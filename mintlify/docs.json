@@ -42,9 +42,72 @@
           {
             "group": "TrueCurrent",
             "pages": [
-              "index"
+              "index",
+              {
+                "group": "overview",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "overview/how-it-works",
+                  "overview/why-truecurrent"
+                ]
+              },
+              {
+                "group": "getting-started",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "getting-started/connect-wallet",
+                  "getting-started/deposit-funds",
+                  "getting-started/first-trade"
+                ]
+              },
+              {
+                "group": "trading",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "trading/how-to-trade",
+                  "trading/perpetual-markets",
+                  "trading/prices",
+                  "trading/trigger-orders",
+                  "trading/funding-rates",
+                  "trading/fees",
+                  "trading/margin-trading",
+                  "trading/liquidation",
+                  "trading/slippage-and-worst-price"
+                ]
+              },
+              {
+                "group": "market-makers",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "market-makers/overview",
+                  "market-makers/getting-whitelisted",
+                  "market-makers/maker-stream",
+                  "market-makers/signing-quotes",
+                  "market-makers/authz-setup",
+                  "market-makers/quoting-guidelines"
+                ]
+              },
+              {
+                "group": "technical",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "technical/architecture",
+                  "technical/how-rfq-works",
+                  "technical/understanding-quotes",
+                  "technical/smart-contract",
+                  "technical/websocket-streams",
+                  "technical/authz-model",
+                  "technical/error-reference"
+                ]
+              },
+              "faq"
             ]
-        }
+          }
         ],
         "footer": {
           "socials": {

@@ -1,0 +1,107 @@
+# Error reference
+
+This page lists common errors you may encounter when integrating with TrueCurrent, along with their causes and resolutions.
+
+---
+
+## Smart contract errors
+
+### `signature verification failed`
+
+**Cause:** The market maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
+
+**Common causes:**
+- Incorrect field ordering in the signed message
+- Numeric values not serialized as strings (e.g., passing integer `100` instead of string `"100"`)
+- Price decimal format mismatch (e.g., `4.455` vs `4.4550`)
+- Wrong `chain_id` or `contract_address` in the signed message
+
+**Resolution:** Review the [Signing quotes](../market-makers/signing-quotes.md) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+
+---
+
+### `quote expired`
+
+**Cause:** The quote's `expiry` timestamp is in the past at the time of onchain settlement.
+
+**Common causes:**
+- Quote `expiry` was set too short (less than the time needed for the taker to accept + block confirmation)
+- System clock skew on the market maker's server
+- Network delay between quote submission and onchain settlement
+
+**Resolution:** Set quote expiry to at least 30 seconds from signing time. Ensure your server uses NTP time synchronization. Monitor average confirmation times.
+
+---
+
+### `price exceeds worst_price`
+
+**Cause:** The quoted price is worse than the taker's `worst_price` parameter.
+
+**For longs:** `quote.price > worst_price`
+**For shorts:** `quote.price < worst_price`
+
+**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](../trading/slippage-and-worst-price.md).
+
+**Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
+
+---
+
+### `unauthorized` / `authz grant not found`
+
+**Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
+
+**Resolution:** Re-run the authz grant setup. See [Authorization setup](../market-makers/authz-setup.md) (for market makers) or [Connect your wallet](../getting-started/connect-wallet.md) (for traders).
+
+---
+
+### `insufficient funds` / `insufficient margin`
+
+**Cause:** The taker's or maker's subaccount doesn't have enough USDT to cover the required margin for the trade.
+
+**Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](../getting-started/deposit-funds.md).
+
+**Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
+
+---
+
+### `maker not whitelisted`
+
+**Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
+
+**Resolution:** Apply for whitelist approval. See [Getting whitelisted](../market-makers/getting-whitelisted.md).
+
+---
+
+## WebSocket / stream errors
+
+### No quotes received
+
+**Symptom:** The taker's `collect_quotes()` returns an empty list after the collection window.
+
+**Common causes:**
+- No market makers are currently active for the requested market
+- The requesting taker address is not recognized by the indexer (connection issue)
+- The market ID in the request is incorrect
+- Market makers are whitelisted but their MakerStream is disconnected
+
+**Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the MM wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
+
+---
+
+### Connection dropped / timeout
+
+**Symptom:** WebSocket connection closes unexpectedly or `wait_for_request` times out.
+
+**Resolution:** Implement reconnection logic with exponential backoff. See [WebSocket streams](websocket-streams.md) for a reconnection example.
+
+---
+
+### `rfq_id` mismatch
+
+**Symptom:** Quotes arrive with a different `rfq_id` than expected, or no quotes arrive for the submitted `rfq_id`.
+
+**Common causes:**
+- Multiple concurrent requests from the same address with different IDs
+- ID generation collision (avoid using sequential small integers; use timestamps or UUIDs)
+
+**Resolution:** Use millisecond timestamps as `rfq_id` values to ensure uniqueness. Ensure your quote collection is filtering by the correct `rfq_id`.

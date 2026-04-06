@@ -1,0 +1,89 @@
+# Frequently asked questions
+
+---
+
+## General
+
+**What is TrueCurrent?**
+
+TrueCurrent is a non-custodial perpetuals exchange on Injective that uses a Request for Quote (RFQ) system. Instead of trading against an automated market maker or a passive order book, you receive live, competitive quotes from professional market makers and execute at the locked-in price with no slippage.
+
+**Is TrueCurrent non-custodial?**
+
+Yes. Your funds stay in your Injective subaccount at all times. TrueCurrent's smart contract only accesses your funds during settlement, via narrow `authz` permissions that you control and can revoke at any time. No TrueCurrent team member or infrastructure can access your wallet.
+
+**What chain is TrueCurrent on?**
+
+Injective. All settlement happens on the Injective blockchain, which provides sub-second finality and zero gas fees for users.
+
+**Do I need to pay gas fees?**
+
+No. Injective covers transaction costs for users. You pay no gas for any action on TrueCurrent.
+
+---
+
+## Trading
+
+**What is an RFQ?**
+
+RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks professional market makers to compete for your order in real time. You receive firm, signed quotes and can accept the best one. Unlike AMMs, the price is fixed at quote time and doesn't change during settlement. See [RFQ explained](../overview/rfq-explained.md) for a full explanation.
+
+**What happens if no market maker responds to my request?**
+
+If no market maker quotes within the 2-second window, your order routes automatically to Injective's onchain order book. You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+
+**What is the worst price setting?**
+
+Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price. See [Slippage and worst price](../trading/slippage-and-worst-price.md).
+
+**Why did my quote expire before I could accept?**
+
+Quotes are valid for a limited window (typically 30 seconds). Market makers need short expiry windows to manage price risk in fast-moving markets. If a quote expires, request a new one – the process is fast.
+
+**Can I get liquidated?**
+
+Yes. Perpetual positions use margin and can be liquidated if the mark price moves enough against your position. Your liquidation price is displayed in the Positions panel. Monitor it, and add margin or reduce your position size if it's getting close. See [Perpetual markets](../trading/perpetual-markets.md) for details.
+
+**What leverage is available?**
+
+Up to 20x on supported markets, depending on position size. Higher leverage means a closer liquidation price. Start with lower leverage while you're getting familiar with the platform.
+
+---
+
+## Market makers
+
+**How do I become a market maker?**
+
+Apply for whitelist access by contacting the TrueCurrent team. You'll need to complete a testnet integration first to demonstrate your system is working correctly. See [Getting whitelisted](../market-makers/getting-whitelisted.md).
+
+**What programming languages/SDKs are supported?**
+
+The testnet E2E reference implementation is in Python, using the `rfq-qa-python-tests` framework. The underlying protocol (WebSocket messages + Injective chain interactions) is language-agnostic. Any language that can maintain a WebSocket connection, implement the quote signing specification, and submit Injective transactions can be used.
+
+**Why is my quote not winning trades?**
+
+Your price may be less competitive than other market makers. Review your pricing model and reference data sources. Also verify that your `authz` grants are current and your margin is sufficient – quote wins that fail at settlement still count against your metrics.
+
+**Can I see who other market makers are?**
+
+Market maker addresses are visible onchain (in the `AcceptQuote` transaction history), but the list of whitelisted makers is not publicly published. You can observe trade history to infer active makers.
+
+---
+
+## Security and technical
+
+**Has TrueCurrent been audited?**
+
+A security audit of the TrueCurrent smart contract is planned before mainnet launch. The audit report will be published and linked here upon completion.
+
+**What happens if TrueCurrent's servers go down?**
+
+If the off-chain RFQ indexer is unavailable, new trades can't be initiated through the RFQ system. However, your existing positions, margin, and funds are fully onchain and unaffected. You can manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app) even without TrueCurrent's frontend.
+
+**Can TrueCurrent be upgraded or changed?**
+
+The smart contract's upgrade policy will be documented upon mainnet launch. Any upgrades to core settlement logic will be announced in advance through official TrueCurrent channels.
+
+**How do I revoke TrueCurrent's access to my wallet?**
+
+Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. See [Authorization model](../technical/authz-model.md).
