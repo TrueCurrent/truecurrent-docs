@@ -19,7 +19,7 @@ Make sure you've:
 From the trading interface, select the market you want to trade. Each market shows the current price, 24h volume, and funding rate.
 
 <div class="image-placeholder">
-  <img src="../../assets/market-select.png" alt="Market selection" />
+  <img src="/img/market-select.png" alt="Market selection" />
   <p><em>Selecting a market on TrueCurrent</em></p>
 </div>
 
@@ -42,7 +42,7 @@ For example, $100 margin at 2x leverage means a $200 position. A 10% price move 
 **Start with low leverage (1x–3x) while learning.** Higher leverage amplifies both gains and losses.
 
 <div class="image-placeholder">
-  <img src="../../assets/trade-size.png" alt="Setting trade size and leverage" />
+  <img src="/img/trade-size.png" alt="Setting trade size and leverage" />
   <p><em>Setting margin and leverage</em></p>
 </div>
 
@@ -61,7 +61,7 @@ TrueCurrent will never execute your trade at a price worse than your limit. If n
 Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes your trade – all in under a second.
 
 <div class="image-placeholder">
-  <img src="../../assets/trade-confirm.png" alt="Confirming a trade" />
+  <img src="/img/trade-confirm.png" alt="Confirming a trade" />
   <p><em>Confirming your trade</em></p>
 </div>
 
@@ -76,7 +76,7 @@ Your open position appears in the **Positions** panel below the chart. You'll se
 - Your **liquidation price** – if the mark price reaches this level, your position is automatically closed and you lose your margin. Keep an eye on it.
 
 <div class="image-placeholder">
-  <img src="../../assets/positions-panel.png" alt="Open positions panel" />
+  <img src="/img/positions-panel.png" alt="Open positions panel" />
   <p><em>Managing open positions</em></p>
 </div>
 

@@ -5,7 +5,7 @@
 Most exchanges charge taker fees of 0.02–0.07% per trade. On TrueCurrent, takers pay nothing. Zero protocol fees, zero gas fees.
 
 <div class="image-placeholder">
-  <img src="../../assets/fee-comparison.png" alt="Fee comparison chart" />
+  <img src="/img/fee-comparison.png" alt="Fee comparison chart" />
   <p><em>TrueCurrent vs. leading perpetuals exchanges on fees</em></p>
 </div>
 

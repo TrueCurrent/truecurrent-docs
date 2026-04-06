@@ -11,7 +11,7 @@ A complete guide to opening, managing, and closing positions on TrueCurrent.
 Choose the perpetual market you want to trade from the markets list. You'll see the current price, 24h volume, open interest, and funding rate for each market.
 
 <div class="image-placeholder">
-  <img src="../../assets/markets-list.png" alt="Markets list" />
+  <img src="/img/markets-list.png" alt="Markets list" />
   <p><em>Available markets on TrueCurrent</em></p>
 </div>
 
@@ -47,7 +47,7 @@ For most market conditions, 0.5–1% works well. In volatile markets, set it sli
 Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes – all in under a second. You'll see an estimated price and can review your worst-case price before confirming; the trade will never execute at a less favorable price than your limit.
 
 <div class="image-placeholder">
-  <img src="../../assets/trade-confirm.png" alt="Confirming a trade" />
+  <img src="/img/trade-confirm.png" alt="Confirming a trade" />
   <p><em>Confirming your trade</em></p>
 </div>
 
@@ -66,7 +66,7 @@ Your positions appear in the **Positions** panel. For each position you can see:
 - **Liquidation price** – the price at which your position is automatically closed
 
 <div class="image-placeholder">
-  <img src="../../assets/position-details.png" alt="Position management panel" />
+  <img src="/img/position-details.png" alt="Position management panel" />
   <p><em>The positions panel with key metrics</em></p>
 </div>
 

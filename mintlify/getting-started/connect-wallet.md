@@ -25,7 +25,7 @@ TrueCurrent is non-custodial – you trade directly from your own wallet. No acc
 Your address will appear in the top right when connected.
 
 <div class="image-placeholder">
-  <img src="../../assets/connect-wallet.png" alt="Connect wallet screen" />
+  <img src="/img/connect-wallet.png" alt="Connect wallet screen" />
   <p><em>Connecting a wallet on TrueCurrent</em></p>
 </div>
 

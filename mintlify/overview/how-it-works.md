@@ -13,7 +13,7 @@ Your funds never leave your wallet. Every fill is settled onchain.
 Choose which perpetual market you want to trade, whether you want to go long (profit when price rises) or short (profit when price falls), and how much you want to trade.
 
 <div class="image-placeholder">
-  <img src="../../assets/trade-panel.png" alt="TrueCurrent trade panel" />
+  <img src="/img/trade-panel.png" alt="TrueCurrent trade panel" />
   <p><em>The TrueCurrent trade panel</em></p>
 </div>
 
@@ -26,7 +26,7 @@ You'll see an estimated price and can set your price floor before confirming. Th
 ### Your position is live
 
 <div class="image-placeholder">
-  <img src="../../assets/position-open.png" alt="Open position view" />
+  <img src="/img/position-open.png" alt="Open position view" />
   <p><em>Your position after opening</em></p>
 </div>
 

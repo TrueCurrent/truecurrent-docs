@@ -16,7 +16,7 @@ TrueCurrent's built-in deposit widget supports CCTP (Circle's Cross-Chain Transf
 Your USDC arrives in your TrueCurrent account within seconds. Gas fees are covered – you pay nothing.
 
 <div class="image-placeholder">
-  <img src="../../assets/deposit-widget.png" alt="Deposit widget" />
+  <img src="/img/deposit-widget.png" alt="Deposit widget" />
   <p><em>The TrueCurrent deposit widget</em></p>
 </div>
 
@@ -32,7 +32,7 @@ Every TrueCurrent account has a unique deposit address – a wallet address that
 4. Funds arrive in your TrueCurrent account automatically
 
 <div class="image-placeholder">
-  <img src="../../assets/deposit-address.png" alt="Deposit address / QR code" />
+  <img src="/img/deposit-address.png" alt="Deposit address / QR code" />
   <p><em>Your unique deposit address</em></p>
 </div>
 

@@ -51,7 +51,7 @@ This means:
 When placing a new trade, you can set both a TP and SL directly in the order panel before confirming. These are attached to the position from the moment it opens.
 
 <div class="image-placeholder">
-  <img src="../../assets/tpsl-entry.png" alt="Setting TP/SL at entry" />
+  <img src="/img/tpsl-entry.png" alt="Setting TP/SL at entry" />
   <p><em>Setting take profit and stop loss when opening a position</em></p>
 </div>
 
@@ -65,7 +65,7 @@ You can add or modify TP/SL on any open position at any time:
 4. Confirm
 
 <div class="image-placeholder">
-  <img src="../../assets/tpsl-modify.png" alt="Modifying TP/SL on existing position" />
+  <img src="/img/tpsl-modify.png" alt="Modifying TP/SL on existing position" />
   <p><em>Adding or modifying TP/SL on an open position</em></p>
 </div>
 
