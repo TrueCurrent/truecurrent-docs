@@ -116,4 +116,4 @@ This is more capital-efficient than isolated margin but means a large losing pos
 
 **Monitor the margin ratio** – if it approaches MMR, act proactively rather than waiting for liquidation.
 
-See [Liquidation](liquidation.md) for exactly how the liquidation price is calculated.
+See [Liquidation](/trading/liquidation) for exactly how the liquidation price is calculated.

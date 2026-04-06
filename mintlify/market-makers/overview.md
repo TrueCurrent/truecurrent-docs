@@ -41,7 +41,7 @@ You compete against other registered market makers for every trade. Best price w
 
 ## Becoming a market maker
 
-TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting whitelisted](getting-whitelisted.md).
+TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting whitelisted](/market-makers/getting-whitelisted).
 
 ---
 
@@ -55,10 +55,10 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 **Integration guides:**
 
-- [Connecting to MakerStream](maker-stream.md)
-- [Signing quotes](signing-quotes.md)
-- [Authorization setup](authz-setup.md)
-- [Quoting guidelines](quoting-guidelines.md)
+- [Connecting to MakerStream](/market-makers/maker-stream)
+- [Signing quotes](/market-makers/signing-quotes)
+- [Authorization setup](/market-makers/authz-setup)
+- [Quoting guidelines](/market-makers/quoting-guidelines)
 
 ---
 

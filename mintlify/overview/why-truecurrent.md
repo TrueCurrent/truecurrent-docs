@@ -33,7 +33,7 @@ This is what real self-custody looks like.
 
 ## Bring funds from anywhere
 
-You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain. See [Deposit funds](../getting-started/deposit-funds.md) for the full walkthrough.
+You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain. See [Deposit funds](/getting-started/deposit-funds) for the full walkthrough.
 
 ---
 

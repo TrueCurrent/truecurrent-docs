@@ -121,4 +121,4 @@ The insurance fund grows from a portion of liquidation proceeds when positions a
 
 **Use lower leverage.** The relationship is direct: at 20× leverage, a 5% adverse move approaches liquidation. At 2× leverage, you'd need a 50% move. Sizing leverage to your risk tolerance is the most effective protection.
 
-**Watch funding rates.** Persistent funding payments drain margin over time. A position that's safe today may be closer to liquidation tomorrow if funding is running against you. See [Funding rates](funding-rates.md).
+**Watch funding rates.** Persistent funding payments drain margin over time. A position that's safe today may be closer to liquidation tomorrow if funding is running against you. See [Funding rates](/trading/funding-rates).

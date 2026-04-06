@@ -22,7 +22,7 @@ This makes TrueCurrent one of the most cost-effective venues to trade perpetuals
 
 Holding an open position over time incurs **funding payments**. These are periodic payments exchanged between long and short holders to keep the perpetual price anchored to spot – not fees paid to TrueCurrent.
 
-See [Funding rates](funding-rates.md) for how these are calculated and how to factor them into your trading.
+See [Funding rates](/trading/funding-rates) for how these are calculated and how to factor them into your trading.
 
 ---
 
@@ -49,4 +49,4 @@ See [Funding rates](funding-rates.md) for how these are calculated and how to fa
 
 Institutional liquidity providers who quote on TrueCurrent pay a **4 bps (0.04%) fee** on filled volume. This is how the protocol is sustained while keeping trading completely free for users.
 
-See [Market maker overview](../market-makers/overview.md) for details.
+See [Market maker overview](/market-makers/overview) for details.

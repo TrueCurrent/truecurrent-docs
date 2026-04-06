@@ -39,7 +39,7 @@ New markets on TrueCurrent require at least one registered market maker willing 
 3. A new market is deployed to the TrueCurrent contract
 4. The market is made available in the UI
 
-If you're a market maker interested in supporting a new market, see [Getting whitelisted](../market-makers/getting-whitelisted.md).
+If you're a market maker interested in supporting a new market, see [Getting whitelisted](/market-makers/getting-whitelisted).
 
 ---
 

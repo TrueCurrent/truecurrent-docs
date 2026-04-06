@@ -30,7 +30,7 @@ No. Injective covers transaction costs for users. You pay no gas for any action 
 
 **What is an RFQ?**
 
-RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks professional market makers to compete for your order in real time. You receive firm, signed quotes and can accept the best one. Unlike AMMs, the price is fixed at quote time and doesn't change during settlement. See [RFQ explained](../overview/rfq-explained.md) for a full explanation.
+RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks professional market makers to compete for your order in real time. You receive firm, signed quotes and can accept the best one. Unlike AMMs, the price is fixed at quote time and doesn't change during settlement. See [RFQ explained](/overview/rfq-explained) for a full explanation.
 
 **What happens if no market maker responds to my request?**
 
@@ -38,7 +38,7 @@ If no market maker quotes within the 2-second window, your order routes automati
 
 **What is the worst price setting?**
 
-Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price. See [Slippage and worst price](../trading/slippage-and-worst-price.md).
+Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price. See [Slippage and worst price](/trading/slippage-and-worst-price).
 
 **Why did my quote expire before I could accept?**
 
@@ -46,7 +46,7 @@ Quotes are valid for a limited window (typically 30 seconds). Market makers need
 
 **Can I get liquidated?**
 
-Yes. Perpetual positions use margin and can be liquidated if the mark price moves enough against your position. Your liquidation price is displayed in the Positions panel. Monitor it, and add margin or reduce your position size if it's getting close. See [Perpetual markets](../trading/perpetual-markets.md) for details.
+Yes. Perpetual positions use margin and can be liquidated if the mark price moves enough against your position. Your liquidation price is displayed in the Positions panel. Monitor it, and add margin or reduce your position size if it's getting close. See [Perpetual markets](/trading/perpetual-markets) for details.
 
 **What leverage is available?**
 
@@ -58,7 +58,7 @@ Up to 20x on supported markets, depending on position size. Higher leverage mean
 
 **How do I become a market maker?**
 
-Apply for whitelist access by contacting the TrueCurrent team. You'll need to complete a testnet integration first to demonstrate your system is working correctly. See [Getting whitelisted](../market-makers/getting-whitelisted.md).
+Apply for whitelist access by contacting the TrueCurrent team. You'll need to complete a testnet integration first to demonstrate your system is working correctly. See [Getting whitelisted](/market-makers/getting-whitelisted).
 
 **What programming languages/SDKs are supported?**
 
@@ -90,4 +90,4 @@ The smart contract's upgrade policy will be documented upon mainnet launch. Any 
 
 **How do I revoke TrueCurrent's access to my wallet?**
 
-Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. See [Authorization model](../technical/authz-model.md).
+Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. See [Authorization model](/technical/authz-model).

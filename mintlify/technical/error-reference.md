@@ -20,7 +20,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - Price decimal format mismatch (e.g., `4.455` vs `4.4550`)
 - Wrong `chain_id` or `contract_address` in the signed message
 
-**Resolution:** Review the [Signing quotes](../market-makers/signing-quotes.md) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+**Resolution:** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
 
 ---
 
@@ -44,7 +44,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **For longs:** `quote.price > worst_price`
 **For shorts:** `quote.price < worst_price`
 
-**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](../trading/slippage-and-worst-price.md).
+**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
 
 **Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
 
@@ -54,7 +54,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
 
-**Resolution:** Re-run the authz grant setup. See [Authorization setup](../market-makers/authz-setup.md) (for market makers) or [Connect your wallet](../getting-started/connect-wallet.md) (for traders).
+**Resolution:** Re-run the authz grant setup. See [Authorization setup](/market-makers/authz-setup) (for market makers) or [Connect your wallet](../getting-started/connect-wallet) (for traders).
 
 ---
 
@@ -62,7 +62,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The taker's or maker's subaccount doesn't have enough USDT to cover the required margin for the trade.
 
-**Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](../getting-started/deposit-funds.md).
+**Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
 
 **Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
 
@@ -72,7 +72,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
 
-**Resolution:** Apply for whitelist approval. See [Getting whitelisted](../market-makers/getting-whitelisted.md).
+**Resolution:** Apply for whitelist approval. See [Getting whitelisted](/market-makers/getting-whitelisted).
 
 ---
 
@@ -96,7 +96,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Symptom:** WebSocket connection closes unexpectedly or `wait_for_request` times out.
 
-**Resolution:** Implement reconnection logic with exponential backoff. See [WebSocket streams](websocket-streams.md) for a reconnection example.
+**Resolution:** Implement reconnection logic with exponential backoff. See [WebSocket streams](/technical/websocket-streams) for a reconnection example.
 
 ---
 

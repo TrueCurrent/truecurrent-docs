@@ -52,4 +52,4 @@ You'll see an estimated price and can set your price floor before confirming. Th
 
 Closing works exactly like opening – set your parameters, confirm, and TrueCurrent handles the rest. You can close fully or partially at any time.
 
-See [How to trade](../trading/how-to-trade.md) for a step-by-step walkthrough.
+See [How to trade](/trading/how-to-trade) for a step-by-step walkthrough.

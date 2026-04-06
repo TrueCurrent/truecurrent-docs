@@ -82,7 +82,7 @@ Your quote must include:
 | `expiry` | integer | Quote expiry (Unix ms) – recommend 30s from now |
 | `maker` | string | Your Injective address |
 | `taker` | string | Taker's Injective address (from request) |
-| `signature` | string | Your cryptographic signature (see [Signing quotes](signing-quotes.md)) |
+| `signature` | string | Your cryptographic signature (see [Signing quotes](/market-makers/signing-quotes)) |
 | `chain_id` | string | Injective chain ID |
 | `contract_address` | string | TrueCurrent contract address |
 

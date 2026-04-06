@@ -12,9 +12,9 @@ A step-by-step guide to opening your first position on TrueCurrent.
 
 Make sure you've:
 
-- [x] Connected your wallet ([guide](connect-wallet.md))
+- [x] Connected your wallet ([guide](/getting-started/connect-wallet))
 - [x] Completed the one-time authorization (prompted automatically on first visit)
-- [x] Deposited USDC ([guide](deposit-funds.md))
+- [x] Deposited USDC ([guide](/getting-started/deposit-funds))
 
 ---
 
@@ -96,4 +96,4 @@ Click **Close** on any open position. Choose full or partial close and confirm.
 
 **Watch your liquidation price.** If you're getting close, you can add margin or partially close to reduce risk.
 
-**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up. See [Funding rates](../trading/funding-rates.md).
+**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up. See [Funding rates](/trading/funding-rates).

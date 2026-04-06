@@ -4,7 +4,7 @@ description: "--"
 updatedAt: "2026-04-06"
 ---
 
-For a full step-by-step walkthrough, see **[How to trade](how-to-trade.md)**.
+For a full step-by-step walkthrough, see **[How to trade](/trading/how-to-trade)**.
 
 This page covers the specific parameters you control when placing a trade.
 
@@ -50,4 +50,4 @@ Settlement completes onchain in approximately one second.
 
 ## For technical details
 
-If you're a developer or market maker and want to understand the full settlement mechanics, see the [Technical reference](../technical/architecture.md) and [How RFQ works](../technical/how-rfq-works.md).
+If you're a developer or market maker and want to understand the full settlement mechanics, see the [Technical reference](/technical/architecture) and [How RFQ works](/technical/how-rfq-works).

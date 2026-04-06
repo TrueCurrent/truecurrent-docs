@@ -26,8 +26,8 @@ Before applying, you should have:
 
 - An Injective wallet with adequate USDT margin
 - A functional automated quoting system connected to TrueCurrent's MakerStream
-- Implemented the quote signing protocol (see [Signing quotes](signing-quotes.md))
-- Completed the `authz` setup (see [Authorization setup](authz-setup.md))
+- Implemented the quote signing protocol (see [Signing quotes](/market-makers/signing-quotes))
+- Completed the `authz` setup (see [Authorization setup](/market-makers/authz-setup))
 - Successfully run the E2E flow on testnet
 
 ---

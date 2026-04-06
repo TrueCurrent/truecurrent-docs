@@ -55,7 +55,7 @@ Before you confirm a trade, TrueCurrent displays an **indicative price** – an 
 
 The indicative price is not a firm quote. The actual quoted price is determined at execution time when liquidity providers respond. In stable markets, the two will be nearly identical. In fast-moving markets, they may differ slightly.
 
-Your [price tolerance](slippage-and-worst-price.md) setting determines the maximum deviation you'll accept between the indicative price and the actual quoted price. The trade will never execute at a price worse than your specified limit.
+Your [price tolerance](/trading/slippage-and-worst-price) setting determines the maximum deviation you'll accept between the indicative price and the actual quoted price. The trade will never execute at a price worse than your specified limit.
 
 ---
 
