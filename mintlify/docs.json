@@ -1,0 +1,77 @@
+{
+  "theme": "mint",
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "TrueCurrent Docs",
+  "description": "TrueCurrent allows you to trade markets without limits.",
+  "seo": {
+    "indexing": "all",
+    "metatags": {
+      "og:type": "website",
+      "og:site_name": "TrueCurrent Docs",
+      "canonical": "https://docs.tc.xyz",
+      "indexnow-verification": "TODO",
+      "msvalidate.01": "TODO"
+    }
+  },
+  "search": {
+    "prompt": "Search TrueCurrent docs..."
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "integrations": {
+    "gtm": {
+      "tagId": "GTM-TODO"
+    }
+  },
+  "colors": {
+    "primary": "#999999",
+    "light": "#EEEEEE",
+    "dark": "#000000"
+  },
+  "logo": {
+    "light": "/img/truecurrent-logo-192x192.png",
+    "dark": "/img/truecurrent-logo-192x192.png"
+  },
+  "favicon": "/img/truecurrent-logo-192x192.png",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "groups": [
+          {
+            "group": "TrueCurrent",
+            "pages": [
+              "index"
+            ]
+        }
+        ],
+        "footer": {
+          "socials": {
+            "website": "https://tx.xyz/",
+            "x": "https://x.com/TrueCurrentX"
+          },
+          "links": [
+            {
+              "header": "About docs",
+              "items": [
+                { "label": "Maintained by TrueCurrent", "href": "https://tc.xyz/" }
+              ]
+            },
+            {
+              "header": "Resources",
+              "items": [
+                { "label": "Blog", "href": "https://tc.xyz/blog" }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "redirects": [
+  ]
+}
