@@ -1,4 +1,8 @@
-# WebSocket streams
+---
+title: "WebSocket streams"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for market makers.
 

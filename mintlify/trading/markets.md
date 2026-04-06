@@ -1,4 +1,8 @@
-# Available markets
+---
+title: "Available markets"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent currently offers perpetual futures markets on Injective. New markets are added based on demand and liquidity availability.
 

@@ -1,4 +1,8 @@
-# RFQ explained
+---
+title: "RFQ explained"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 Request for Quote (RFQ) is a trading model where a buyer or seller solicits price quotes from one or more liquidity providers before committing to a trade. Unlike automated pricing models, RFQ involves human or algorithmic market makers actively pricing each individual trade.
 

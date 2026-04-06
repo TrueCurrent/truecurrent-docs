@@ -1,4 +1,8 @@
-# Signing quotes
+---
+title: "Signing quotes"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 Every quote you submit must be signed with your market maker wallet's private key. This signature is a cryptographic commitment to your quoted terms – it allows the TrueCurrent smart contract to verify authenticity at settlement without requiring you to be online at that moment.
 

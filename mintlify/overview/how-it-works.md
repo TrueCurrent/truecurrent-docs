@@ -1,4 +1,8 @@
-# How TrueCurrent works
+---
+title: "How TrueCurrent works"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent is a perpetuals exchange where professional liquidity providers compete to give you the best possible price on every trade. You set your parameters, and TrueCurrent automatically finds and executes at the best available price – no manual quote acceptance required.
 

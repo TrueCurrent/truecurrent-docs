@@ -1,4 +1,8 @@
-# Deposit funds
+---
+title: "Deposit funds"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 To trade on TrueCurrent, you need USDC in your trading account. There are two ways to get it there.
 

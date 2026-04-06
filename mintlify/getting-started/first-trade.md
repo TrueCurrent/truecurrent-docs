@@ -1,4 +1,8 @@
-# Your first trade
+---
+title: "Your first trade"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 A step-by-step guide to opening your first position on TrueCurrent.
 

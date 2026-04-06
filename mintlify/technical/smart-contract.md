@@ -1,4 +1,8 @@
-# Smart contract
+---
+title: "Smart contract"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on Injective. This page documents the contract's main entrypoints, the settlement flow, and how to interact with it directly.
 

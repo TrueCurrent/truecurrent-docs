@@ -1,4 +1,8 @@
-# Connect your wallet
+---
+title: "Connect your wallet"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent is non-custodial – you trade directly from your own wallet. No account creation, no email, no KYC.
 

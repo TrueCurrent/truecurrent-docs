@@ -1,4 +1,8 @@
-# Authorization setup (authz)
+---
+title: "Authorization setup (authz)"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent uses Injective's native `authz` module to allow the smart contract to execute trades on behalf of both traders and market makers. As a market maker, you need to grant the contract specific permissions before your quotes can settle.
 

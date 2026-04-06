@@ -1,4 +1,8 @@
-# Margin trading
+---
+title: "Margin trading"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 Margin trading lets you control a position larger than your deposited collateral by using leverage. This page explains how margin is calculated, how your account equity is tracked, and how to read the key metrics in your positions panel.
 

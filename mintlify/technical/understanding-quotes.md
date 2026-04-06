@@ -1,4 +1,8 @@
-# Understanding quotes
+---
+title: "Understanding quotes"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 When you request a trade on TrueCurrent, market makers respond with quotes. Understanding what a quote contains – and what it commits to – helps you trade more effectively.
 

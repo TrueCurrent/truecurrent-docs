@@ -1,4 +1,8 @@
-# Architecture
+---
+title: "Architecture"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent is composed of three main layers: an off-chain quote distribution layer, an onchain smart contract, and Injective's native exchange module for final settlement.
 

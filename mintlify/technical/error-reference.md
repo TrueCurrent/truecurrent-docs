@@ -1,4 +1,8 @@
-# Error reference
+---
+title: "Error reference"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 This page lists common errors you may encounter when integrating with TrueCurrent, along with their causes and resolutions.
 

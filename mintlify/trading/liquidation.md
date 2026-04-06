@@ -1,4 +1,8 @@
-# Liquidation
+---
+title: "Liquidation"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 When a position's margin ratio falls to or below the maintenance margin rate (MMR), TrueCurrent's liquidation engine automatically closes it. This page explains exactly when and how that happens, how to calculate your liquidation price, and how to protect yourself.
 

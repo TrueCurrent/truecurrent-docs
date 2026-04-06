@@ -1,4 +1,8 @@
-# Authorization model
+---
+title: "Authorization model"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent uses Injective's native `authz` module to allow the smart contract to act on behalf of both traders and market makers during settlement. This page explains the model in detail.
 

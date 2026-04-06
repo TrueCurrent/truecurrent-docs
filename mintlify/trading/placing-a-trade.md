@@ -1,4 +1,8 @@
-# Placing a trade
+---
+title: "Placing a trade"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 For a full step-by-step walkthrough, see **[How to trade](how-to-trade.md)**.
 

@@ -40,11 +40,11 @@
         "language": "en",
         "groups": [
           {
-            "group": "TrueCurrent",
+            "group": "TRUECURRENT",
             "pages": [
               "index",
               {
-                "group": "overview",
+                "group": "Overview",
                 "icon": "",
                 "expanded": false,
                 "pages": [
@@ -53,7 +53,7 @@
                 ]
               },
               {
-                "group": "getting-started",
+                "group": "Getting Started",
                 "icon": "",
                 "expanded": false,
                 "pages": [
@@ -63,7 +63,7 @@
                 ]
               },
               {
-                "group": "trading",
+                "group": "Trading",
                 "icon": "",
                 "expanded": false,
                 "pages": [
@@ -79,7 +79,7 @@
                 ]
               },
               {
-                "group": "market-makers",
+                "group": "Market Makers",
                 "icon": "",
                 "expanded": false,
                 "pages": [
@@ -92,7 +92,7 @@
                 ]
               },
               {
-                "group": "technical",
+                "group": "Technical",
                 "icon": "",
                 "expanded": false,
                 "pages": [

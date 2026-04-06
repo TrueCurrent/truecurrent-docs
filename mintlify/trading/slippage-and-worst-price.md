@@ -1,4 +1,8 @@
-# Price tolerance
+---
+title: "Price tolerance"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 When you place a trade on TrueCurrent, you set a **price tolerance** – a worst-case price you're willing to accept. TrueCurrent will never execute your trade at a price less favorable than this limit.
 

@@ -1,4 +1,8 @@
-# Perpetual markets
+---
+title: "Perpetual markets"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent offers perpetual futures – leveraged positions on asset prices with no expiration date.
 

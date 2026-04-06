@@ -1,4 +1,8 @@
-# How to trade
+---
+title: "How to trade"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 A complete guide to opening, managing, and closing positions on TrueCurrent.
 

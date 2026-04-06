@@ -1,4 +1,8 @@
-# Market makers: overview
+---
+title: "Market makers: overview"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent's liquidity is powered by professional market makers. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
 

@@ -1,4 +1,8 @@
-# Trigger orders (TP/SL)
+---
+title: "Trigger orders (TP/SL)"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 Trigger orders let you automate your exit strategy. You set a target price in advance, and TrueCurrent closes your position automatically when that price is reached – without you having to watch the market.
 

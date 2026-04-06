@@ -1,4 +1,8 @@
-# Connecting to MakerStream
+---
+title: "Connecting to MakerStream"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to market makers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
 

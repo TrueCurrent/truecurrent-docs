@@ -1,4 +1,8 @@
-# Funding rates
+---
+title: "Funding rates"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 Perpetual contracts have no expiry, so they use **funding rates** to keep the perpetual price anchored to the underlying spot price. Funding is a periodic payment exchanged between long and short positions.
 

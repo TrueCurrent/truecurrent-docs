@@ -1,4 +1,8 @@
-# Quoting guidelines
+---
+title: "Quoting guidelines"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 This page covers best practices for market makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your market maker standing in good shape.
 

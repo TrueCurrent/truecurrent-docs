@@ -1,4 +1,8 @@
-# Getting whitelisted
+---
+title: "Getting whitelisted"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent uses an approved market maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
 

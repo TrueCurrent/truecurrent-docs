@@ -1,4 +1,8 @@
-# Index, mark, and quoted prices
+---
+title: "Index, mark, and quoted prices"
+description: "--"
+updatedAt: "2026-04-06"
+---
 
 TrueCurrent uses three distinct prices, each serving a specific purpose. Understanding the difference helps you interpret your P&L, anticipate liquidations, and know exactly what price you traded at.
 
