@@ -1,6 +1,6 @@
 ---
 title: "Fees"
-description: "--"
+description: "TrueCurrent charges zero taker fees, zero gas fees, and zero deposit or withdrawal fees for traders, with protocol sustainability through a 4 bps maker fee on institutional liquidity providers."
 updatedAt: "2026-04-06"
 ---
 

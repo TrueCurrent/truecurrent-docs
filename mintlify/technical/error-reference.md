@@ -1,6 +1,6 @@
 ---
 title: "Error reference"
-description: "--"
+description: "Troubleshooting guide for common TrueCurrent integration errors including signature verification failures, quote expiry, authz grants, insufficient margin, and WebSocket connection issues."
 updatedAt: "2026-04-06"
 ---
 

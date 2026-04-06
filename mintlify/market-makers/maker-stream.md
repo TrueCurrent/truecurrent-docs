@@ -1,6 +1,6 @@
 ---
 title: "Connecting to MakerStream"
-description: "--"
+description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocket endpoint, receiving RFQ requests, submitting signed quotes within the 2-second window, and handling concurrent market making operations."
 updatedAt: "2026-04-06"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Why TrueCurrent"
-description: "--"
+description: "Comparison of TrueCurrent's zero-fee RFQ trading against AMM DEXs and order book exchanges, highlighting MEV resistance, tight spreads, true non-custody, and best-price execution advantages."
 updatedAt: "2026-04-06"
 ---
 

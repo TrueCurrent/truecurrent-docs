@@ -1,6 +1,6 @@
 ---
 title: "Your first trade"
-description: "--"
+description: "Step-by-step tutorial for executing your first perpetual futures trade on TrueCurrent, covering market selection, leverage setup, price tolerance, position monitoring, and funding rate considerations."
 updatedAt: "2026-04-06"
 ---
 

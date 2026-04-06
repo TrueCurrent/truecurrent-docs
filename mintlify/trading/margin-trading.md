@@ -1,6 +1,6 @@
 ---
 title: "Margin trading"
-description: "--"
+description: "Master margin trading on TrueCurrent with cross-margin mechanics, initial and maintenance margin ratios, margin ratio calculations, available margin, and liquidation threshold management."
 updatedAt: "2026-04-06"
 ---
 

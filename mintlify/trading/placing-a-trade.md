@@ -1,6 +1,6 @@
 ---
 title: "Placing a trade"
-description: "--"
+description: "Reference for placing trades on TrueCurrent including market selection, direction, margin allocation, leverage configuration, price tolerance settings, and fill guarantees for RFQ execution."
 updatedAt: "2026-04-06"
 ---
 

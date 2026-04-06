@@ -1,6 +1,6 @@
 ---
 title: "Funding rates"
-description: "--"
+description: "Understand perpetual funding rates on TrueCurrent including hourly payments between longs and shorts, rate calculations, funding factor, and strategic implications for position holding costs."
 updatedAt: "2026-04-06"
 ---
 

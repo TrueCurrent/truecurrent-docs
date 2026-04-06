@@ -1,6 +1,6 @@
 ---
 title: "Understanding quotes"
-description: "--"
+description: "Technical analysis of RFQ quote structure, best-quote selection algorithm, quote expiry handling, and automatic fallback routing to Injective order book when market makers don't respond."
 updatedAt: "2026-04-06"
 ---
 

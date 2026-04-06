@@ -1,6 +1,6 @@
 ---
 title: "Index, mark, and quoted prices"
-description: "--"
+description: "Differentiate between index price, mark price, quoted price, and indicative price on TrueCurrent for accurate P&L tracking, liquidation monitoring, and trigger order execution on perpetual markets."
 updatedAt: "2026-04-06"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "RFQ explained"
-description: "--"
+description: "Technical deep dive into TrueCurrent's RFQ protocol architecture covering market maker competition, quote expiry mechanics, hybrid order book fallback, and atomic settlement on Injective blockchain."
 updatedAt: "2026-04-06"
 ---
 

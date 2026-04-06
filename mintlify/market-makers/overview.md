@@ -1,6 +1,6 @@
 ---
 title: "Market makers: overview"
-description: "--"
+description: "Overview of TrueCurrent's market maker program including RFQ liquidity provision, MakerStream integration, quote signing requirements, fee structure, and whitelist application process for professional liquidity providers on Injective."
 updatedAt: "2026-04-06"
 ---
 

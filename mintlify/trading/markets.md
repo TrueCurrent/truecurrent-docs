@@ -1,6 +1,6 @@
 ---
 title: "Available markets"
-description: "--"
+description: "Available perpetual futures markets on TrueCurrent including INJ/USDC with leverage up to 20x, hourly funding rates, oracle-based mark pricing, and requirements for new market listings."
 updatedAt: "2026-04-06"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Smart contract"
-description: "--"
+description: "Reference documentation for TrueCurrent's CosmWasm smart contract including AcceptQuote entrypoint, settlement validation, authz integration, and query methods for market maker registry."
 updatedAt: "2026-04-06"
 ---
 

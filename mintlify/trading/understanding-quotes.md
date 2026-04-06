@@ -1,6 +1,6 @@
 ---
 title: "Understanding quotes"
-description: "--"
+description: "Guide to understanding RFQ quotes on TrueCurrent including price, quantity, expiry, maker address, cryptographic signature verification, and how the best quote is selected for trade execution."
 updatedAt: "2026-04-06"
 ---
 

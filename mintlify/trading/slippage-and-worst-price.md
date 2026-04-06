@@ -1,6 +1,6 @@
 ---
 title: "Price tolerance"
-description: "--"
+description: "Configure price tolerance and worst-price protection on TrueCurrent to guarantee execution limits, prevent adverse fills, and manage slippage during volatile market conditions."
 updatedAt: "2026-04-06"
 ---
 

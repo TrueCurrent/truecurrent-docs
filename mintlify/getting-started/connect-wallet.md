@@ -1,6 +1,6 @@
 ---
 title: "Connect your wallet"
-description: "--"
+description: "Connect supported wallets including Rabby, MetaMask, Keplr, Rainbow, Leap, and Phantom to TrueCurrent's non-custodial perpetuals exchange with one-time authz authorization setup."
 updatedAt: "2026-04-06"
 ---
 

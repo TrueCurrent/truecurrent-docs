@@ -1,6 +1,6 @@
 ---
 title: "WebSocket streams"
-description: "--"
+description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs with connection details, message formats, authentication, and reconnection handling for real-time RFQ trading."
 updatedAt: "2026-04-06"
 ---
 

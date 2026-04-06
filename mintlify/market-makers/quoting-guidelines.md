@@ -1,6 +1,6 @@
 ---
 title: "Quoting guidelines"
-description: "--"
+description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
 updatedAt: "2026-04-06"
 ---
 

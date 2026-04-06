@@ -1,6 +1,6 @@
 ---
 title: "Signing quotes"
-description: "--"
+description: "Technical documentation for cryptographically signing quotes on TrueCurrent, including signature format, field ordering, Python signing implementation, common errors, and security considerations for market makers."
 updatedAt: "2026-04-06"
 ---
 

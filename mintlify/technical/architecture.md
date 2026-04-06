@@ -1,6 +1,6 @@
 ---
 title: "Architecture"
-description: "--"
+description: "System architecture overview of TrueCurrent's three-layer design with off-chain RFQ indexer, CosmWasm smart contract for verification, and Injective exchange module for settlement."
 updatedAt: "2026-04-06"
 ---
 

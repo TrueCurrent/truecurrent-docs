@@ -1,6 +1,6 @@
 ---
 title: "Trigger orders (TP/SL)"
-description: "--"
+description: "Set up automated take profit and stop loss trigger orders on TrueCurrent using quoted price execution to lock in gains and limit losses without constant market monitoring."
 updatedAt: "2026-04-06"
 ---
 

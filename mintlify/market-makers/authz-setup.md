@@ -1,6 +1,6 @@
 ---
 title: "Authorization setup (authz)"
-description: "--"
+description: "Step-by-step guide to setting up authz grants on Injective for TrueCurrent market makers, including required message types, Python implementation, grant verification, and security best practices for automated settlement."
 updatedAt: "2026-04-06"
 ---
 

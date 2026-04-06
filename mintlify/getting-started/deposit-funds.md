@@ -1,6 +1,6 @@
 ---
 title: "Deposit funds"
-description: "--"
+description: "Guide to depositing USDC into TrueCurrent using CCTP cross-chain transfers or direct wallet deposits with zero fees, instant settlement, and support for EVM and IBC-compatible chains."
 updatedAt: "2026-04-06"
 ---
 

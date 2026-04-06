@@ -1,6 +1,6 @@
 ---
 title: "Liquidation"
-description: "--"
+description: "Technical explanation of liquidation mechanics on TrueCurrent including margin ratio calculations, liquidation price formulas, bankruptcy price, insurance fund protection, and strategies to prevent forced position closure."
 updatedAt: "2026-04-06"
 ---
 

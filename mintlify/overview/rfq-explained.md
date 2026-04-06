@@ -1,6 +1,6 @@
 ---
 title: "RFQ explained"
-description: "--"
+description: "Deep dive into Request for Quote (RFQ) trading on TrueCurrent, comparing it to AMMs and order books, explaining market maker pricing, quote expiry, and zero-slippage execution for perpetual futures."
 updatedAt: "2026-04-06"
 ---
 

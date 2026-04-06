@@ -1,6 +1,6 @@
 ---
 title: "Perpetual markets"
-description: "--"
+description: "Introduction to perpetual futures trading on TrueCurrent covering leverage, long and short positions, mark pricing, cross-margin, funding rates, liquidation mechanics, and oracle price feeds."
 updatedAt: "2026-04-06"
 ---
 

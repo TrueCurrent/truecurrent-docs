@@ -1,6 +1,6 @@
 ---
 title: "How to trade"
-description: "--"
+description: "Complete trading guide for TrueCurrent perpetuals covering position opening, long and short strategies, leverage selection, margin management, P&L calculation, and liquidation avoidance techniques."
 updatedAt: "2026-04-06"
 ---
 
