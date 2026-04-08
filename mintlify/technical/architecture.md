@@ -1,10 +1,10 @@
 ---
 title: "Architecture"
-description: "System architecture overview of TrueCurrent's three-layer design with off-chain RFQ indexer, CosmWasm smart contract for verification, and Injective exchange module for settlement."
+description: "System architecture overview of TrueCurrent's three-layer design with offchain RFQ indexer, CosmWasm smart contract for verification, and Injective exchange module for settlement."
 updatedAt: "2026-04-06"
 ---
 
-TrueCurrent is composed of three main layers: an off-chain quote distribution layer, an onchain smart contract, and Injective's native exchange module for final settlement.
+TrueCurrent is composed of three main layers: an offchain quote distribution layer, an onchain smart contract, and Injective's native exchange module for final settlement.
 
 ---
 
@@ -47,18 +47,25 @@ TrueCurrent is composed of three main layers: an off-chain quote distribution la
 
 ## Components
 
-### RFQ Indexer (off-chain)
+### Takers
 
-The indexer is TrueCurrent's off-chain coordination layer. It:
+"Takers" is an umbrella term for anyone initiating a trade — both end users clicking through the TrueCurrent UI and programmatic clients (arbitrage bots, HFT systems, integrators). Both populations hit the same TakerStream and settle through the same contract.
+
+- End users: see [How to trade](/trading/how-to-trade) for the UI walkthrough
+- Programmatic takers: see [Takers: overview](/takers/overview) for the developer track
+
+### RFQ Indexer (offchain)
+
+The indexer is TrueCurrent's offchain coordination layer. It:
 
 - Maintains the registry of whitelisted market maker addresses
-- Operates the **TakerStream** WebSocket (for traders submitting requests)
-- Operates the **MakerStream** WebSocket (for market makers receiving requests and submitting quotes)
+- Operates the **TakerStream** WebSocket — see [Takers: TakerStream](/takers/taker-stream)
+- Operates the **MakerStream** WebSocket — see [Market makers: MakerStream](/market-makers/maker-stream)
 - Routes requests to all active market makers
-- Collects and forwards quotes back to traders
+- Collects and forwards quotes back to takers
 - Selects the best quote for presentation
 
-The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and market makers. Even if the indexer were to behave maliciously, it could not forge a market maker's signature or alter the terms of a quote.
+The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between takers and market makers. Even if the indexer were to behave maliciously, it could not forge a market maker's signature or alter the terms of a quote.
 
 ### TrueCurrent smart contract (onchain)
 
@@ -89,7 +96,7 @@ The exchange module handles:
 
 1. **Trader → Indexer (TakerStream):** Trader sends an RFQ request over WebSocket
 2. **Indexer → All MMs (MakerStream):** Request is broadcast to all active makers simultaneously
-3. **MMs → Indexer (MakerStream):** Each maker responds with a signed quote within 2 seconds
+3. **MMs → Indexer (MakerStream):** Each maker responds with a signed quote within a few hundred milliseconds {/* TODO: CK to add precise MM response deadline once benchmarked */}
 4. **Indexer → Trader (TakerStream):** Best quote is returned to the trader
 5. **Trader → Chain (AcceptQuote):** Trader submits the `AcceptQuote` transaction with the quote and their parameters
 6. **Contract verification:** Onchain contract verifies signature, price, expiry, and margin

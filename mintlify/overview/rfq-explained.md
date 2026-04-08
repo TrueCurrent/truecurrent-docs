@@ -16,7 +16,7 @@ Automated Market Makers (AMMs) like Uniswap price trades using a mathematical fo
 
 - **Price impact.** Every trade moves the pool's price. The larger the trade, the worse the execution price.
 - **MEV exposure.** Because trades are predictable and public before confirmation, bots can front-run or sandwich your transaction.
-- **Fixed pricing.** AMMs can't react to off-chain information; they only know their pool balances.
+- **Fixed pricing.** AMMs can't react to offchain information; they only know their pool balances.
 
 In TrueCurrent's RFQ model, prices are set by professional market makers who monitor real-time market data across centralized and decentralized venues. They can price each trade based on actual current conditions, not a formula. The result:
 
@@ -54,6 +54,6 @@ This real-time, size-aware pricing is fundamentally superior to static formula p
 
 ## Quote expiry and settlement timing
 
-Every quote includes an expiry timestamp. Quotes are valid for a short window (typically 30 seconds), which prevents stale quotes from being used in fast-moving markets.
+Every quote includes an expiry timestamp. Quotes are valid for a short window (minimum 1.5 seconds), which prevents stale quotes from being used in fast-moving markets. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 When you accept a quote, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.

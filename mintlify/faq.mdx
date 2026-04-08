@@ -34,7 +34,7 @@ RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks profe
 
 **What happens if no market maker responds to my request?**
 
-If no market maker quotes within the 2-second window, your order routes automatically to Injective's onchain order book. You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+If no market maker quotes within the response window, your order routes automatically to Injective's onchain order book. You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
 
 **What is the worst price setting?**
 
@@ -42,7 +42,7 @@ Worst price is the maximum (for longs) or minimum (for shorts) price you're will
 
 **Why did my quote expire before I could accept?**
 
-Quotes are valid for a limited window (typically 30 seconds). Market makers need short expiry windows to manage price risk in fast-moving markets. If a quote expires, request a new one – the process is fast.
+Quotes are valid for a short window (minimum 1.5 seconds). Market makers need short expiry windows to manage price risk in fast-moving markets. If a quote expires, request a new one – the process is fast. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 **Can I get liquidated?**
 
@@ -82,7 +82,7 @@ A security audit of the TrueCurrent smart contract is planned before mainnet lau
 
 **What happens if TrueCurrent's servers go down?**
 
-If the off-chain RFQ indexer is unavailable, new trades can't be initiated through the RFQ system. However, your existing positions, margin, and funds are fully onchain and unaffected. You can manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app) even without TrueCurrent's frontend.
+If the offchain RFQ indexer is unavailable, new trades can't be initiated through the RFQ system. However, your existing positions, margin, and funds are fully onchain and unaffected. You can manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app) even without TrueCurrent's frontend.
 
 **Can TrueCurrent be upgraded or changed?**
 

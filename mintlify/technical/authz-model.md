@@ -1,7 +1,7 @@
 ---
 title: "Authorization model"
 description: "Detailed explanation of Injective's authz authorization model enabling TrueCurrent's smart contract to execute atomic settlements with granular message-type permissions and revocable grants."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 TrueCurrent uses Injective's native `authz` module to allow the smart contract to act on behalf of both traders and market makers during settlement. This page explains the model in detail.
@@ -25,9 +25,12 @@ This is secure because:
 
 | Message type | Why it's needed |
 |---|---|
-| `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Allows the contract to open and manage your exchange positions |
-| `/injective.exchange.v2.MsgBatchUpdateOrders` | Allows the contract to interact with the order book on your behalf (for fallback OB routing) |
 | `/cosmos.bank.v1beta1.MsgSend` | Allows the contract to move margin between your wallet and subaccount as needed for settlement |
+| `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Allows the contract to open and manage your exchange positions |
+| `/injective.exchange.v2.MsgBatchUpdateOrders` | Allows the contract to post limit orders for fallback orderbook routing (`unfilled_action: {"limit": ...}`) |
+| `/injective.exchange.v2.MsgCreateDerivativeMarketOrder` | Allows the contract to submit market orders for fallback orderbook routing (`unfilled_action: {"market": {}}`) |
+
+Programmatic takers should see [Takers: authorization setup](/takers/authz-setup) for the full grant implementation in Python and TypeScript.
 
 ---
 
@@ -68,6 +71,6 @@ GET /cosmos/authz/v1beta1/grants?granter={your_address}&grantee={contract_addres
 
 ## Why not just use allowances or signatures per trade?
 
-Alternative designs exist – for example, requiring the trader to sign each `AcceptQuote` transaction manually. TrueCurrent uses `authz` instead for UX reasons: waiting for a second user signature during the 30-second quote expiry window introduces friction and increases the chance the quote expires before settlement. The `authz` model allows instant, one-click settlement.
+Alternative designs exist – for example, requiring the trader to sign each `AcceptQuote` transaction manually. TrueCurrent uses `authz` instead for UX reasons: waiting for a second user signature during the short quote expiry window introduces friction and dramatically increases the chance the quote expires before settlement. The `authz` model allows instant, one-click settlement.
 
 The security tradeoff is the pre-granted permission. TrueCurrent mitigates this by keeping grants narrow (specific message types only) and building the onchain contract checks (worst price, quote signature, expiry) as the actual security layer – the contract enforces your trading parameters regardless of its grant.
