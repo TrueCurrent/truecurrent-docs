@@ -71,7 +71,7 @@ taker = request["taker_address"]
 
 You have **a few hundred milliseconds** from when the request is broadcast to submit a quote. After that window closes, no further quotes for that `rfq_id` are accepted.
 
-{/* TODO: CK to add precise MM response deadline once benchmarked */}
+{/* TODO: add precise MM response deadline once benchmarked */}
 
 Your quote must include:
 
