@@ -1,6 +1,5 @@
 ---
-title: "Takers: authorization setup"
-description: "Guide to setting up Injective authz grants for programmatic RFQ takers, including the four required message types, Python and TypeScript implementations, grant verification, revocation, and the security model of scoped delegation."
+title: "Authorization setup"
 updatedAt: "2026-04-08"
 ---
 
@@ -20,7 +19,7 @@ When you call `AcceptQuote`, the TrueCurrent contract needs to:
 2. Move margin between your wallet and subaccount if required (`MsgSend`)
 3. Optionally route any unfilled quantity to the Injective order book (`MsgBatchUpdateOrders`, `MsgCreateDerivativeMarketOrder`)
 
-Rather than making you sign each of these messages individually at settlement time, you pre-authorize the contract once. Each authorization is narrow — scoped to a specific message type and a specific grantee address (the contract).
+Rather than making you sign each of these messages individually at settlement time, you pre-authorize the contract once. Each authorization is narrow – scoped to a specific message type and a specific grantee address (the contract).
 
 ---
 
@@ -35,13 +34,13 @@ A programmatic taker must grant the following four message types to the TrueCurr
 | `/injective.exchange.v2.MsgBatchUpdateOrders` | Route unfilled quantity to the orderbook via limit fallback |
 | `/injective.exchange.v2.MsgCreateDerivativeMarketOrder` | Route unfilled quantity to the orderbook via market fallback (IOC) |
 
-If you never intend to use `unfilled_action: {"market": {}}` or `{"limit": {...}}`, you can skip the last two grants — but then `AcceptQuote` calls that would have routed a remainder to the orderbook will fail. Most takers should grant all four.
+If you never intend to use `unfilled_action: {"market": {}}` or `{"limit": {...}}`, you can skip the last two grants – but then `AcceptQuote` calls that would have routed a remainder to the orderbook will fail. Most takers should grant all four.
 
 ---
 
 ## Setting up grants
 
-**Python** — using the helper from `rfq-testing`:
+**Python** – using the helper from `rfq-testing`:
 
 ```python
 from rfq_test.clients.chain import ChainClient
@@ -65,9 +64,9 @@ await setup_authz_grants(
 await chain.close()
 ```
 
-`RETAIL_AUTHZ_GRANTS` is the list of four message types above. Each becomes its own transaction — the helper waits for each to confirm before submitting the next. Total setup takes ~5 seconds.
+`RETAIL_AUTHZ_GRANTS` is the list of four message types above. Each becomes its own transaction – the helper waits for each to confirm before submitting the next. Total setup takes ~5 seconds.
 
-**Python** — without the helper, using `injective-py` directly:
+**Python** – without the helper, using `injective-py` directly:
 
 ```python
 from pyinjective.composer_v2 import Composer
@@ -94,7 +93,7 @@ for msg_type in MSG_TYPES:
     print(f"Granted {msg_type}: {result.tx_response.txhash}")
 ```
 
-**TypeScript** — using `@injectivelabs/sdk-ts`:
+**TypeScript** – using `@injectivelabs/sdk-ts`:
 
 ```ts
 import {
@@ -130,7 +129,7 @@ for (const messageType of MSG_TYPES) {
 }
 ```
 
-Submit grants sequentially — account sequence number increments on each, and parallel submissions will collide.
+Submit grants sequentially – account sequence number increments on each, and parallel submissions will collide.
 
 ---
 
@@ -139,6 +138,14 @@ Submit grants sequentially — account sequence number increments on each, and p
 By default, `authz` grants can include an expiration time. TrueCurrent recommends setting **no expiry** (pass `0` or `undefined` depending on the SDK) so you're not surprised by a failed settlement six months from now.
 
 If you must set an expiry, renew grants well before they lapse. An expired grant causes any `AcceptQuote` that depends on it to fail with `unauthorized`.
+
+---
+
+## Managing grants from a GUI
+
+If you'd rather manage your authz grants from a web interface than the CLI, **[do.injective.network](https://do.injective.network)** has a built-in authz manager. You can view existing grants, create new ones, and revoke them, all signed from your connected wallet.
+
+This is useful for ad-hoc inspection, for sanity-checking that your programmatic grants went through, and for the quick revoke button during an incident.
 
 ---
 
@@ -206,7 +213,7 @@ const msg = MsgRevoke.fromJSON({
 await broadcaster.broadcast({ msgs: msg });
 ```
 
-Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlements on this wallet — it's the kill switch.
+Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlements on this wallet – it's the kill switch.
 
 **Revocation does not affect open positions.** Your existing positions remain open and can be managed through the standard Injective exchange module. Revoking only prevents *new* contract-initiated actions.
 
@@ -214,9 +221,9 @@ Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlem
 
 ## Security model summary
 
-- Grants are scoped to **specific message types** — the contract cannot transfer arbitrary funds, only perform the operations you authorized.
-- Grants are scoped to **a specific grantee** — only the TrueCurrent contract address, nothing else.
+- Grants are scoped to **specific message types** – the contract cannot transfer arbitrary funds, only perform the operations you authorized.
+- Grants are scoped to **a specific grantee** – only the TrueCurrent contract address, nothing else.
 - Grants are **revocable at any time**, effective immediately.
-- The onchain contract logic enforces your trading parameters (`worst_price`, quote signature, quote expiry) — even a malicious contract operator could not forge a trade against your authz because the onchain verification catches it.
+- The onchain contract logic enforces your trading parameters (`worst_price`, quote signature, quote expiry) – even a malicious contract operator could not forge a trade against your authz because the onchain verification catches it.
 
 For production systems, run takers from wallets dedicated to RFQ trading. Don't grant from a treasury or cold wallet.

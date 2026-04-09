@@ -1,7 +1,6 @@
 ---
 title: "Margin trading"
-description: "Master margin trading on TrueCurrent with cross-margin mechanics, initial and maintenance margin ratios, margin ratio calculations, available margin, and liquidation threshold management."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 Margin trading lets you control a position larger than your deposited collateral by using leverage. This page explains how margin is calculated, how your account equity is tracked, and how to read the key metrics in your positions panel.
@@ -15,7 +14,7 @@ Margin trading lets you control a position larger than your deposited collateral
 | **Margin (M)** | The USDC collateral you deposit to back a position |
 | **Leverage (L)** | The multiplier applied to your margin to determine position size |
 | **Notional value (N)** | The total USD value of your position at current mark price |
-| **IMR** | Initial Margin Rate – minimum margin required to *open* a position, equal to $1/L$ |
+| **IMR** | Initial Margin Rate – minimum margin required to *open* a position, equal to `1 / L` |
 | **MMR** | Maintenance Margin Rate – minimum margin required to *keep* a position open |
 | **Mark price** | The fair-value price used for all P&L and margin calculations |
 | **uPnL** | Unrealized profit or loss on an open position |
@@ -26,9 +25,11 @@ Margin trading lets you control a position larger than your deposited collateral
 
 The notional value of your position is the total exposure at the current mark price:
 
-$$N = Q \times P_{mark}$$
+```
+N = Q × P_mark
+```
 
-where $Q$ is your position size (quantity of contracts) and $P_{mark}$ is the current mark price.
+where `Q` is your position size (quantity of contracts) and `P_mark` is the current mark price.
 
 ---
 
@@ -36,11 +37,15 @@ where $Q$ is your position size (quantity of contracts) and $P_{mark}$ is the cu
 
 The initial margin required to open a position is:
 
-$$IM = Q \times P_{entry} \times IMR = \frac{Q \times P_{entry}}{L}$$
+```
+IM = Q × P_entry × IMR = (Q × P_entry) / L
+```
 
 For example, opening a 10 BTC position at $50,000 with 10× leverage requires:
 
-$$IM = \frac{10 \times 50{,}000}{10} = \$50{,}000$$
+```
+IM = (10 × 50,000) / 10 = $50,000
+```
 
 ---
 
@@ -50,11 +55,15 @@ Your unrealized P&L updates continuously with the mark price.
 
 **Long position:**
 
-$$uPnL = (P_{mark} - P_{entry}) \times Q$$
+```
+uPnL = (P_mark − P_entry) × Q
+```
 
 **Short position:**
 
-$$uPnL = (P_{entry} - P_{mark}) \times Q$$
+```
+uPnL = (P_entry − P_mark) × Q
+```
 
 ---
 
@@ -62,9 +71,11 @@ $$uPnL = (P_{entry} - P_{mark}) \times Q$$
 
 Account equity is the current value of your position, including unrealized gains or losses:
 
-$$E = M + uPnL$$
+```
+E = M + uPnL
+```
 
-When $uPnL$ is negative (position moving against you), equity decreases. When equity falls toward the maintenance margin threshold, you approach liquidation.
+When `uPnL` is negative (position moving against you), equity decreases. When equity falls toward the maintenance margin threshold, you approach liquidation.
 
 ---
 
@@ -72,11 +83,11 @@ When $uPnL$ is negative (position moving against you), equity decreases. When eq
 
 The margin ratio expresses your current equity as a fraction of your position's notional value:
 
-$$MR = \frac{M + uPnL}{Q \times P_{mark}}$$
+```
+MR = (M + uPnL) / (Q × P_mark)
+```
 
-Liquidation is triggered when:
-
-$$MR \leq MMR$$
+Liquidation is triggered when `MR ≤ MMR`.
 
 You can monitor your margin ratio in the Positions panel. The closer it is to MMR, the closer you are to liquidation.
 
@@ -86,7 +97,10 @@ You can monitor your margin ratio in the Positions panel. The closer it is to MM
 
 Available margin is the excess equity above what is required to maintain your position:
 
-$$M_{avail} = E - Q \times P_{mark} \times MMR = M + uPnL - Q \times P_{mark} \times MMR$$
+```
+M_avail = E − Q × P_mark × MMR
+        = M + uPnL − Q × P_mark × MMR
+```
 
 This is the amount you can withdraw without closing any positions, and the buffer you have before liquidation.
 
@@ -96,15 +110,7 @@ This is the amount you can withdraw without closing any positions, and the buffe
 
 Each market has a fixed MMR. Positions are liquidated when the margin ratio falls at or below this threshold. MMR is lower than IMR, which means you have some buffer before liquidation even if the market moves against you immediately after entry.
 
-For example, if $IMR = 5\%$ (20× leverage) and $MMR = 2.5\%$, you have a 2.5% buffer between your entry and your liquidation threshold.
-
----
-
-## Cross-margin
-
-TrueCurrent uses **cross-margin** across all positions in your subaccount. All open positions share the same equity pool – profits on one position offset losses on another.
-
-This is more capital-efficient than isolated margin but means a large losing position can draw on the margin of your other positions, increasing the risk of cascading liquidations if multiple positions move against you simultaneously.
+For example, if `IMR = 2%` (50× leverage) and `MMR = 1%`, you have a 1% buffer between your entry and your liquidation threshold.
 
 ---
 

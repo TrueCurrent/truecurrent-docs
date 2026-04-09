@@ -69,15 +69,12 @@
                 "expanded": false,
                 "pages": [
                   "trading/how-to-trade",
-                  "trading/markets",
                   "trading/perpetual-markets",
-                  "trading/prices",
                   "trading/trigger-orders",
                   "trading/funding-rates",
                   "trading/fees",
                   "trading/margin-trading",
-                  "trading/liquidation",
-                  "trading/slippage-and-worst-price"
+                  "trading/liquidation"
                 ]
               },
               {

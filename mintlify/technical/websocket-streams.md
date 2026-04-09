@@ -149,7 +149,7 @@ await mm_ws.send_quote(quote_data)
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
 | Mainnet | *(TBD)* {/* TODO: CK to add mainnet indexer info when ready */} |
 
-Clients append `/TakerStream` or `/MakerStream` to the base URL. The connection is gRPC-web framed over WebSocket — the `rfq-testing` client libraries handle the framing.
+Clients append `/TakerStream` or `/MakerStream` to the base URL. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
 
 See [Takers: TakerStream](/takers/taker-stream) and [Market makers: MakerStream](/market-makers/maker-stream) for the full request and quote schemas on each stream.
 

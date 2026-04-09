@@ -49,18 +49,18 @@ TrueCurrent is composed of three main layers: an offchain quote distribution lay
 
 ### Takers
 
-"Takers" is an umbrella term for anyone initiating a trade — both end users clicking through the TrueCurrent UI and programmatic clients (arbitrage bots, HFT systems, integrators). Both populations hit the same TakerStream and settle through the same contract.
+"Takers" is an umbrella term for anyone initiating a trade – both end users clicking through the TrueCurrent UI and programmatic clients (arbitrage bots, HFT systems, integrators). Both populations hit the same TakerStream and settle through the same contract.
 
 - End users: see [How to trade](/trading/how-to-trade) for the UI walkthrough
-- Programmatic takers: see [Takers: overview](/takers/overview) for the developer track
+- Programmatic takers: see the [Takers](/takers/overview) section for the developer track
 
 ### RFQ Indexer (offchain)
 
 The indexer is TrueCurrent's offchain coordination layer. It:
 
 - Maintains the registry of whitelisted market maker addresses
-- Operates the **TakerStream** WebSocket — see [Takers: TakerStream](/takers/taker-stream)
-- Operates the **MakerStream** WebSocket — see [Market makers: MakerStream](/market-makers/maker-stream)
+- Operates the **TakerStream** WebSocket – see [TakerStream](/takers/taker-stream)
+- Operates the **MakerStream** WebSocket – see [Market makers: MakerStream](/market-makers/maker-stream)
 - Routes requests to all active market makers
 - Collects and forwards quotes back to takers
 - Selects the best quote for presentation

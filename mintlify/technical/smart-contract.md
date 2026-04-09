@@ -51,28 +51,28 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `rfq_id` | number (u64) | RFQ identifier — must be a JSON **number**, not a string |
+| `rfq_id` | number (u64) | RFQ identifier – must be a JSON **number**, not a string |
 | `market_id` | string | Injective perpetual market ID |
-| `direction` | string | Taker's direction — lowercase `"long"` or `"short"` |
+| `direction` | string | Taker's direction – lowercase `"long"` or `"short"` |
 | `margin` | string | Taker's margin (USDC, decimal string) |
 | `quantity` | string | Taker's requested quantity |
-| `worst_price` | string | Taker's hard price limit — required |
+| `worst_price` | string | Taker's hard price limit – required |
 | `quotes` | array | One or more maker quotes to consume atomically |
 | `quotes[].maker` | string | Market maker's Injective address |
 | `quotes[].margin` | string | Maker's margin commitment |
 | `quotes[].quantity` | string | Quantity the maker is filling |
 | `quotes[].price` | string | Maker's quoted price |
-| `quotes[].expiry` | object | Wrapped enum — `{"ts": <unix_ms>}` or `{"h": <height>}` |
+| `quotes[].expiry` | object | Wrapped enum – `{"ts": <unix_ms>}` or `{"h": <height>}` |
 | `quotes[].signature` | string | Maker's secp256k1 signature, **base64-encoded** |
 | `unfilled_action` | object \| null | What to do with any unfilled quantity |
 
-**Multi-quote aggregation:** `quotes` is an array, and the contract processes every entry in submission order, filling from each until the taker's `quantity` is exhausted. A taker can submit 1 to `config.max_quotes` quotes from different makers in a single settlement and receive one aggregated position. See [Takers: accepting quotes](/takers/accepting-quotes) for details.
+**Multi-quote aggregation:** `quotes` is an array, and the contract processes every entry in submission order, filling from each until the taker's `quantity` is exhausted. A taker can submit 1 to `config.max_quotes` quotes from different makers in a single settlement and receive one aggregated position. See [Accepting quotes](/takers/accepting-quotes) for details.
 
 **Encoding requirements:**
 
 - **`rfq_id` must be a JSON number**, not a string. The contract field is `u64`.
-- **Quote `expiry` must be wrapped** as `{"ts": <ms>}` (timestamp) or `{"h": <height>}` (block height). The indexer delivers it as a plain integer — callers must wrap it.
-- **Quote `signature` must be base64**, not hex. The indexer delivers it as hex — callers must convert.
+- **Quote `expiry` must be wrapped** as `{"ts": <ms>}` (timestamp) or `{"h": <height>}` (block height). The indexer delivers it as a plain integer – callers must wrap it.
+- **Quote `signature` must be base64**, not hex. The indexer delivers it as hex – callers must convert.
 
 **`unfilled_action` options:**
 
@@ -125,25 +125,25 @@ Both positions are settled atomically in the same block. There is no partial sta
 
 The contract exposes four query methods for reading state. All are standard CosmWasm smart contract queries.
 
-**List approved market makers** — returns the current whitelist with pagination:
+**List approved market makers** – returns the current whitelist with pagination:
 
 ```json
 { "list_makers": { "start_after": null, "limit": 100 } }
 ```
 
-**Get global config** — returns `taker_fee_rate`, `maker_fee_rate`, `fee_recipient`, `max_quotes`, `max_evict`:
+**Get global config** – returns `taker_fee_rate`, `maker_fee_rate`, `fee_recipient`, `max_quotes`, `max_evict`:
 
 ```json
 { "config": {} }
 ```
 
-**Taker nonce state** — returns the set of `rfq_id` values this taker has already settled, used for replay protection:
+**Taker nonce state** – returns the set of `rfq_id` values this taker has already settled, used for replay protection:
 
 ```json
 { "taker_info": { "taker": "inj1taker..." } }
 ```
 
-**Maker nonces** — returns the set of blind-quote nonces this maker has already had consumed, used for replay protection:
+**Maker nonces** – returns the set of blind-quote nonces this maker has already had consumed, used for replay protection:
 
 ```json
 { "maker_nonces": { "maker": "inj1maker..." } }

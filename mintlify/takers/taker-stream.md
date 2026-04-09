@@ -1,10 +1,10 @@
 ---
-title: "Takers: TakerStream"
+title: "TakerStream"
 description: "Reference for TrueCurrent's TakerStream WebSocket API including connection setup, gRPC-web framing, request message schema, quote subscription, collection windows, filtering, and reconnection patterns for programmatic takers."
 updatedAt: "2026-04-08"
 ---
 
-The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ requests and receive quotes. It is the offchain half of the RFQ flow — once you've picked a quote, everything after is onchain.
+The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ requests and receive quotes. It is the offchain half of the RFQ flow – once you've picked a quote, everything after is onchain.
 
 ---
 
@@ -15,7 +15,7 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
 | Mainnet | *(not yet deployed)* |
 
-The connection is **gRPC-web over WebSocket**. The client appends `/TakerStream` to the base URL, frames messages with gRPC-web length prefixes, and uses protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you — if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+The connection is **gRPC-web over WebSocket**. The client appends `/TakerStream` to the base URL, frames messages with gRPC-web length prefixes, and uses protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 
 ---
 
@@ -33,17 +33,21 @@ The [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is an authentica
 
 | Transport | Method |
 |---|---|
-| WebSocket (gRPC-web framed) | `?api_key=...` query param on connect, **or** first message: `{"jsonrpc":"2.0","id":0,"method":"auth","params":{"api_key":"..."}}` |
+| WebSocket (gRPC-web framed) | `?api_key=...` query param on connect, **or** first-message auth (see below) |
 | HTTP/REST | `X-API-Key` header, **or** `?api_key=...` query param |
 | gRPC | `x-api-key` metadata |
 
-The first-message WebSocket auth is preferred over the query param: keys in URLs leak into logs and referrer headers.
+For WebSocket connections, the first-message auth form is preferred over the query param – keys in URLs leak into logs and referrer headers. The first message sent after the WebSocket upgrade should be:
 
-**Endpoints may move to a gateway-fronted hostname.** Today's testnet endpoints (`testnet.rfq.ws.injective.network`, `testnet.rfq.injective.network`, `testnet.rfq.grpc.injective.network`) may either be cut over to point at the gateway transparently — in which case the URLs stay the same and you only need to start sending an API key — or replaced with new gateway-specific DNS names. Either way, the transport (gRPC-web framed over WebSocket) and message shapes don't change; only the auth layer in front of them does.
+```json
+{"jsonrpc": "2.0", "id": 0, "method": "auth", "params": {"api_key": "rfq_api_..."}}
+```
 
-{/* TODO: CK — once the gateway is deployed, document the canonical public-facing hostnames here (one for each transport: WebSocket, HTTP/REST, gRPC, gRPC-Web). The README's `:7080`/`:7090`/`:7091` ports are for local docker-compose deployments only and don't apply to public endpoints. */}
+**Endpoints may move to a gateway-fronted hostname.** Today's testnet endpoints (`testnet.rfq.ws.injective.network`, `testnet.rfq.injective.network`, `testnet.rfq.grpc.injective.network`) may either be cut over to point at the gateway transparently – in which case the URLs stay the same and you only need to start sending an API key – or replaced with new gateway-specific DNS names. Either way, the transport (gRPC-web framed over WebSocket) and message shapes don't change; only the auth layer in front of them does.
 
-**Settlement is unaffected.** `AcceptQuote` goes directly to the smart contract on Injective, not through the gateway. The gateway controls quote *discovery* (the indexer path), not on-chain settlement. Your authz grants and contract call sites don't change.
+{/* TODO: CK – once the gateway is deployed, document the canonical public-facing hostnames here (one for each transport: WebSocket, HTTP/REST, gRPC, gRPC-Web). The README's `:7080`/`:7090`/`:7091` ports are for local docker-compose deployments only and don't apply to public endpoints. */}
+
+**Settlement is unaffected.** `AcceptQuote` goes directly to the smart contract on Injective, not through the gateway. The gateway controls quote *discovery* (the indexer path), not onchain settlement. Your authz grants and contract call sites don't change.
 
 ### Key tiers
 
@@ -53,11 +57,11 @@ The gateway defines three tiers, of which only one is relevant to programmatic t
 |---|---|---|
 | `frontend` | Origin-locked, unlimited rate. For the TrueCurrent web app only. | Live in gateway codebase |
 | `maker` | For whitelisted market makers. Configurable rate limit. | Live in gateway codebase |
-| `api` | **For programmatic / HFT takers.** Configurable rate limit, no origin lock. | **Future — not yet provisioned** |
+| `api` | **For programmatic / HFT takers.** Configurable rate limit, no origin lock. | **Future – not yet provisioned** |
 
-You will need to request an `api`-tier key from the TrueCurrent team once the gateway is live. The default rate limit for a freshly-issued key (10 req/s, burst 20) is far below HFT needs — make sure to ask for a higher per-key rate when you request it.
+You will need to request an `api`-tier key from the TrueCurrent team once the gateway is live. The default rate limit for a freshly-issued key (10 req/s, burst 20) is far below HFT needs – make sure to ask for a higher per-key rate when you request it.
 
-{/* TODO: CK — once the gateway is deployed, document the API key request process here: who to contact, what info to provide (use case, expected throughput, source IP), expected turnaround. Remove the "today" section above and rewrite the rest as the canonical authentication section. */}
+{/* TODO: CK – once the gateway is deployed, document the API key request process here: who to contact, what info to provide (use case, expected throughput, source IP), expected turnaround. Remove the "today" section above and rewrite the rest as the canonical authentication section. */}
 
 ---
 
@@ -107,7 +111,7 @@ request_data = {
 await taker_ws.send_request(request_data)
 ```
 
-This is the same pattern the reference scripts use — see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py) for a full working example.
+This is the same pattern the reference scripts use – see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py) for a full working example.
 
 > A convenience wrapper, `rfq_test.factories.request.RequestFactory.create_indexer_request(...)`, produces the same dict shape if you'd rather not hand-build it. Both approaches are equivalent.
 
@@ -120,7 +124,7 @@ const request = {
   type: "rfq_request",
   rfq_id: rfqId,
   market_id: INJUSDC_MARKET_ID,
-  direction: "long",                   // lowercase string — NOT an integer
+  direction: "long",                   // lowercase string – NOT an integer
   margin: "200",
   quantity: "100",
   worst_price: "5.00",
@@ -131,7 +135,7 @@ const request = {
 ws.send(JSON.stringify(request));
 ```
 
-> **Note:** some older examples in the repo use `direction: 0` against a local dev JSON-RPC indexer. On testnet (gRPC-web framed over WebSocket), the indexer expects the lowercase string form — `"long"` or `"short"`.
+> **Note:** some older examples in the repo use `direction: 0` against a local dev JSON-RPC indexer. On testnet (gRPC-web framed over WebSocket), the indexer expects the lowercase string form – `"long"` or `"short"`.
 
 ---
 
@@ -139,7 +143,7 @@ ws.send(JSON.stringify(request));
 
 After submitting, quotes stream in over the same connection as they're produced by makers. Each quote is a separate message. You should expect anywhere from zero to `N` quotes (one per active maker) within the collection window.
 
-**Quote fields** (as delivered by `collect_quotes()` — see `websocket.py` `_quote_to_dict`):
+**Quote fields** (as delivered by `collect_quotes()` – see `websocket.py` `_quote_to_dict`):
 
 | Field | Type | Description |
 |---|---|---|
@@ -158,7 +162,7 @@ After submitting, quotes stream in over the same connection as they're produced 
 
 > **Signature format:** the indexer delivers the signature as hex (e.g. `"0xabc123..."`). The onchain contract requires **base64**. You must convert before building the `AcceptQuote` message. See [Accepting quotes](/takers/accepting-quotes).
 
-> **Expiry format:** here it arrives as a plain integer in Unix milliseconds. In the onchain message it must be wrapped as `{"ts": <ms>}`.
+> **Expiry format:** here it arrives as a plain integer in Unix milliseconds. In the onchain message it must be wrapped as the `Expiry` enum variant – see [Accepting quotes](/takers/accepting-quotes).
 
 ---
 
@@ -168,7 +172,7 @@ Because quotes arrive asynchronously, the standard pattern is:
 
 1. Submit the request
 2. Collect incoming messages into a list, filtering by `rfq_id`
-3. After a short fixed window (a few hundred milliseconds is typical — quotes are only valid for a minimum of 1.5 seconds, so you can't wait long), stop collecting and pick the best quote(s)
+3. After a short fixed window (a few hundred milliseconds is typical – quotes expire quickly, so you can't wait long), stop collecting and pick the best quote(s)
 4. Proceed to settlement immediately
 
 {/* TODO: CK to add precise collection window guidance once benchmarked */}
@@ -178,7 +182,7 @@ Because quotes arrive asynchronously, the standard pattern is:
 ```python
 quotes = await taker_ws.collect_quotes(
     rfq_id=rfq_id,
-    timeout=0.5,         # collect for ~500ms, then proceed — tune against real benchmarks
+    timeout=0.5,         # collect for ~500ms, then proceed – tune against real benchmarks
     min_quotes=1,
 )
 
@@ -214,9 +218,9 @@ const best = quotes
 
 **Choosing the window size:**
 
-The hard ceiling is the quote's `expiry` (minimum 1.5 seconds from signing). By the time you've accounted for a few hundred milliseconds of MM response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
+The hard ceiling is the quote's `expiry`. By the time you've accounted for a few hundred milliseconds of MM response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
 
-- **A few hundred milliseconds** is a reasonable default — long enough to receive quotes from warm makers, short enough to leave settlement headroom.
+- **A few hundred milliseconds** is a reasonable default – long enough to receive quotes from warm makers, short enough to leave settlement headroom.
 - **Too short** (<100ms): you'll miss slower makers and reduce competition.
 - **Too long** (>1s): quote expiry becomes a race you will lose.
 
@@ -234,7 +238,7 @@ The wire protocol is slightly different from what most of the examples suggest. 
 
 **Two correlation patterns:**
 
-### Pattern A — Simple (used by `test_settlement.py`)
+### Pattern A – Simple (used by `test_settlement.py`)
 
 Generate `rfq_id = int(time.time() * 1000)` locally, pass it in the request dict, and use the same value for `collect_quotes()`:
 
@@ -260,14 +264,14 @@ This works *in practice* because the indexer assigns `rfq_id` from its own milli
 
 **When it can fail:** significant clock skew between taker and indexer, or long network delay between `send_request` and the indexer processing the request. The taker's local `rfq_id` won't match the indexer's assignment, and `collect_quotes()` will silently skip every quote.
 
-### Pattern B — Robust (ACK-based correlation)
+### Pattern B – Robust (ACK-based correlation)
 
 For production takers where you can't tolerate silent correlation failures, wait for the indexer ACK after sending the request. The ACK carries the real assigned `rfq_id`:
 
 ```python
 # wait_for_response=True blocks until the indexer ACKs (or errors)
 ack = await taker_ws.send_request(request_data, wait_for_response=True, response_timeout=2.0)
-# ack is {"type": "ack", "rfq_id": <indexer-assigned>, "client_id": <uuid>, "status": ...}
+# ack is a dict: {"type": "ack", "rfq_id": indexer_assigned, "client_id": uuid, "status": ...}
 
 real_rfq_id = int(ack["rfq_id"])
 quotes = await taker_ws.collect_quotes(rfq_id=real_rfq_id, timeout=0.5, min_quotes=1)
@@ -357,7 +361,7 @@ await taker_ws.connect()
 If you send a request and see nothing come back:
 
 - Check that `request_address` exactly matches the wallet you're using
-- Verify there are active whitelisted makers on testnet — query the contract's `list_makers` entry
+- Verify there are active whitelisted makers on testnet – query the contract's `list_makers` entry
 - Check `configs/testnet.yaml` for the current indexer URL; the path component matters (`/injective_rfq_rpc.InjectiveRfqRPC`)
 - If using gRPC-web framing manually, confirm your length-prefix and compression flag bytes are correct
 
@@ -365,5 +369,5 @@ If you send a request and see nothing come back:
 
 ## Next
 
-- [Accepting quotes](/takers/accepting-quotes) — turning a collected quote into an onchain settlement
-- [Best practices](/takers/best-practices) — window tuning, nonce handling, reconnection strategy
+- [Accepting quotes](/takers/accepting-quotes) – turning a collected quote into an onchain settlement
+- [Best practices](/takers/best-practices) – window tuning, nonce handling, reconnection strategy

@@ -30,7 +30,7 @@ This is secure because:
 | `/injective.exchange.v2.MsgBatchUpdateOrders` | Allows the contract to post limit orders for fallback orderbook routing (`unfilled_action: {"limit": ...}`) |
 | `/injective.exchange.v2.MsgCreateDerivativeMarketOrder` | Allows the contract to submit market orders for fallback orderbook routing (`unfilled_action: {"market": {}}`) |
 
-Programmatic takers should see [Takers: authorization setup](/takers/authz-setup) for the full grant implementation in Python and TypeScript.
+Programmatic takers should see [Authorization setup](/takers/authz-setup) for the full grant implementation in Python and TypeScript.
 
 ---
 

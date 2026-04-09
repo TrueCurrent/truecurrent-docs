@@ -1,10 +1,11 @@
 ---
-title: "Takers: quickstart"
-description: "End-to-end quickstart for building a programmatic RFQ taker in Python and TypeScript, including wallet setup, subaccount funding, authz grants, submitting a request, collecting quotes, and settling onchain against TrueCurrent."
+title: "Quickstart"
 updatedAt: "2026-04-08"
 ---
 
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
+
+{/* TODO: CK – replace `rfq-testing` with the canonical prod repo name before mainnet launch. The word "testing" in the repo name is a testnet-era artifact; we need a permanent home for the taker SDK / examples under a name that reads right in production docs. Once the new repo exists, update every link and reference on this page and across the taker section. */}
 
 Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing):
 
@@ -16,7 +17,7 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 ## Prerequisites
 
 - An Injective wallet (a 32-byte secp256k1 private key)
-- A small amount of **INJ** for gas on `injective-888` (testnet) — [testnet faucet](https://testnet-faucet.injective.dev)
+- A small amount of **INJ** for gas on `injective-888` (testnet) – [testnet faucet](https://testnet-faucet.injective.dev)
 - **USDC** in the wallet's exchange subaccount to cover your margin
 - Network connectivity to `wss://testnet.rfq.ws.injective.network`
 {/* TODO : CK to add mainnet WS info */}
@@ -26,7 +27,7 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 
 ## 1. Install
 
-**Python** — clone the testing repo and install the library:
+**Python** – clone the testing repo and install the library:
 
 ```bash
 git clone https://github.com/InjectiveLabs/rfq-testing.git
@@ -35,7 +36,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e .
 ```
 
-**TypeScript** — install the Injective SDK and the example deps:
+**TypeScript** – install the Injective SDK and the example deps:
 
 ```bash
 cd rfq-testing/examples
@@ -67,9 +68,9 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | INJ/USDC PERP | `0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6` |
 {/* TODO : CK to add mainnet indexer info */}
 
-> **API key — currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key — the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/takers/best-practices#rate-limiting) for the breakdown.
+> **API key – currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key – the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/takers/best-practices#rate-limiting) for the breakdown.
 >
-> {/* TODO: CK — once the gateway is live, add `RFQ_API_KEY` to this `.env` block, document the API key request process, and update all the example code to pass the key via `?api_key=` (WebSocket) and `X-API-Key` header (HTTP/REST). */}
+> {/* TODO: CK – once the gateway is live, add `RFQ_API_KEY` to this `.env` block, document the API key request process, and update all the example code to pass the key via `?api_key=` (WebSocket) and `X-API-Key` header (HTTP/REST). */}
 
 ---
 
@@ -144,7 +145,7 @@ request_data = {
 await taker_ws.send_request(request_data)
 ```
 
-This is the exact pattern used by the reference scripts — see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py).
+This is the exact pattern used by the reference scripts – see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py).
 
 **TypeScript:**
 
@@ -158,7 +159,7 @@ const request = {
   type: "rfq_request",
   rfq_id: rfqId,
   market_id: INJUSDC_MARKET_ID,
-  direction: "long",                    // lowercase string — NOT an integer
+  direction: "long",                    // lowercase string – NOT an integer
   margin: "200",
   quantity: "100",
   worst_price: "5.00",
@@ -175,7 +176,7 @@ See [TakerStream](/takers/taker-stream) for the full request schema, the gRPC-we
 
 ## 5. Collect quotes
 
-Quotes stream in over the same WebSocket. Open a collection window, gather every quote matching your `rfq_id`, and pick the best one (or several — see [Accepting quotes](/takers/accepting-quotes) for multi-quote aggregation).
+Quotes stream in over the same WebSocket. Open a collection window, gather every quote matching your `rfq_id`, and pick the best one (or several – see [Accepting quotes](/takers/accepting-quotes) for multi-quote aggregation).
 
 **Python:**
 
@@ -212,13 +213,13 @@ const best = quotes.sort(
 )[0];
 ```
 
-A sub-second collection window is typical — quotes are only guaranteed valid for about 1.5 seconds, so waiting longer just eats into your settlement budget. See [Best practices](/takers/best-practices) for tuning. {/* TODO: CK to add precise collection window guidance once benchmarked */}
+A sub-second collection window is typical – quotes are only valid for a short window, so waiting longer just eats into your settlement budget. See [Best practices](/takers/best-practices) for tuning. {/* TODO: CK to add precise collection window guidance once benchmarked */}
 
 ---
 
 ## 6. Accept onchain
 
-Now submit `AcceptQuote` to the TrueCurrent contract. This is where the three encoding gotchas bite — read [Accepting quotes](/takers/accepting-quotes) for the full story.
+Now submit `AcceptQuote` to the TrueCurrent contract. This is where the three encoding gotchas bite – read [Accepting quotes](/takers/accepting-quotes) for the full story.
 
 **Python** (the `ContractClient.accept_quote` helper handles encoding for you):
 
@@ -233,8 +234,8 @@ contract_quote = {
     "margin": best["margin"],
     "quantity": best["quantity"],
     "price": best["price"],
-    "expiry": int(best["expiry"]),         # defensive cast — client wraps to {"ts": ...}
-    "signature": best["signature"],        # hex with 0x prefix — client converts to base64
+    "expiry": int(best["expiry"]),         # defensive cast – client wraps to {"ts": ...}
+    "signature": best["signature"],        # hex with 0x prefix – client converts to base64
 }
 
 tx_hash = await contract.accept_quote(
@@ -252,7 +253,7 @@ tx_hash = await contract.accept_quote(
 print(f"Settled: {tx_hash}")
 ```
 
-**TypeScript** — because no high-level helper exists yet, you build the execute message yourself. The raw JSON shape with every gotcha applied:
+**TypeScript** – because no high-level helper exists yet, you build the execute message yourself. The raw JSON shape with every gotcha applied:
 
 ```ts
 import { MsgExecuteContractCompat, MsgBroadcasterWithPk } from "@injectivelabs/sdk-ts";
@@ -298,7 +299,7 @@ const { txHash } = await broadcaster.broadcast({ msgs: msg });
 console.log("Settled:", txHash);
 ```
 
-If the transaction succeeds, your position is open. Query it via the standard Injective exchange APIs — there is no RFQ-specific position state.
+If the transaction succeeds, your position is open. Query it via the standard Injective exchange APIs – there is no RFQ-specific position state.
 
 ---
 
@@ -319,7 +320,7 @@ See [Best practices](/takers/best-practices) for reconnection and error handling
 
 ## Next
 
-- [Authorization setup](/takers/authz-setup) — grant details and revocation
-- [TakerStream](/takers/taker-stream) — request schema and quote collection
-- [Accepting quotes](/takers/accepting-quotes) — multi-quote aggregation and every field of the `AcceptQuote` message
-- [Best practices](/takers/best-practices) — slippage, expiry, reconnection, testing
+- [Authorization setup](/takers/authz-setup) – grant details and revocation
+- [TakerStream](/takers/taker-stream) – request schema and quote collection
+- [Accepting quotes](/takers/accepting-quotes) – multi-quote aggregation and every field of the `AcceptQuote` message
+- [Best practices](/takers/best-practices) – slippage, expiry, reconnection, testing

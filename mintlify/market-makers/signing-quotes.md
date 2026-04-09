@@ -77,7 +77,7 @@ The returned `signature` is a hex string that you include in your quote payload.
 - Are numeric values encoded as strings (not raw integers)?
 - Is the price string in the correct decimal format?
 
-**`quote expired`** – Your quote's `expiry` timestamp was in the past by the time the trader accepted. Ensure your system clocks are synchronized (use NTP) and set an expiry that meets the minimum quote lifetime of 1.5 seconds. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
+**`quote expired`** – Your quote's `expiry` timestamp was in the past by the time the trader accepted. Ensure your system clocks are synchronized (use NTP) and set a generous-enough expiry window. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 **`unauthorized` / wrong maker address** – The signing wallet doesn't match the `maker` field in your quote, or the `maker` address is not whitelisted.
 

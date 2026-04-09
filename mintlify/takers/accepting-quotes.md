@@ -1,10 +1,10 @@
 ---
-title: "Takers: accepting quotes"
+title: "Accepting quotes"
 description: "Complete reference for the AcceptQuote contract message used by RFQ takers on TrueCurrent, including single-quote and multi-quote aggregation, unfilled action fallback, required encoding conversions, matching order, partial fills, and every onchain validation check."
 updatedAt: "2026-04-08"
 ---
 
-`AcceptQuote` is the onchain entrypoint that settles an RFQ trade. As a taker, it's the only contract message you call. This page documents every field, every encoding rule, and every validation the contract performs — including the features that aren't obvious from the other docs.
+`AcceptQuote` is the onchain entrypoint that settles an RFQ trade. As a taker, it's the only contract message you call. This page documents every field, every encoding rule, and every validation the contract performs – including the features that aren't obvious from the other docs.
 
 ---
 
@@ -40,7 +40,7 @@ This JSON is the payload of a standard `MsgExecuteContract` transaction to the T
 
 ## Three encoding rules you must follow
 
-These are the things most takers get wrong on the first try. They are not debatable — the contract parses the message with strict Rust serde types.
+These are the things most takers get wrong on the first try. They are not debatable – the contract parses the message with strict Rust serde types.
 
 ### 1. `rfq_id` is a JSON number, not a string
 
@@ -51,11 +51,11 @@ The contract field is `u64`. JSON encoders that stringify large integers will pr
 "rfq_id": "1708000700000"   // ❌ will fail to parse
 ```
 
-In TypeScript, `Date.now()` returns a number — use it directly. In Python, cast `int(rfq_id)` before serializing; if you build the request from a string, convert first.
+In TypeScript, `Date.now()` returns a number – use it directly. In Python, cast `int(rfq_id)` before serializing; if you build the request from a string, convert first.
 
 ### 2. Quote `expiry` must be wrapped as `{"ts": <ms>}`
 
-The contract's `Expiry` type is an enum with two variants — timestamp or block height. Serde requires the variant tag:
+The contract's `Expiry` type is an enum with two variants – timestamp or block height. Serde requires the variant tag:
 
 ```json
 "expiry": { "ts": 1708000800000 }   // ✅ timestamp variant (Unix ms)
@@ -101,7 +101,7 @@ The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of
 |---|---|---|---|
 | `rfq_id` | number (u64) | yes | Must match the `rfq_id` on the request you sent to the indexer. Used as a nonce to prevent replay. |
 | `market_id` | string | yes | Injective derivative market hex ID |
-| `direction` | string | yes | `"long"` or `"short"` — lowercase. This is the taker's direction. |
+| `direction` | string | yes | `"long"` or `"short"` – lowercase. This is the taker's direction. |
 | `margin` | string | yes | Taker margin in USDC, decimal string |
 | `quantity` | string | yes | Requested quantity |
 | `worst_price` | string | yes | Hard price limit. Individual quotes worse than this are rejected. |
@@ -118,7 +118,7 @@ The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of
 | `margin` | string | yes | Maker's margin commitment |
 | `quantity` | string | yes | Quantity the maker is offering |
 | `price` | string | yes | Maker's quoted price |
-| `expiry` | `{ts: number}` or `{h: number}` | yes | Quote expiry — wrapped enum |
+| `expiry` | `{ts: number}` or `{h: number}` | yes | Quote expiry – wrapped enum |
 | `signature` | string (base64) | yes | Maker's signature over the canonical quote payload |
 | `nonce` | number \| null | no | Present on blind quotes, used for replay protection |
 | `min_fill_quantity` | string \| null | no | Maker-imposed minimum fill; if the contract would fill them for less, the quote is skipped |
@@ -129,7 +129,7 @@ The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of
 
 The simplest case: you collect quotes, pick one, accept it.
 
-**Python** — high-level helper:
+**Python** – high-level helper:
 
 ```python
 from rfq_test.clients.contract import ContractClient
@@ -145,8 +145,8 @@ tx_hash = await contract.accept_quote(
         "margin": "200",
         "quantity": "100",
         "price": best["price"],
-        "expiry": best["expiry"],            # int ms — client wraps {"ts": ...}
-        "signature": best["signature"],      # hex — client converts to base64
+        "expiry": best["expiry"],            # int ms – client wraps {"ts": ...}
+        "signature": best["signature"],      # hex – client converts to base64
     }],
     rfq_id=str(rfq_id),
     market_id=MARKET_ID,
@@ -158,7 +158,7 @@ tx_hash = await contract.accept_quote(
 )
 ```
 
-**Python** — manual, no helper:
+**Python** – manual, no helper:
 
 ```python
 import base64, json
@@ -285,12 +285,12 @@ The contract walks the array:
 
 1. Fill 40 from Alice at 4.90 → remaining 60
 2. Fill 40 from Bob at 4.92 → remaining 20
-3. Fill 20 from Carol at 4.95 → remaining 0 (partial consumption of Carol's quote — legal and expected)
+3. Fill 20 from Carol at 4.95 → remaining 0 (partial consumption of Carol's quote – legal and expected)
 4. Done. Your position opens with a volume-weighted entry.
 
 You end up with a single taker position for 100 INJ at a blended entry. Each maker gets a maker-side position for the quantity they actually filled.
 
-> **Important: quote order matters.** The contract processes the `quotes` array in submission order, not by price. If you submit Carol first, the contract happily takes 50 @ 4.95, then Bob's 40 @ 4.92, then only 10 from Alice — you end up with a worse blended price. Always sort your quotes by price (ascending for longs, descending for shorts) before submitting.
+> **Important: quote order matters.** The contract processes the `quotes` array in submission order, not by price. If you submit Carol first, the contract happily takes 50 @ 4.95, then Bob's 40 @ 4.92, then only 10 from Alice – you end up with a worse blended price. Always sort your quotes by price (ascending for longs, descending for shorts) before submitting.
 
 > **There is a maximum.** The contract enforces `quotes.len() <= config.max_quotes`. In practice this is ~20, but check the current value with a `config` query before submitting very long lists.
 
@@ -300,7 +300,7 @@ You end up with a single taker position for 100 INJ at a blended entry. Each mak
 
 If your submitted quotes don't cover the full `quantity`, the contract has three options for the remainder, determined by `unfilled_action`:
 
-### `None` — strict RFQ only
+### `None` – strict RFQ only
 
 ```json
 "unfilled_action": null
@@ -310,7 +310,7 @@ If the quotes don't fill your full quantity, the transaction still settles **the
 
 Use this when you have a hard price target and would rather under-fill than touch the orderbook.
 
-### `{"limit": {"price": "..."}}` — post a limit order
+### `{"limit": {"price": "..."}}` – post a limit order
 
 ```json
 "unfilled_action": { "limit": { "price": "4.93" } }
@@ -318,9 +318,9 @@ Use this when you have a hard price target and would rather under-fill than touc
 
 After consuming your quotes, the contract posts the remaining `quantity` as a limit order on the Injective derivative orderbook at the specified price. Requires the `MsgBatchUpdateOrders` authz grant.
 
-The limit order is owned by your subaccount and behaves like any other order on the book — it can rest, be cancelled, or be filled by incoming flow.
+The limit order is owned by your subaccount and behaves like any other order on the book – it can rest, be cancelled, or be filled by incoming flow.
 
-### `{"market": {}}` — market-hit the orderbook
+### `{"market": {}}` – market-hit the orderbook
 
 ```json
 "unfilled_action": { "market": {} }
@@ -332,7 +332,7 @@ This is the closest thing to "just get me filled", with the safety net that you'
 
 ### Edge case: remainder below minimum tick
 
-If the remainder is smaller than the market's minimum quantity tick, it is silently dropped — not posted or market-ordered. Emitted in the settlement event as `fallback_dropped_quantity`.
+If the remainder is smaller than the market's minimum quantity tick, it is silently dropped – not posted or market-ordered. Emitted in the settlement event as `fallback_dropped_quantity`.
 
 ---
 
@@ -353,9 +353,9 @@ For each quote in the submitted array, the contract performs the following check
 
 After the loop, the contract checks:
 
-- **At least some fills happened** — if `filled_quantity == 0` and `unfilled_action` wouldn't route anything, the whole transaction fails with `all quotes rejected`. If at least one quote filled, the transaction settles the fills and uses `unfilled_action` for the rest.
+- **At least some fills happened** – if `filled_quantity == 0` and `unfilled_action` wouldn't route anything, the whole transaction fails with `all quotes rejected`. If at least one quote filled, the transaction settles the fills and uses `unfilled_action` for the rest.
 - **Taker has enough balance** for the aggregate margin used across all filled quotes.
-- **`quotes.len() <= config.max_quotes`** — checked at the top of the handler before any iteration.
+- **`quotes.len() <= config.max_quotes`** – checked at the top of the handler before any iteration.
 
 The full list of per-quote failures is available in the emitted settlement event under `quote_results`, keyed by maker address. Inspect it in a failed transaction to diagnose exactly which quote was rejected and why.
 
@@ -365,7 +365,7 @@ The full list of per-quote failures is available in the emitted settlement event
 
 After a successful transaction:
 
-- **You have a new position** in your Injective exchange subaccount. Query it via the standard exchange module APIs — there is no RFQ-specific position state onchain.
+- **You have a new position** in your Injective exchange subaccount. Query it via the standard exchange module APIs – there is no RFQ-specific position state onchain.
 - **The settlement event** contains the filled quantity, the per-quote `quote_results`, the taker's aggregate entry price, any orderbook routing that happened via `unfilled_action`, and the `cid` you passed (useful for matching events to your trade log).
 - **Fees have been deducted** according to the current `taker_fee_rate` and `maker_fee_rate` in the contract's config. Query `config` for the current values.
 
@@ -391,6 +391,6 @@ Each entry includes the `rfq_id`, `tx_hash`, fill quantities, per-quote results,
 
 ## Next
 
-- [Best practices](/takers/best-practices) — slippage strategy, expiry races, idempotency
-- [TakerStream](/takers/taker-stream) — collecting quotes to feed into `AcceptQuote`
-- [Authorization setup](/takers/authz-setup) — the grants you need before any of this works
+- [Best practices](/takers/best-practices) – slippage strategy, expiry races, idempotency
+- [TakerStream](/takers/taker-stream) – collecting quotes to feed into `AcceptQuote`
+- [Authorization setup](/takers/authz-setup) – the grants you need before any of this works

@@ -1,7 +1,6 @@
 ---
 title: "How TrueCurrent works"
-description: "Explanation of TrueCurrent's RFQ perpetuals trading flow where professional liquidity providers compete to offer best prices with zero taker fees, non-custodial settlement, and guaranteed price execution."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 TrueCurrent is a perpetuals exchange where professional liquidity providers compete to give you the best possible price on every trade. You set your parameters, and TrueCurrent automatically finds and executes at the best available price – no manual quote acceptance required.

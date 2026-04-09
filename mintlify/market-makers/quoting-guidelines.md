@@ -50,19 +50,6 @@ spread = base_spread × (1 + size_factor × quantity / reference_quantity)
 
 ---
 
-## Inventory and hedging
-
-**Hedge promptly.** When you fill a taker long, you take on a short perpetuals position. Your goal as a market maker is typically to be market-neutral – capture the spread while hedging away directional risk.
-
-Common hedging approaches:
-- Open an offsetting spot position on a CEX immediately after settlement confirms
-- Hedge via another derivatives venue
-- Allow inventory to build within limits and hedge periodically
-
-**Set inventory limits.** Don't let any single position grow large enough to threaten your capital. Define hard limits on net delta per market and stop quoting (or skew heavily) when those limits are approached.
-
----
-
 ## Common pitfalls
 
 **Quoting stale prices.** If your reference price feed has a lag, you're quoting old prices into a market that may have moved. This is the primary source of adverse selection for market makers. Use low-latency price feeds and monitor feed freshness.

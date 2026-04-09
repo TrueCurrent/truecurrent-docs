@@ -22,7 +22,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (market makers):** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
 
-**Resolution (programmatic takers):** Most taker-side signature errors come from encoding mistakes when building the `AcceptQuote` message, not from the maker actually signing badly. See [Accepting quotes — Three encoding rules you must follow](/takers/accepting-quotes) for the common gotchas (`rfq_id` as number, `expiry` wrapped as `{"ts": ...}`, `signature` as base64 not hex).
+**Resolution (programmatic takers):** Most taker-side signature errors come from encoding mistakes when building the `AcceptQuote` message, not from the maker actually signing badly. See [Accepting quotes – Three encoding rules you must follow](/takers/accepting-quotes) for the common gotchas (`rfq_id` as number, `expiry` wrapped as `{"ts": ...}`, `signature` as base64 not hex).
 
 ---
 
@@ -35,7 +35,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - System clock skew on the market maker's server
 - Network delay between quote submission and onchain settlement
 
-**Resolution:** Quotes must be valid for at least 1.5 seconds from signing time (system minimum). Ensure your server uses NTP time synchronization and monitor average confirmation times to make sure your expiry setting covers the full round-trip. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
+**Resolution:** Ensure your server uses NTP time synchronization and monitor average confirmation times to make sure your expiry setting covers the full round-trip. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 ---
 
@@ -46,7 +46,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **For longs:** `quote.price > worst_price`
 **For shorts:** `quote.price < worst_price`
 
-**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
+**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions.
 
 **Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
 
@@ -59,7 +59,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **Resolution:** Re-run the authz grant setup.
 
 - Market makers: see [Authorization setup](/market-makers/authz-setup)
-- Programmatic takers: see [Takers: authorization setup](/takers/authz-setup) — note that takers need **four** grants, not three
+- Programmatic takers: see [Takers: authorization setup](/takers/authz-setup) – note that takers need **four** grants, not three
 - UI traders: see [Connect your wallet](/getting-started/connect-wallet)
 
 ---
@@ -70,7 +70,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (UI traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
 
-**Resolution (programmatic takers):** Verify the taker's exchange subaccount balance, not the main bank balance — margin lives in the subaccount. See [Takers: subaccount balance](/takers/best-practices).
+**Resolution (programmatic takers):** Verify the taker's exchange subaccount balance, not the main bank balance – margin lives in the subaccount. See [Takers: subaccount balance](/takers/best-practices).
 
 **Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
 

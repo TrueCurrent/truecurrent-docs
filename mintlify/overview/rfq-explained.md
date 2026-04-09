@@ -28,7 +28,7 @@ In TrueCurrent's RFQ model, prices are set by professional market makers who mon
 
 ## RFQ vs. order books
 
-Traditional onchain order books (like the one Injective natively provides, and which Helix uses) match passive limit orders. This is more efficient than AMMs for liquid markets, but RFQ is still meaningfully different:
+Traditional onchain order books match passive limit orders. This is more efficient than AMMs for liquid markets, but RFQ is still meaningfully different:
 
 - **Active vs. passive liquidity.** Limit orders sit idle until matched. RFQ market makers actively respond to each trade request, so you always get a fresh, competitive price.
 - **No queue.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
@@ -54,6 +54,6 @@ This real-time, size-aware pricing is fundamentally superior to static formula p
 
 ## Quote expiry and settlement timing
 
-Every quote includes an expiry timestamp. Quotes are valid for a short window (minimum 1.5 seconds), which prevents stale quotes from being used in fast-moving markets. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
+Every quote includes an expiry timestamp. Quotes are valid for a short window, which prevents stale quotes from being used in fast-moving markets. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 When you accept a quote, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.

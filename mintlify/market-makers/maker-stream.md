@@ -17,7 +17,7 @@ Connect to the MakerStream WebSocket endpoint:
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
 | Mainnet | *(TBD)* {/* TODO: CK to add mainnet MakerStream URL when ready */} |
 
-The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing — see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
+The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing – see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
 
 Authentication is based on your wallet address – the endpoint routes requests to your system based on your whitelisted maker address.
 
@@ -95,7 +95,7 @@ Your quote must include:
 ```python
 from rfq_test.crypto.signing import sign_quote
 
-quote_expiry = int(time.time() * 1000) + 2_000  # ~2 seconds from now — must meet the minimum of 1.5s
+quote_expiry = int(time.time() * 1000) + 2_000  # ~2 seconds from now – must meet the minimum of 1.5s
 {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 signature = sign_quote(
