@@ -1,7 +1,6 @@
 ---
 title: "Perpetual markets"
-description: "Introduction to perpetual futures trading on TrueCurrent covering leverage, long and short positions, mark pricing, cross-margin, funding rates, liquidation mechanics, and oracle price feeds."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 TrueCurrent offers perpetual futures – leveraged positions on asset prices with no expiration date.
@@ -27,13 +26,31 @@ Your profit or loss is determined by the difference between your entry price and
 
 ---
 
-## Mark price vs. last traded price
+## Prices
 
-**Mark price** is the fair value of the perpetual, derived from TrueCurrent's onchain price oracle. It's used for all P&L calculations and liquidation checks. It tracks the underlying spot price closely and is designed to resist short-term manipulation.
+TrueCurrent uses a few distinct prices, each serving a specific purpose.
 
-**Last traded price** is the most recent fill price on TrueCurrent. It may briefly diverge from mark price, but funding rates keep them anchored over time.
+**Index price.** The real-time spot price of the underlying asset, aggregated from multiple major external exchanges. It represents the broader market's consensus on where the asset is actually trading.
 
-Your unrealized P&L is always based on **mark price**.
+**Mark price.** The fair value of the perpetual, used for all P&L calculations, margin ratio, and liquidation checks. It comes from TrueCurrent's onchain oracle.
+
+Today, **mark price tracks index price 1:1** – no funding-basis adjustment is applied. This may change as funding-rate mechanics evolve, but for now the two are interchangeable in practice.
+
+{/* TODO: CK to update once mark price diverges from index (funding-basis adjustment goes live) */}
+
+**Quoted price.** The actual execution price delivered by the liquidity providers who compete to fill your trade. This is what you bought or sold at.
+
+**Indicative price.** A pre-trade estimate of the quoted price, shown in the UI before you confirm. In stable markets the two are nearly identical; in fast-moving markets they may differ slightly, which is what your worst-price tolerance is for.
+
+**Which price applies when:**
+
+| Price | Used for |
+|-------|----------|
+| Index / Mark | Unrealized P&L, margin ratio, liquidation price, funding rate basis |
+| Quoted | Trade entry and exit, realized P&L, TP/SL trigger evaluation |
+| Indicative | UI preview before you confirm a trade |
+
+All of these prices are publicly visible onchain – liquidations and P&L calculations are fully transparent and verifiable.
 
 ---
 
@@ -64,15 +81,3 @@ When the mark price reaches your **liquidation price**, your position is automat
 - Add margin to your position
 - Partially close to reduce exposure
 - Close the position entirely
-
----
-
-## Cross-margin
-
-TrueCurrent uses **cross-margin** – all positions in your subaccount share the same margin pool. Profits from one position can offset losses in another, which is more capital efficient. However, a large losing position can draw on the margin of your other positions.
-
----
-
-## Oracle and index price
-
-Every market's mark price comes from TrueCurrent's onchain oracle, which aggregates data from multiple sources. This price is publicly visible onchain – liquidations and P&L calculations are fully transparent and verifiable.

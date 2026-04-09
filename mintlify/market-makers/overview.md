@@ -14,7 +14,7 @@ As a market maker on TrueCurrent, you:
 
 1. **Connect to the MakerStream** – a WebSocket endpoint delivering live trade requests from users
 2. **Evaluate each request** – assess the market, direction, size, and your current inventory
-3. **Respond with a signed quote** – within a 2-second window, submit a cryptographically signed price commitment
+3. **Respond with a signed quote** – within a few hundred milliseconds, submit a cryptographically signed price commitment {/* TODO: CK to add precise MM response deadline once benchmarked */}
 4. **Settle onchain** – when a user accepts your quote, the TrueCurrent smart contract settles both sides atomically on Injective
 
 You compete against other registered market makers for every trade. Best price wins.
@@ -47,9 +47,9 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 ## Technical requirements
 
-- An Injective wallet with sufficient USDT margin
+- An Injective wallet with sufficient USDC margin
 - WebSocket connectivity to TrueCurrent's MakerStream
-- An automated quoting system that responds within 2 seconds
+- An automated quoting system that responds within a few hundred milliseconds
 - Implementation of TrueCurrent's quote signing specification
 - `authz` grants from your wallet to the TrueCurrent contract
 
@@ -64,4 +64,4 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 ## Capital requirements
 
-There is no hard minimum, but you must maintain sufficient USDT in your subaccount to back the quotes you submit. Quotes submitted without adequate margin result in failed settlements. A healthy market maker maintains enough capital to cover the maximum aggregate notional of their open quotes.
+There is no hard minimum, but you must maintain sufficient USDC in your subaccount to back the quotes you submit. Quotes submitted without adequate margin result in failed settlements. A healthy market maker maintains enough capital to cover the maximum aggregate notional of their open quotes.

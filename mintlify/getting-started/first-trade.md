@@ -1,7 +1,6 @@
 ---
 title: "Your first trade"
-description: "Step-by-step tutorial for executing your first perpetual futures trade on TrueCurrent, covering market selection, leverage setup, price tolerance, position monitoring, and funding rate considerations."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 A step-by-step guide to opening your first position on TrueCurrent.
@@ -41,7 +40,7 @@ From the trading interface, select the market you want to trade. Each market sho
 
 Enter the **amount of USDC** you want to use as margin (your collateral). Then set your leverage – this determines the size of your position relative to your margin.
 
-For example, $100 margin at 2x leverage means a $200 position. A 10% price move in your favor = $20 profit (20% on your margin). A 10% adverse move = $20 loss.
+For example, 100 USDC margin at 2x leverage means a 200 USDC position. A 10% price move in your favor is 20 USDC profit (20% on your margin). A 10% adverse move is 20 USDC loss.
 
 **Start with low leverage (1x–3x) while learning.** Higher leverage amplifies both gains and losses.
 

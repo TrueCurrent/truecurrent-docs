@@ -1,7 +1,7 @@
 ---
 title: "Connecting to MakerStream"
-description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocket endpoint, receiving RFQ requests, submitting signed quotes within the 2-second window, and handling concurrent market making operations."
-updatedAt: "2026-04-06"
+description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocket endpoint, receiving RFQ requests, submitting signed quotes within the response window, and handling concurrent market making operations."
+updatedAt: "2026-04-08"
 ---
 
 The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to market makers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
@@ -14,8 +14,10 @@ Connect to the MakerStream WebSocket endpoint:
 
 | Environment | Endpoint |
 |-------------|----------|
-| Testnet | `wss://testnet-indexer.injective.network/stream/rfq/maker` *(confirm exact URL)* |
-| Mainnet | `wss://indexer.injective.network/stream/rfq/maker` *(confirm exact URL)* |
+| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
+| Mainnet | *(TBD)* {/* TODO: CK to add mainnet MakerStream URL when ready */} |
+
+The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing – see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
 
 Authentication is based on your wallet address – the endpoint routes requests to your system based on your whitelisted maker address.
 
@@ -42,7 +44,7 @@ Once connected, you'll receive RFQ request events in real time. Each request con
 | `rfq_id` | integer | Unique identifier for this RFQ |
 | `market_id` | string | Injective market ID (hex string) |
 | `direction` | string | `"long"` or `"short"` (taker's direction) |
-| `margin` | string | Taker's margin in quote currency (USDT) |
+| `margin` | string | Taker's margin in quote currency (USDC) |
 | `quantity` | string | Number of contracts requested |
 | `worst_price` | string | Taker's worst acceptable price |
 | `taker_address` | string | Taker's Injective `inj1...` address |
@@ -67,7 +69,9 @@ taker = request["taker_address"]
 
 ## Responding with a quote
 
-You have **2 seconds** from when the request is broadcast to submit a quote. After that window closes, no further quotes for that `rfq_id` are accepted.
+You have **a few hundred milliseconds** from when the request is broadcast to submit a quote. After that window closes, no further quotes for that `rfq_id` are accepted.
+
+{/* TODO: add precise MM response deadline once benchmarked */}
 
 Your quote must include:
 
@@ -91,7 +95,8 @@ Your quote must include:
 ```python
 from rfq_test.crypto.signing import sign_quote
 
-quote_expiry = int(time.time() * 1000) + 30_000  # 30 seconds from now
+quote_expiry = int(time.time() * 1000) + 2_000  # ~2 seconds from now – must meet the minimum of 1.5s
+{/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 signature = sign_quote(
     private_key=mm_wallet.private_key,
@@ -134,7 +139,7 @@ await mm_ws.send_quote(quote_data)
 
 In active markets, you may receive multiple RFQ requests in rapid succession. Your quoting system must be able to handle concurrent requests without one slowing down another. Each `rfq_id` is independent – there's no ordering requirement between responses to different requests.
 
-Use async/concurrent processing to ensure your 2-second window isn't eaten up by sequential processing.
+Use async/concurrent processing to ensure your response window isn't eaten up by sequential processing.
 
 ---
 

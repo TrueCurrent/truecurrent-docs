@@ -1,7 +1,7 @@
 ---
 title: "Error reference"
 description: "Troubleshooting guide for common TrueCurrent integration errors including signature verification failures, quote expiry, authz grants, insufficient margin, and WebSocket connection issues."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 This page lists common errors you may encounter when integrating with TrueCurrent, along with their causes and resolutions.
@@ -20,7 +20,9 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - Price decimal format mismatch (e.g., `4.455` vs `4.4550`)
 - Wrong `chain_id` or `contract_address` in the signed message
 
-**Resolution:** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+**Resolution (market makers):** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+
+**Resolution (programmatic takers):** Most taker-side signature errors come from encoding mistakes when building the `AcceptQuote` message, not from the maker actually signing badly. See [Accepting quotes – Three encoding rules you must follow](/takers/accepting-quotes) for the common gotchas (`rfq_id` as number, `expiry` wrapped as `{"ts": ...}`, `signature` as base64 not hex).
 
 ---
 
@@ -33,7 +35,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - System clock skew on the market maker's server
 - Network delay between quote submission and onchain settlement
 
-**Resolution:** Set quote expiry to at least 30 seconds from signing time. Ensure your server uses NTP time synchronization. Monitor average confirmation times.
+**Resolution:** Ensure your server uses NTP time synchronization and monitor average confirmation times to make sure your expiry setting covers the full round-trip. {/* TODO: CK to confirm the precise minimum quote expiry once benchmarked */}
 
 ---
 
@@ -44,7 +46,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **For longs:** `quote.price > worst_price`
 **For shorts:** `quote.price < worst_price`
 
-**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
+**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions.
 
 **Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
 
@@ -54,15 +56,21 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
 
-**Resolution:** Re-run the authz grant setup. See [Authorization setup](/market-makers/authz-setup) (for market makers) or [Connect your wallet](../getting-started/connect-wallet) (for traders).
+**Resolution:** Re-run the authz grant setup.
+
+- Market makers: see [Authorization setup](/market-makers/authz-setup)
+- Programmatic takers: see [Takers: authorization setup](/takers/authz-setup) – note that takers need **four** grants, not three
+- UI traders: see [Connect your wallet](/getting-started/connect-wallet)
 
 ---
 
 ### `insufficient funds` / `insufficient margin`
 
-**Cause:** The taker's or maker's subaccount doesn't have enough USDT to cover the required margin for the trade.
+**Cause:** The taker's or maker's subaccount doesn't have enough USDC to cover the required margin for the trade.
 
-**Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
+**Resolution (UI traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
+
+**Resolution (programmatic takers):** Verify the taker's exchange subaccount balance, not the main bank balance – margin lives in the subaccount. See [Takers: subaccount balance](/takers/best-practices).
 
 **Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
 

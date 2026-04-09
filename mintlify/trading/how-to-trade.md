@@ -38,7 +38,8 @@ A $100 margin at 5x leverage = $500 position. Every 1% price move = 5% change in
 **Leverage guidelines:**
 - 1x–3x – Conservative, good for learning
 - 5x–10x – Moderate, for experienced traders
-- 10x–20x – High risk, requires active monitoring
+- 20x–50x – High risk, requires active monitoring
+- 50x–100x – FX markets only, experienced traders with active risk management
 
 ### 4. Set your price tolerance
 

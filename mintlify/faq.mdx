@@ -1,7 +1,6 @@
 ---
 title: "Frequently asked questions"
-description: "Comprehensive FAQ covering TrueCurrent's RFQ trading model, non-custodial security, zero fees, market maker program, liquidation mechanics, funding rates, and wallet authorization on Injective."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-08"
 ---
 
 ---
@@ -18,11 +17,11 @@ Yes. Your funds stay in your Injective subaccount at all times. TrueCurrent's sm
 
 **What chain is TrueCurrent on?**
 
-Injective. All settlement happens on the Injective blockchain, which provides sub-second finality and zero gas fees for users.
+Injective. All settlement happens on the Injective blockchain, which provides sub-second finality. Trading on TrueCurrent itself costs you no gas – TrueCurrent pays your Injective transaction fees on your behalf.
 
 **Do I need to pay gas fees?**
 
-No. Injective covers transaction costs for users. You pay no gas for any action on TrueCurrent.
+No. TrueCurrent covers your Injective transaction costs. You pay no gas for any action taken through TrueCurrent – opening positions, closing them, managing margin, all of it.
 
 ---
 
@@ -34,15 +33,11 @@ RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks profe
 
 **What happens if no market maker responds to my request?**
 
-If no market maker quotes within the 2-second window, your order routes automatically to Injective's onchain order book. You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+If no market maker quotes within the response window, your order fails. A future version of TrueCurrent may fall back to the onchain order book in this case, but that feature is not yet enabled – today, you'll need to resubmit.
 
 **What is the worst price setting?**
 
-Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price. See [Slippage and worst price](/trading/slippage-and-worst-price).
-
-**Why did my quote expire before I could accept?**
-
-Quotes are valid for a limited window (typically 30 seconds). Market makers need short expiry windows to manage price risk in fast-moving markets. If a quote expires, request a new one – the process is fast.
+Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price.
 
 **Can I get liquidated?**
 
@@ -50,7 +45,7 @@ Yes. Perpetual positions use margin and can be liquidated if the mark price move
 
 **What leverage is available?**
 
-Up to 20x on supported markets, depending on position size. Higher leverage means a closer liquidation price. Start with lower leverage while you're getting familiar with the platform.
+Up to 50x on most markets and 100x on FX markets. Higher leverage means a closer liquidation price. Start with lower leverage while you're getting familiar with the platform.
 
 ---
 
@@ -62,7 +57,7 @@ Apply for whitelist access by contacting the TrueCurrent team. You'll need to co
 
 **What programming languages/SDKs are supported?**
 
-The testnet E2E reference implementation is in Python, using the `rfq-qa-python-tests` framework. The underlying protocol (WebSocket messages + Injective chain interactions) is language-agnostic. Any language that can maintain a WebSocket connection, implement the quote signing specification, and submit Injective transactions can be used.
+The underlying protocol (WebSocket messages + Injective chain interactions) is language-agnostic. Any language that can maintain a WebSocket connection, implement the quote signing specification, and submit Injective transactions can be used. Python and TypeScript are the best-supported today, with reference implementations available.
 
 **Why is my quote not winning trades?**
 
@@ -70,7 +65,7 @@ Your price may be less competitive than other market makers. Review your pricing
 
 **Can I see who other market makers are?**
 
-Market maker addresses are visible onchain (in the `AcceptQuote` transaction history), but the list of whitelisted makers is not publicly published. You can observe trade history to infer active makers.
+Market maker addresses are visible onchain (in the `AcceptQuote` transaction history), but the list of whitelisted makers is not publicly published.
 
 ---
 
@@ -78,16 +73,14 @@ Market maker addresses are visible onchain (in the `AcceptQuote` transaction his
 
 **Has TrueCurrent been audited?**
 
-A security audit of the TrueCurrent smart contract is planned before mainnet launch. The audit report will be published and linked here upon completion.
+Yes. The TrueCurrent smart contract has been audited by [SCV](https://www.scvsecurity.com/) and [Zenith](https://www.zenith.security/). Audit reports will be linked here upon publication.
 
-**What happens if TrueCurrent's servers go down?**
+{/* TODO: CK – link the actual published audit reports from SCV and Zenith once they're up. */}
 
-If the off-chain RFQ indexer is unavailable, new trades can't be initiated through the RFQ system. However, your existing positions, margin, and funds are fully onchain and unaffected. You can manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app) even without TrueCurrent's frontend.
-
-**Can TrueCurrent be upgraded or changed?**
+**Can the TrueCurrent smart contract be upgraded or changed?**
 
 The smart contract's upgrade policy will be documented upon mainnet launch. Any upgrades to core settlement logic will be announced in advance through official TrueCurrent channels.
 
 **How do I revoke TrueCurrent's access to my wallet?**
 
-Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. See [Authorization model](/technical/authz-model).
+Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. You can manage grants from a GUI at [do.injective.network](https://do.injective.network), or see [Authorization model](/technical/authz-model) for the details.
