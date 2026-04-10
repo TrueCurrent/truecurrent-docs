@@ -1,5 +1,6 @@
 ---
 title: "How TrueCurrent works"
+description: "Explanation of TrueCurrent's RFQ perpetuals trading flow where professional liquidity providers compete to offer best prices with zero taker fees, non-custodial settlement, and guaranteed price execution."
 updatedAt: "2026-04-08"
 ---
 

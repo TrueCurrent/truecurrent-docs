@@ -40,7 +40,7 @@ This JSON is the payload of a standard `MsgExecuteContract` transaction to the T
 
 ## Three encoding rules you must follow
 
-These are the things most takers get wrong on the first try. They are not debatable – the contract parses the message with strict Rust serde types.
+These encoding rules are relatively common to get wrong. However, they are strictly enforced, as the contract parses the message with strict Rust `serde` types.
 
 ### 1. `rfq_id` is a JSON number, not a string
 
@@ -67,7 +67,7 @@ The indexer delivers `expiry` as a plain integer. You must wrap it before passin
 
 ### 3. Quote `signature` is base64, not hex
 
-Indexers (including TrueCurrent's) transmit signatures as hex strings (`"0xabc123..."`). The contract's `signature` field is a CosmWasm `Binary` type, which on the wire is **standard base64**. You must convert.
+Indexers (including TrueCurrent's) transmit signatures as hex strings (`"0xabc123..."`). The contract's `signature` field is a CosmWasm `Binary` type, which on the wire is **standard `base64`**. You must convert.
 
 **Python:**
 
@@ -87,7 +87,7 @@ const sigHex = quote.signature.replace(/^0x/, "");
 const signatureB64 = Buffer.from(sigHex, "hex").toString("base64");
 ```
 
-If you skip the conversion, the contract returns a signature verification error that looks like the *maker* signed badly, but it's actually your encoding.
+If you skip the conversion, the contract returns a signature verification error that looks like the *maker* signed badly. However the true cause of the error is *encoding*.
 
 The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of these automatically. If you're building from scratch, apply them yourself.
 
@@ -290,9 +290,11 @@ The contract walks the array:
 
 You end up with a single taker position for 100 INJ at a blended entry. Each maker gets a maker-side position for the quantity they actually filled.
 
-> **Important: quote order matters.** The contract processes the `quotes` array in submission order, not by price. If you submit Carol first, the contract happily takes 50 @ 4.95, then Bob's 40 @ 4.92, then only 10 from Alice – you end up with a worse blended price. Always sort your quotes by price (ascending for longs, descending for shorts) before submitting.
+> **Important: quote order matters.** The contract processes the `quotes` array in submission order, not by price. If you submit Carol first, the contract happily takes 50 at 4.95, then Bob's 40 at 4.92, then only 10 from Alice – you end up with a worse blended price.
+>
+> Therefore, always sort your quotes by price before submitting. For long sort quotes by ascending price. For shorts, sort quotes by descending price.
 
-> **There is a maximum.** The contract enforces `quotes.len() <= config.max_quotes`. In practice this is ~20, but check the current value with a `config` query before submitting very long lists.
+> **There is a maximum.** The contract enforces `quotes.len() <= config.max_quotes`. In practice this is approximately 20. Check the current value with a `config` query to obtain the exact number before submitting very long lists.
 
 ---
 

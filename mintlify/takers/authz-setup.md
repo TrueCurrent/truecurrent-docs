@@ -1,5 +1,6 @@
 ---
 title: "Authorization setup"
+description: "--"
 updatedAt: "2026-04-08"
 ---
 
@@ -34,7 +35,7 @@ A programmatic taker must grant the following four message types to the TrueCurr
 | `/injective.exchange.v2.MsgBatchUpdateOrders` | Route unfilled quantity to the orderbook via limit fallback |
 | `/injective.exchange.v2.MsgCreateDerivativeMarketOrder` | Route unfilled quantity to the orderbook via market fallback (IOC) |
 
-If you never intend to use `unfilled_action: {"market": {}}` or `{"limit": {...}}`, you can skip the last two grants – but then `AcceptQuote` calls that would have routed a remainder to the orderbook will fail. Most takers should grant all four.
+If you never intend to use `unfilled_action: {"market": {}}` or `{"limit": {...}}`, you can skip the last two grants – but then `AcceptQuote` calls that would have routed a remainder to the orderbook will fail. Most takers **should grant all four**.
 
 ---
 
@@ -143,7 +144,7 @@ If you must set an expiry, renew grants well before they lapse. An expired grant
 
 ## Managing grants from a GUI
 
-If you'd rather manage your authz grants from a web interface than the CLI, **[do.injective.network](https://do.injective.network)** has a built-in authz manager. You can view existing grants, create new ones, and revoke them, all signed from your connected wallet.
+If you'd rather manage your authz grants from a web interface than the CLI, **[`do.injective.network`](https://do.injective.network)** has a built-in authz manager. You can view existing grants, create new ones, and revoke them, all signed from your connected wallet.
 
 This is useful for ad-hoc inspection, for sanity-checking that your programmatic grants went through, and for the quick revoke button during an incident.
 
@@ -213,7 +214,7 @@ const msg = MsgRevoke.fromJSON({
 await broadcaster.broadcast({ msgs: msg });
 ```
 
-Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlements on this wallet – it's the kill switch.
+Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlements on this wallet – it is a kill switch.
 
 **Revocation does not affect open positions.** Your existing positions remain open and can be managed through the standard Injective exchange module. Revoking only prevents *new* contract-initiated actions.
 
