@@ -14,7 +14,7 @@ As a market maker on TrueCurrent, you:
 
 1. **Connect to the MakerStream** – a WebSocket endpoint delivering live trade requests from users
 2. **Evaluate each request** – assess the market, direction, size, and your current inventory
-3. **Respond with a signed quote** – within a 2-second window, submit a cryptographically signed price commitment
+3. **Respond with a signed quote** – within a response window of a few hundred milliseconds, submit a cryptographically signed price commitment {/* TODO: add precise MM response deadline once benchmarked */}
 4. **Settle onchain** – when a user accepts your quote, the TrueCurrent smart contract settles both sides atomically on Injective
 
 You compete against other registered market makers for every trade. Best price wins.

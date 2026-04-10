@@ -54,6 +54,6 @@ This real-time, size-aware pricing is fundamentally superior to static formula p
 
 ## Quote expiry and settlement timing
 
-Every quote includes an expiry timestamp. Quotes are valid for a short window (typically 30 seconds), which prevents stale quotes from being used in fast-moving markets.
+Every quote includes an expiry timestamp. Quotes are valid for a short window, which prevents stale quotes from being used in fast-moving markets. {/* TODO: confirm the precise minimum quote expiry once benchmarked */}
 
 When you accept a quote, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.
