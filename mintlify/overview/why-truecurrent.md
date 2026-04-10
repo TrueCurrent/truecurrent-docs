@@ -1,6 +1,7 @@
 ---
 title: "Why TrueCurrent"
-updatedAt: "2026-04-08"
+description: "Comparison of TrueCurrent's zero-fee RFQ trading against AMM DEXs and order book exchanges, highlighting MEV resistance, tight spreads, true non-custody, and best-price execution advantages."
+updatedAt: "2026-04-06"
 ---
 
 ## Free to trade
@@ -44,5 +45,5 @@ You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compa
 | Gas fees | High | Low–Medium | **Free** |
 | Slippage on large trades | High | Medium | **None** |
 | Funds stay in your wallet | ❌ | ❌ | **✅** |
-| MEV / sandwich risk | High | Moderate | **None** |
+| MEV / sandwich risk | High | Moderate | **Minimal** |
 | Settlement speed | Varies | Varies | **< 1 second** |

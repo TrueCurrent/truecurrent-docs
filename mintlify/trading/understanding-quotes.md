@@ -1,6 +1,6 @@
 ---
 title: "Understanding quotes"
-description: "Technical analysis of RFQ quote structure, best-quote selection algorithm, quote expiry handling, and automatic fallback routing to Injective order book when market makers don't respond."
+description: "Guide to understanding RFQ quotes on TrueCurrent including price, quantity, expiry, maker address, cryptographic signature verification, and how the best quote is selected for trade execution."
 updatedAt: "2026-04-06"
 ---
 

@@ -40,13 +40,24 @@ spread = base_spread × (1 + size_factor × quantity / reference_quantity)
 
 ## Response rate
 
-**Always try to quote within a few hundred milliseconds.** A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none fall back to the order book – a worse experience for them.
-
-{/* TODO: CK to add precise MM response deadline once benchmarked */}
+**Always try to quote within 2 seconds.** A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none fall back to the order book – a worse experience for them.
 
 **Fail gracefully.** If you genuinely can't price a request (e.g., your pricing feed is down, your margin is depleted), it's better to not submit a quote than to submit a random price. The system handles no-quote gracefully by falling back to the order book.
 
-**Monitor latency.** The response window includes network round-trip time. If your system is co-located far from the indexer, account for that latency. A quote that arrives after the window is ignored.
+**Monitor latency.** The 2-second window includes network round-trip time. If your system is co-located far from the indexer, account for that latency. A quote that arrives after the window is ignored.
+
+---
+
+## Inventory and hedging
+
+**Hedge promptly.** When you fill a taker long, you take on a short perpetuals position. Your goal as a market maker is typically to be market-neutral – capture the spread while hedging away directional risk.
+
+Common hedging approaches:
+- Open an offsetting spot position on a CEX immediately after settlement confirms
+- Hedge via another derivatives venue
+- Allow inventory to build within limits and hedge periodically
+
+**Set inventory limits.** Don't let any single position grow large enough to threaten your capital. Define hard limits on net delta per market and stop quoting (or skew heavily) when those limits are approached.
 
 ---
 

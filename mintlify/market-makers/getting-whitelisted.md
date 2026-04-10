@@ -12,7 +12,7 @@ TrueCurrent uses an approved market maker whitelist. Only whitelisted addresses 
 
 The whitelist ensures that every market maker on TrueCurrent is:
 
-- Technically integrated and able to respond reliably within the MM response window (a few hundred milliseconds)
+- Technically integrated and able to respond reliably within the 2-second window
 - Capitalized sufficiently to back their quotes
 - Committed to quoting in good faith (avoiding quote manipulation or gaming)
 
@@ -24,7 +24,7 @@ A reliable maker pool produces better outcomes for traders – consistent fills,
 
 Before applying, you should have:
 
-- An Injective wallet with adequate USDC margin
+- An Injective wallet with adequate USDT margin
 - A functional automated quoting system connected to TrueCurrent's MakerStream
 - Implemented the quote signing protocol (see [Signing quotes](/market-makers/signing-quotes))
 - Completed the `authz` setup (see [Authorization setup](/market-makers/authz-setup))
@@ -37,7 +37,7 @@ Before applying, you should have:
 Before going live, test your full integration on TrueCurrent's testnet:
 
 1. Set `RFQ_ENV=testnet` in your configuration
-2. Fund your testnet wallet with testnet INJ and USDC (available from Injective testnet faucet)
+2. Fund your testnet wallet with testnet INJ and USDT (available from Injective testnet faucet)
 3. Grant `authz` permissions to the testnet contract address
 4. Connect your MakerStream to the testnet indexer endpoint
 5. Run through the complete quote and acceptance flow to confirm your signing and settlement logic is correct
@@ -63,7 +63,7 @@ Once whitelisted, your wallet address can submit quotes to the production MakerS
 
 Your market maker status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
 
-- Response rate falls below an acceptable threshold (consistently failing to quote within the response window)
+- Response rate falls below an acceptable threshold (consistently failing to quote within 2 seconds)
 - Quotes are systematically off-market (quoting prices that never win and appear designed to game metrics)
 - Settlements consistently fail due to insufficient margin
 - Any behavior that degrades the experience for traders

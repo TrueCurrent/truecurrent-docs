@@ -1,6 +1,7 @@
 ---
 title: "Liquidation"
-updatedAt: "2026-04-08"
+description: "Technical explanation of liquidation mechanics on TrueCurrent including margin ratio calculations, liquidation price formulas, bankruptcy price, insurance fund protection, and strategies to prevent forced position closure."
+updatedAt: "2026-04-06"
 ---
 
 When a position's margin ratio falls to or below the maintenance margin rate (MMR), TrueCurrent's liquidation engine automatically closes it. This page explains exactly when and how that happens, how to calculate your liquidation price, and how to protect yourself.
@@ -11,67 +12,65 @@ When a position's margin ratio falls to or below the maintenance margin rate (MM
 
 Liquidation is triggered when your margin ratio falls at or below the maintenance margin rate:
 
-```
-MR = (M + uPnL) / (Q × P_mark) ≤ MMR
-```
+$$MR = \frac{M + uPnL}{Q \times P_{mark}} \leq MMR$$
 
-As the mark price moves against your position, `uPnL` decreases, which decreases `MR`. When `MR` hits `MMR`, your position is liquidated.
+As the mark price moves against your position, $uPnL$ decreases, which decreases $MR$. When $MR$ hits $MMR$, your position is liquidated.
 
 ---
 
 ## Liquidation price
 
-The liquidation price is the mark price at which your margin ratio exactly equals MMR. To find it, set `MR = MMR` and solve for `P_mark`.
+The liquidation price is the mark price at which your margin ratio exactly equals MMR. To find it, substitute the liquidation condition $MR = MMR$ and solve for $P_{mark}$.
 
 ### Long position
 
-For a long, `uPnL = (P_mark − P_entry) × Q`. Setting `MR = MMR` and solving for `P_liq`:
+For a long, $uPnL = (P_{mark} - P_{entry}) \times Q$. Setting $MR = MMR$:
 
-```
-P_liq_long = (Q × P_entry − M) / (Q × (1 − MMR))
-```
+$$\frac{M + (P_{liq} - P_{entry}) \times Q}{Q \times P_{liq}} = MMR$$
 
-Since initial margin `M = Q × P_entry / L`, this simplifies to:
+Solving for $P_{liq}$:
 
-```
-P_liq_long = P_entry × (1 − 1/L) / (1 − MMR)
-```
+$$M + Q \times P_{liq} - Q \times P_{entry} = Q \times P_{liq} \times MMR$$
+
+$$M - Q \times P_{entry} = Q \times P_{liq} \times (MMR - 1)$$
+
+$$\boxed{P_{liq}^{long} = \frac{Q \times P_{entry} - M}{Q \times (1 - MMR)}}$$
+
+Since initial margin $M = Q \times P_{entry} / L$, this simplifies to:
+
+$$P_{liq}^{long} = P_{entry} \times \frac{1 - \frac{1}{L}}{1 - MMR}$$
 
 ### Short position
 
-For a short, `uPnL = (P_entry − P_mark) × Q`. Setting `MR = MMR` and solving for `P_liq`:
+For a short, $uPnL = (P_{entry} - P_{mark}) \times Q$. Setting $MR = MMR$:
 
-```
-P_liq_short = (M + Q × P_entry) / (Q × (1 + MMR))
-```
+$$\frac{M + (P_{entry} - P_{liq}) \times Q}{Q \times P_{liq}} = MMR$$
 
-Substituting `M = Q × P_entry / L`:
+Solving for $P_{liq}$:
 
-```
-P_liq_short = P_entry × (1 + 1/L) / (1 + MMR)
-```
+$$M + Q \times P_{entry} - Q \times P_{liq} = Q \times P_{liq} \times MMR$$
+
+$$M + Q \times P_{entry} = Q \times P_{liq} \times (1 + MMR)$$
+
+$$\boxed{P_{liq}^{short} = \frac{M + Q \times P_{entry}}{Q \times (1 + MMR)}}$$
+
+Substituting $M = Q \times P_{entry} / L$:
+
+$$P_{liq}^{short} = P_{entry} \times \frac{1 + \frac{1}{L}}{1 + MMR}$$
 
 ---
 
 ## Worked example
 
-Suppose you open a **long** at `P_entry = $100` with `L = 10×` leverage and `MMR = 2.5%`:
+Suppose you open a **long** on an asset at $P_{entry} = \$100$ with $L = 10\times$ leverage and $MMR = 2.5\%$:
 
-```
-P_liq = 100 × (1 − 1/10) / (1 − 0.025)
-      = 100 × 0.9 / 0.975
-      ≈ $92.31
-```
+$$P_{liq} = 100 \times \frac{1 - \frac{1}{10}}{1 - 0.025} = 100 \times \frac{0.9}{0.975} \approx \$92.31$$
 
 If the mark price drops to $92.31, your position is liquidated.
 
 For the equivalent **short** at the same parameters:
 
-```
-P_liq = 100 × (1 + 1/10) / (1 + 0.025)
-      = 100 × 1.1 / 1.025
-      ≈ $107.32
-```
+$$P_{liq} = 100 \times \frac{1 + \frac{1}{10}}{1 + 0.025} = 100 \times \frac{1.1}{1.025} \approx \$107.32$$
 
 If the mark price rises to $107.32, the short is liquidated.
 
@@ -83,17 +82,13 @@ The bankruptcy price is where unrealized losses fully consume your margin – eq
 
 **Long:**
 
-```
-P_bankrupt_long = P_entry × (1 − 1/L)
-```
+$$P_{bankrupt}^{long} = P_{entry} \times \left(1 - \frac{1}{L}\right)$$
 
 **Short:**
 
-```
-P_bankrupt_short = P_entry × (1 + 1/L)
-```
+$$P_{bankrupt}^{short} = P_{entry} \times \left(1 + \frac{1}{L}\right)$$
 
-The gap between `P_liq` and `P_bankrupt` is where the liquidation engine operates. Positions are closed at `P_liq`, and any remaining margin above zero is partially returned. If the position cannot be closed before the bankruptcy price is reached (e.g., during extreme volatility), the insurance fund covers the shortfall.
+The gap between $P_{liq}$ and $P_{bankrupt}$ is where the liquidation engine operates. Positions are closed at $P_{liq}$, and any remaining margin above zero is partially returned. If the position cannot be closed before the bankruptcy price is reached (e.g., during extreme volatility), the insurance fund covers the shortfall.
 
 ---
 
@@ -112,7 +107,7 @@ When the mark price reaches your liquidation price:
 
 TrueCurrent maintains an insurance fund to cover situations where liquidated positions cannot be closed before reaching the bankruptcy price. This ensures that winning traders are always paid in full, even when counterparties are liquidated at a loss.
 
-The insurance fund grows from a portion of liquidation proceeds when positions are closed between `P_liq` and `P_bankrupt`.
+The insurance fund grows from a portion of liquidation proceeds when positions are closed between $P_{liq}$ and $P_{bankrupt}$.
 
 ---
 
@@ -124,6 +119,6 @@ The insurance fund grows from a portion of liquidation proceeds when positions a
 
 **Reduce leverage.** Partially closing a position reduces your notional exposure while keeping the same margin, effectively deleveraging.
 
-**Use lower leverage.** The relationship is direct: at 50× leverage, a 2% adverse move approaches liquidation. At 2× leverage, you'd need a 50% move. Sizing leverage to your risk tolerance is the most effective protection.
+**Use lower leverage.** The relationship is direct: at 20× leverage, a 5% adverse move approaches liquidation. At 2× leverage, you'd need a 50% move. Sizing leverage to your risk tolerance is the most effective protection.
 
 **Watch funding rates.** Persistent funding payments drain margin over time. A position that's safe today may be closer to liquidation tomorrow if funding is running against you. See [Funding rates](/trading/funding-rates).

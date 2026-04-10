@@ -49,8 +49,7 @@
                 "expanded": false,
                 "pages": [
                   "overview/how-it-works",
-                  "overview/why-truecurrent",
-                  "overview/rfq-explained"
+                  "overview/why-truecurrent"
                 ]
               },
               {
@@ -70,24 +69,13 @@
                 "pages": [
                   "trading/how-to-trade",
                   "trading/perpetual-markets",
+                  "trading/prices",
                   "trading/trigger-orders",
                   "trading/funding-rates",
                   "trading/fees",
                   "trading/margin-trading",
-                  "trading/liquidation"
-                ]
-              },
-              {
-                "group": "Takers",
-                "icon": "",
-                "expanded": false,
-                "pages": [
-                  "takers/overview",
-                  "takers/quickstart",
-                  "takers/authz-setup",
-                  "takers/taker-stream",
-                  "takers/accepting-quotes",
-                  "takers/best-practices"
+                  "trading/liquidation",
+                  "trading/slippage-and-worst-price"
                 ]
               },
               {
