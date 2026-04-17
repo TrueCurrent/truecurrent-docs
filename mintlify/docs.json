@@ -94,7 +94,18 @@
                     "icon": "",
                     "expanded": true,
                     "pages": [
-                      "market-makers/integration/index"
+                      "market-makers/integration/index",
+                      "market-makers/integration/architecture",
+                      "market-makers/integration/quick-start",
+                      "market-makers/integration/rfq-flow",
+                      "market-makers/integration/quote-signing",
+                      "market-makers/integration/example-ts",
+                      "market-makers/integration/example-py",
+                      "market-makers/integration/example-go",
+                      "market-makers/integration/contract",
+                      "market-makers/integration/markets",
+                      "market-makers/integration/testing",
+                      "market-makers/integration/troubleshooting"
                     ]
                   }
                 ]
