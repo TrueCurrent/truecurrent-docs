@@ -1,6 +1,6 @@
 ---
 title: "Signed taker intents (TP/SL)"
-description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a trade in advance, gated by a trigger (mark-price GTE/LTE). A relayer executes it when the trigger fires via AcceptSignedIntent. V1 scope is TP/SL protective flow only: zero-margin, blind-quote settlement of an existing position."
+description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a trade in advance, gated by a trigger (mark-price GTE/LTE). A relayer executes it when the trigger fires via AcceptSignedIntent. V1 scope is TP/SL protective flow only: zero-margin settlement with either blind or taker-specific quotes (contract 0.1.0-alpha.6)."
 updatedAt: "2026-04-17"
 ---
 
@@ -9,7 +9,7 @@ A **signed taker intent** is a pre-authorized, conditional instruction to the Tr
 This is how **take-profit / stop-loss** orders work on TrueCurrent: you sign the exit intent at the same time as (or any time after) opening the position, and the relayer fires it when the mark price crosses your trigger.
 
 <Warning>
-**V1 scope: protective flow only.** The contract currently restricts signed intents to **zero-margin, blind-quote** settlements. In practice that means exiting an existing position with makers who pre-posted blind quotes (nonce-based replay protection, no per-request signature). Opening new positions, adding margin, or using an `unfilled_action` fallback through signed intents is **not supported in v1** and will be rejected by the contract.
+**V1 scope: protective flow only.** The contract currently restricts signed intents to **zero-margin** settlements with **no orderbook fallback** (`unfilled_action` must be `null`). In practice this means signed intents are for exiting an existing position, not opening or adjusting margin. Both quote binding modes are supported: **blind quotes** (nonce-based, pre-posted) and **taker-specific quotes** (bound to a live `rfq_id`), gated by the optional `quote_rfq_id` field on `AcceptSignedIntent` — see [Quote binding modes](#quote-binding-modes) below.
 </Warning>
 
 ---
@@ -53,17 +53,22 @@ sequenceDiagram
 
     Note over Taker,Contract: 3. Trigger fires
 
-    Indexer->>MMs: Request blind quotes for exit size
-    MMs-->>Indexer: Signed blind quotes (nonce-based)
+    alt Blind-quote path (pre-posted liquidity)
+        Indexer->>MMs: (makers already posted blind quotes)
+        MMs-->>Indexer: pre-posted quotes w/ nonce
+    else Taker-specific path (live RFQ)
+        Indexer->>MMs: Request live quotes for exit size
+        MMs-->>Indexer: Fresh quotes bound to rfq_id
+    end
     Indexer->>Indexer: Select best quote(s)
 
     Note over Taker,Contract: 4. Settle
 
-    Indexer->>Chain: MsgExecuteContract<br/>AcceptSignedIntent(intent, sig, quotes)
+    Indexer->>Chain: MsgExecuteContract<br/>AcceptSignedIntent(intent, sig, quotes,<br/>quote_rfq_id if taker-specific)
     Chain->>Contract: Verify taker signature (ECDSA)
     Contract->>Contract: ensure_trigger_satisfied(mark_price)
     Contract->>Contract: Check epoch + lane_version<br/>(not cancelled)
-    Contract->>Contract: Settle as AcceptQuote<br/>(blind quotes only)
+    Contract->>Contract: Settle as AcceptQuote
     Contract-->>Indexer: Tx success
     Indexer-->>Taker: Stream settlement event
 ```
@@ -130,13 +135,35 @@ The contract re-evaluates the trigger at execution time. Triggers are not latche
         "signature": "Sj9a...base64...",
         "nonce": 42
       }
-    ]
+    ],
+    "quote_rfq_id": null
   }
 }
 ```
 
 - `taker_signature` — your ECDSA signature over the JSON-serialized `intent` object. Same secp256k1 + base64 encoding as maker quote signatures ([Accepting quotes](/takers/accepting-quotes)).
-- `quotes` — **must be blind quotes** (every quote has a `nonce`). Non-blind quotes are rejected by `ensure_blind_quotes_only`.
+- `quotes` — one or more maker quotes. Can be a mix of **blind** (each has a `nonce`) and **taker-specific** (bound to a live `rfq_id`, no `nonce`). The mix determines whether `quote_rfq_id` is required — see [Quote binding modes](#quote-binding-modes).
+- `quote_rfq_id` — *optional* `u64`. Required **iff** any quote in `quotes` is taker-specific. When set, it becomes the `rfq_id` used for settlement (instead of `intent.rfq_id`) and the contract adds a taker-nonce entry for replay protection. If every quote is blind, this field must be `null` — the contract errors on `quote_rfq_id` without taker-specific quotes.
+
+---
+
+## Quote binding modes
+
+Signed intents accept either flavor of quote; the two behave differently:
+
+| Mode | Identifier | Replay protection | When to use |
+|---|---|---|---|
+| **Blind** | quote carries a `nonce`, no per-taker binding | Maker-side nonce — the maker tracks consumed nonces themselves | Pre-posted liquidity. MM publishes standing "I'll fill up to X at price P" quotes; takers (or the relayer on a trigger) pick them up without the MM needing to be live at that instant. |
+| **Taker-specific** | quote has no `nonce` but is bound to a live `rfq_id` | Contract-side nonce — a `taker_info` entry is inserted at settlement, keyed on the `quote_rfq_id` you pass | Live RFQ response. The relayer fires off an RFQ when the trigger hits, collects fresh signed quotes, and submits them with `quote_rfq_id` set to the id assigned by the indexer. |
+
+The contract lets you mix both in one `quotes` array. If **any** entry is taker-specific, `quote_rfq_id` is required and applies to the whole settlement.
+
+**Rules** (enforced by `resolve_accept_quote_rfq_id`):
+
+- All-blind + no `quote_rfq_id` → OK (uses `intent.rfq_id` as the nonce bucket; no taker-nonce insert).
+- Any-taker-specific + `quote_rfq_id` set → OK (uses the provided id; inserts a taker-nonce entry).
+- Any-taker-specific + no `quote_rfq_id` → **reverts**: *"signed intent with taker-specific quotes requires quote_rfq_id"*.
+- All-blind + `quote_rfq_id` set → **reverts**: *"only supported when taker-specific quotes are provided"*.
 
 ---
 
@@ -180,17 +207,16 @@ Use when: killswitch — e.g. you suspect your signing key is compromised, or yo
 At `AcceptSignedIntent` time the contract enforces, in order:
 
 1. **Shape validation** — version must be 1, required fields non-empty, quantity > 0, margin == 0 (v1), worst_price > 0, min_total_fill_quantity > 0 and ≤ quantity, unfilled_action absent.
-2. **Blind quotes only** — every quote in `args.quotes` must carry a `nonce`.
-3. **Runtime context matches** — `intent.chain_id == env.block.chain_id`, `intent.contract_address == env.contract.address`.
-4. **Deadline not passed** — `block_time_ms <= intent.deadline_ms`, and `deadline_ms <= now + 30 days`.
-5. **Allowed relayer** — if `intent.allowed_relayer` is set, `info.sender` must match.
-6. **Taker signature valid** — ECDSA over `to_json_binary(intent)` recovers to the intent's `taker`.
-7. **Epoch current** — `intent.epoch == load_taker_epoch(taker)`.
-8. **Lane version current** — `intent.lane_version == load_taker_lane_version(taker, market_id, subaccount_nonce)`.
-9. **Trigger satisfied** — mark price meets the trigger condition right now.
-10. **Settlement** — quotes are validated and filled using the same path as `AcceptQuote`.
-11. **Minimum fill** — aggregate filled quantity must be ≥ `intent.min_total_fill_quantity`, otherwise the whole tx reverts.
-12. **Lane advance** — on success, `lane_version` is incremented, killing any other intents for this lane.
+2. **Runtime context matches** — `intent.chain_id == env.block.chain_id`, `intent.contract_address == env.contract.address`, deadline not passed, deadline within 30-day max TTL.
+3. **Quote binding resolved** — `resolve_accept_quote_rfq_id` inspects the quotes for taker-specific entries and either accepts the provided `quote_rfq_id` or reverts (see [Quote binding modes](#quote-binding-modes)).
+4. **Allowed relayer** — if `intent.allowed_relayer` is set, `info.sender` must match.
+5. **Taker signature valid** — ECDSA over `to_json_binary(intent)` recovers to the intent's `taker`.
+6. **Epoch current** — `intent.epoch == load_taker_epoch(taker)`.
+7. **Lane version current** — `intent.lane_version == load_taker_lane_version(taker, market_id, subaccount_nonce)`.
+8. **Trigger satisfied** — mark price meets the trigger condition right now.
+9. **Settlement** — quotes are validated and filled using the same path as `AcceptQuote`. If taker-specific quotes are present, a taker-nonce is inserted under the resolved `quote_rfq_id`.
+10. **Minimum fill** — aggregate filled quantity must be ≥ `intent.min_total_fill_quantity`, otherwise the whole tx reverts.
+11. **Lane advance** — on success, `lane_version` is incremented, killing any other intents for this lane.
 
 Any check failure reverts the transaction.
 
@@ -223,8 +249,9 @@ Before signing, query the contract for your current `epoch` and `lane_version` �
 
 - **Entry flow.** Intents can't open new positions; `margin` must be zero.
 - **Orderbook fallback.** `unfilled_action` must be null. No limit/market rest behind the quote fill.
-- **Non-blind quotes.** Every quote consumed by an intent must have a `nonce`. This forces makers to use the blind-quote path so replay protection lives on the maker side and no per-request maker signature is required at trigger time.
 - **Relayer freedom.** If you set `allowed_relayer`, only that relayer can submit. Today this will typically point at the indexer's relayer address to stop random parties from front-running your trigger.
+
+**Note:** v1 *did* previously require blind-quote-only settlement. That restriction was lifted in [`InjectiveLabs/rfq#27`](https://github.com/InjectiveLabs/rfq/pull/27) (contract `0.1.0-alpha.6`) — taker-specific quotes are now supported alongside blind quotes, gated by the `quote_rfq_id` field documented above.
 
 The design leaves room to expand — higher version numbers will carry richer semantics — but any integration you build today should assume v1 constraints.
 

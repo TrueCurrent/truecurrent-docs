@@ -24,7 +24,7 @@ The contract has two settlement entrypoints:
 | Entrypoint | Who calls it | When |
 |---|---|---|
 | `AcceptQuote` | Taker directly | Synchronous: taker is online and accepting right now. Full quote flow (blind or per-request). |
-| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs, relayer fires when a mark-price trigger is satisfied. **V1: protective flow only** (zero-margin, blind quotes only). See [Signed taker intents](/takers/signed-intents). |
+| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs, relayer fires when a mark-price trigger is satisfied. **V1: protective flow only** (zero-margin, no orderbook fallback; accepts both blind and taker-specific quotes since contract `0.1.0-alpha.6` / [#27](https://github.com/InjectiveLabs/rfq/pull/27)). See [Signed taker intents](/takers/signed-intents). |
 
 The two entrypoints share the same settlement path once validated — `AcceptSignedIntent` converts the signed intent into `AcceptQuoteArgs` internally and runs `AcceptQuote`'s fill loop.
 
