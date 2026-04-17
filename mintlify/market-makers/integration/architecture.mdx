@@ -1,0 +1,39 @@
+---
+title: "System Architecture"
+description: "Component overview, architecture diagram, testnet Endpoints"
+updatedAt: "2026-04-17"
+---
+
+## Component Overview
+
+The Injective RFQ system enables retail traders to request competitive quotes from professional market makers,
+with trades settled atomically on the Injective blockchain.
+The system comprises four core components:
+
+Component Technology Purpose
+RFQ Contract Rust / CosmWasm On-chain quote verification, signature validation, trade settlement
+RFQ Indexer Go / gRPC / MongoDB WebSocket streaming, request routing, quote aggregation, validation
+Market Maker TS / Python / Go Connect via WebSocket, receive RFQ requests, sign & send quotes
+Retail Client TS / Python / Go Submit RFQ requests, receive quotes, accept best quote on-chain
+
+## Architecture Diagram
+
+TODO image
+
+> System architecture showing WebSocket communication between MMs, retail, and the indexer,
+> with on-chain settlement via the RFQ smart contract on Injective.
+
+## Testnet Endpoints
+
+TODO image
+
+Fig 2. All endpoints required for testnet integration.
+
+<Info>
+**Contract Address**
+
+`inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q`
+
+This is the deployed RFQ contract on Injective testnet.
+Both market makers and retail users must grant `authz` permissions to this address.
+</Info>
