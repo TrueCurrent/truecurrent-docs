@@ -18,6 +18,8 @@ This is how settlement works without requiring you to manually sign every trade:
 
 ## Required grants
 
+{/* TODO: CK – confirm the canonical maker authz grant list against rfq-contract. The rfq-contract admin.md lists THREE grants for makers (MsgSend, MsgWithdraw, MsgPrivilegedExecuteContract) — this page is currently missing MsgWithdraw. Resolve which grants are actually required (including whether MsgWithdraw is needed for custom-subaccount makers) before updating this table. */}
+
 As a market maker, you need to grant the following message types to the TrueCurrent contract:
 
 | Message type | Purpose |

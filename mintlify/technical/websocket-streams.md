@@ -15,7 +15,7 @@ The TakerStream is used by traders (or applications acting on their behalf) to s
 ### Connection
 
 ```
-wss://[indexer-endpoint]/stream/rfq/taker
+wss://[indexer-endpoint]/rfq.v1.RfqService/StreamQuote
 ```
 
 Authentication: Connect with the taker's Injective address as an identifier. The stream is scoped so that quotes are only returned to the address that submitted the corresponding request.
@@ -85,7 +85,7 @@ The MakerStream is used exclusively by whitelisted market makers to receive trad
 ### Connection
 
 ```
-wss://[indexer-endpoint]/stream/rfq/maker
+wss://[indexer-endpoint]/rfq.v1.RfqService/StreamRequest
 ```
 
 Only whitelisted maker addresses can successfully subscribe to the MakerStream. Unauthorized connections will be rejected.
@@ -146,8 +146,12 @@ await mm_ws.send_quote(quote_data)
 
 | Environment | Indexer WebSocket |
 |-------------|-------------------|
-| Testnet | *(TBD)* |
-| Mainnet | *(TBD)* |
+| Testnet | `wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService` |
+| Mainnet | *(TBD)* {/* TODO: CK to add mainnet indexer info when ready */} |
+
+Clients append `/StreamQuote` (TakerStream) or `/StreamRequest` (MakerStream) to the base URL. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing. "TakerStream" and "MakerStream" are conceptual names; the underlying gRPC methods are `StreamQuote` and `StreamRequest` respectively.
+
+See [Takers: TakerStream](/takers/taker-stream) and [Market makers: MakerStream](/market-makers/maker-stream) for the full request and quote schemas on each stream.
 
 ---
 

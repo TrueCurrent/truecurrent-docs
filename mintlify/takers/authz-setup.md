@@ -26,6 +26,8 @@ Rather than making you sign each of these messages individually at settlement ti
 
 ## Required grants
 
+{/* TODO: CK – confirm the canonical taker authz grant list against the contract source (rfq-contract/src/handler/). The rfq-contract's own admin.md lists three grants for takers (MsgSend, MsgWithdraw, MsgBatchUpdateOrders) while this page lists four. Specifically: (a) is MsgWithdraw actually required when the contract needs to pull from the exchange subaccount?; (b) is MsgPrivilegedExecuteContract granted by the taker or only by the maker, given the synthetic trade opens the maker's position from the contract's authz context?; (c) is MsgCreateDerivativeMarketOrder needed separately or does MsgBatchUpdateOrders cover both limit and market fallback (see handler/orderbook.rs:27 comment)? Resolve before shipping to mainnet. */}
+
 A programmatic taker must grant the following four message types to the TrueCurrent contract address:
 
 | Message type | Purpose |
@@ -74,7 +76,7 @@ from pyinjective.composer_v2 import Composer
 from pyinjective.core.broadcaster import MsgBroadcasterWithPk
 
 composer = Composer(network=network.string())
-CONTRACT_ADDRESS = "inj1vtswdey9c70n475q7q75wgmkfdw8xw4rcfeqa4"
+CONTRACT_ADDRESS = "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q"
 
 MSG_TYPES = [
     "/cosmos.bank.v1beta1.MsgSend",
@@ -104,7 +106,7 @@ import {
 } from "@injectivelabs/sdk-ts";
 import { Network } from "@injectivelabs/networks";
 
-const CONTRACT_ADDRESS = "inj1vtswdey9c70n475q7q75wgmkfdw8xw4rcfeqa4";
+const CONTRACT_ADDRESS = "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q";
 
 const MSG_TYPES = [
   "/cosmos.bank.v1beta1.MsgSend",
@@ -170,7 +172,7 @@ for g in grants:
 ```
 GET https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants
     ?granter=inj1taker...
-    &grantee=inj1vtswdey9c70n475q7q75wgmkfdw8xw4rcfeqa4
+    &grantee=inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q
 ```
 
 **CLI:**
@@ -178,7 +180,7 @@ GET https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants
 ```bash
 injectived query authz grants \
   inj1taker... \
-  inj1vtswdey9c70n475q7q75wgmkfdw8xw4rcfeqa4 \
+  inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q \
   --node https://testnet.sentry.tm.injective.network:443
 ```
 

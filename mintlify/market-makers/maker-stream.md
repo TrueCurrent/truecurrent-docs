@@ -14,8 +14,10 @@ Connect to the MakerStream WebSocket endpoint:
 
 | Environment | Endpoint |
 |-------------|----------|
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
+| Testnet | `wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService/StreamRequest` |
 | Mainnet | *(TBD)* {/* TODO: add mainnet MakerStream URL when ready */} |
+
+The MakerStream is the `StreamRequest` method on the indexer's `rfq.v1.RfqService` gRPC service — takers call `StreamQuote` (see [TakerStream](/takers/taker-stream)); you call `StreamRequest` to subscribe to incoming RFQ requests.
 
 The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing – see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
 

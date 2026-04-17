@@ -251,6 +251,28 @@ const { txHash } = await broadcaster.broadcast({ msgs: msg });
 
 The `quotes` field is an **array**. You can submit multiple quotes from different makers in a single `AcceptQuote` call, and the contract will consume them sequentially until your `quantity` is filled. This is the main mechanism for getting size done when no single maker can cover your whole request.
 
+```mermaid
+flowchart LR
+    Taker["Taker wants<br/>100 @ worst 5.00 (long)"]
+    Sort["Sort quotes ascending<br/>(cheapest first)"]
+    Array["quotes array<br/>[Alice 40@4.90,<br/>Bob 40@4.92,<br/>Carol 50@4.95]"]
+    Walk["Contract walks in order"]
+
+    F1["Fill 40 from Alice @ 4.90<br/>remaining: 60"]
+    F2["Fill 40 from Bob @ 4.92<br/>remaining: 20"]
+    F3["Fill 20 of Carol's 50 @ 4.95<br/>remaining: 0"]
+    Position["Single taker position<br/>100 @ blended 4.924"]
+
+    Taker --> Sort --> Array --> Walk --> F1 --> F2 --> F3 --> Position
+
+    classDef lane fill:#eef4ff,stroke:#4a6db8,color:#111
+    classDef fill fill:#eefbf0,stroke:#3c9c60,color:#111
+    classDef result fill:#fff8e1,stroke:#c88a40,color:#111
+    class Taker,Sort,Array,Walk lane
+    class F1,F2,F3 fill
+    class Position result
+```
+
 **Scenario:** you want to go long 100 INJ. Three makers respond:
 
 | Maker | Quantity | Price |
@@ -395,4 +417,5 @@ Each entry includes the `rfq_id`, `tx_hash`, fill quantities, per-quote results,
 
 - [Best practices](/takers/best-practices) – slippage strategy, expiry races, idempotency
 - [TakerStream](/takers/taker-stream) – collecting quotes to feed into `AcceptQuote`
+- [Signed taker intents](/takers/signed-intents) – the conditional/TP-SL path (pre-signed trigger-gated intents executed by a relayer)
 - [Authorization setup](/takers/authz-setup) – the grants you need before any of this works

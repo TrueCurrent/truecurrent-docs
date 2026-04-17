@@ -19,6 +19,34 @@ The signature is verified onchain during the `AcceptQuote` transaction. If the s
 
 ---
 
+## Flow at a glance
+
+```mermaid
+sequenceDiagram
+    actor MM as Market Maker
+    participant Indexer
+    actor Taker
+    participant Contract as TrueCurrent Contract
+
+    MM->>MM: Build canonical quote payload<br/>(fields in fixed order)
+    MM->>MM: secp256k1 ECDSA sign<br/>with MM private key
+    Note over MM: signature = hex (0x-prefixed)
+
+    MM->>Indexer: Send quote + signature
+    Indexer->>Taker: Deliver quote (hex sig)
+
+    Note over Taker: Convert hex → base64<br/>before building AcceptQuote
+
+    Taker->>Contract: AcceptQuote (base64 sig)
+    Contract->>Contract: Reconstruct canonical payload<br/>from tx params
+    Contract->>Contract: Recover signer address<br/>from ECDSA signature
+    Contract->>Contract: Compare to quote.maker<br/>(✓ or revert)
+```
+
+The contract **does not receive** your pre-built payload — it reconstructs the canonical payload from the transaction parameters. Any mismatch between what you signed and what the contract rebuilds causes a verification failure, even if the signature itself is valid for your original bytes.
+
+---
+
 ## What is signed
 
 The signature covers the full set of quote parameters, in a specific order and encoding:
