@@ -10,27 +10,35 @@ The Injective RFQ system enables retail traders to request competitive quotes fr
 with trades settled atomically on the Injective blockchain.
 The system comprises four core components:
 
-Component Technology Purpose
-RFQ Contract Rust / CosmWasm On-chain quote verification, signature validation, trade settlement
-RFQ Indexer Go / gRPC / MongoDB WebSocket streaming, request routing, quote aggregation, validation
-Market Maker TS / Python / Go Connect via WebSocket, receive RFQ requests, sign & send quotes
-Retail Client TS / Python / Go Submit RFQ requests, receive quotes, accept best quote on-chain
+| Component | Technology | Purpose |
+| --- | --- | --- |
+| RFQ Contract  | Rust / CosmWasm     | On-chain quote verification, signature validation, trade settlement |
+| RFQ Indexer   | Go / gRPC / MongoDB | WebSocket streaming, request routing, quote aggregation, validation |
+| Market Maker  | TS / Python / Go    | Connect via WebSocket, receive RFQ requests, sign & send quotes.    |
+| Retail Client | TS / Python / Go    | Submit RFQ requests, receive quotes, accept best quote on-chain.    |
 
 ## Architecture Diagram
 
-TODO image
+![FRQ system architecture diagram](/img/rfq-system-architecture-diagram.png)
 
 > System architecture showing WebSocket communication between MMs, retail, and the indexer,
 > with on-chain settlement via the RFQ smart contract on Injective.
 
 ## Testnet Endpoints
 
-TODO image
+{/* TODO verify/ double check all endpoints prior to launch */}
 
-Fig 2. All endpoints required for testnet integration.
+- **MakerStream WSS**: `wss://testnet.rfq.ws.injective.network/...MakerStream`
+- **TakerStream WSS**: `wss://testnet.rfq.ws.injective.network/...TakerStream`
+- **Indexer HTTP**: `https://testnet.rfq.injective.network`
+- **Chain gRPC**: `testnet-grpc.injective.dev:443`
+- **Chain LCD**: `https://testnet.sentry.lcd.injective.network`
+- **Faucet**: `https://testnet-faucet.injective.dev`
 
 <Info>
 **Contract Address**
+
+{/* TODO verify/ double check no change to address prior to launch. also check if different address between testnet and mainnet */}
 
 `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q`
 
