@@ -45,7 +45,7 @@ For WebSocket connections, the first-message auth form is preferred over the que
 
 **Endpoints may move to a gateway-fronted hostname.** Today's testnet endpoints (`testnet.rfq.ws.injective.network`, `testnet.rfq.injective.network`, `testnet.rfq.grpc.injective.network`) may either be cut over to point at the gateway transparently – in which case the URLs stay the same and you only need to start sending an API key – or replaced with new gateway-specific DNS names. Either way, the transport (gRPC-web framed over WebSocket) and message shapes don't change; only the auth layer in front of them does.
 
-{/* TODO: CK – once the gateway is deployed, document the canonical public-facing hostnames here (one for each transport: WebSocket, HTTP/REST, gRPC, gRPC-Web). The README's `:7080`/`:7090`/`:7091` ports are for local docker-compose deployments only and don't apply to public endpoints. */}
+{/* TODO: once the gateway is deployed, document the canonical public-facing hostnames here (one for each transport: WebSocket, HTTP/REST, gRPC, gRPC-Web). The README's `:7080`/`:7090`/`:7091` ports are for local docker-compose deployments only and don't apply to public endpoints. */}
 
 **Settlement is unaffected.** `AcceptQuote` goes directly to the smart contract on Injective, not through the gateway. The gateway controls quote *discovery* (the indexer path), not onchain settlement. Your authz grants and contract call sites don't change.
 
@@ -61,13 +61,13 @@ The gateway defines three tiers, of which only one is relevant to programmatic t
 
 You will need to request an `api`-tier key from the TrueCurrent team once the gateway is live. The default rate limit for a freshly-issued key (10 req/s, burst 20) is far below HFT needs – make sure to ask for a higher per-key rate when you request it.
 
-{/* TODO: CK – once the gateway is deployed, document the API key request process here: who to contact, what info to provide (use case, expected throughput, source IP), expected turnaround. Remove the "today" section above and rewrite the rest as the canonical authentication section. */}
+{/* TODO: once the gateway is deployed, document the API key request process here: who to contact, what info to provide (use case, expected throughput, source IP), expected turnaround. Remove the "today" section above and rewrite the rest as the canonical authentication section. */}
 
 ---
 
 ## Submitting a request
 
-An RFQ request declares what you want to trade. The indexer broadcasts it to every active market maker, who each have a few hundred milliseconds to respond. {/* TODO: CK to add precise MM response deadline once benchmarked */}
+An RFQ request declares what you want to trade. The indexer broadcasts it to every active market maker, who each have a few hundred milliseconds to respond. {/* TODO: to add precise MM response deadline once benchmarked */}
 
 **Request fields:**
 
@@ -175,7 +175,7 @@ Because quotes arrive asynchronously, the standard pattern is:
 3. After a short fixed window (a few hundred milliseconds is typical – quotes expire quickly, so you can't wait long), stop collecting and pick the best quote(s)
 4. Proceed to settlement immediately
 
-{/* TODO: CK to add precise collection window guidance once benchmarked */}
+{/* TODO: to add precise collection window guidance once benchmarked */}
 
 **Python:**
 
@@ -221,10 +221,10 @@ const best = quotes
 The hard ceiling is the quote's `expiry`. By the time you've accounted for a few hundred milliseconds of MM response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
 
 - **A few hundred milliseconds** is a reasonable default – long enough to receive quotes from warm makers, short enough to leave settlement headroom.
-- **Too short** (<100ms): you'll miss slower makers and reduce competition.
-- **Too long** (>1s): quote expiry becomes a race you will lose.
+- **Too short** (&lt;100ms): you'll miss slower makers and reduce competition.
+- **Too long** (&gt;1s): quote expiry becomes a race you will lose.
 
-{/* TODO: CK to add precise collection window guidance once benchmarked */}
+{/* TODO: to add precise collection window guidance once benchmarked */}
 
 You can also use a **first-fit pattern**: accept the first quote that satisfies your conditions (price inside `worst_price`, quantity ≥ your needs) and skip the window. This is lowest latency but gives worse execution.
 

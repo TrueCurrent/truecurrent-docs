@@ -95,4 +95,4 @@ What you are **not** trusting:
 
 > **API key requirements (current vs future):** today, takers connect to the testnet indexer with no authentication and no rate limit – the reference scripts work out of the box. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, every taker request will require an API key, and the default per-key rate limit (10 req/s, burst 20) is too low for HFT. Programmatic high-frequency takers will need an `api`-tier key provisioned with a custom rate limit. See [Authentication](/takers/taker-stream#authentication) and [Rate limiting](/takers/best-practices#rate-limiting) for what changes when that happens.
 >
-> {/* TODO: CK – remove the "today/future" framing once the gateway is live in front of the public indexer. Document the actual key issuance process (who to contact, what tier to ask for). */}
+> {/* TODO: remove the "today/future" framing once the gateway is live in front of the public indexer. Document the actual key issuance process (who to contact, what tier to ask for). */}

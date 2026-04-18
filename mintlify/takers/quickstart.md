@@ -5,7 +5,7 @@ updatedAt: "2026-04-08"
 
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
 
-{/* TODO: CK – replace `rfq-testing` with the canonical prod repo name before mainnet launch. The word "testing" in the repo name is a testnet-era artifact; we need a permanent home for the taker SDK / examples under a name that reads right in production docs. Once the new repo exists, update every link and reference on this page and across the taker section. */}
+{/* TODO: replace `rfq-testing` with the canonical prod repo name before mainnet launch. The word "testing" in the repo name is a testnet-era artifact; we need a permanent home for the taker SDK / examples under a name that reads right in production docs. Once the new repo exists, update every link and reference on this page and across the taker section. */}
 
 Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing):
 
@@ -20,7 +20,7 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 - A small amount of **INJ** for gas on `injective-888` (testnet) – [testnet faucet](https://testnet-faucet.injective.dev)
 - **USDC** in the wallet's exchange subaccount to cover your margin
 - Network connectivity to `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream`
-{/* TODO : CK to add mainnet WS info */}
+{/* TODO : to add mainnet WS info */}
 - Python 3.11+ or Node.js 18+
 
 ---
@@ -66,11 +66,11 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | Chain LCD | `https://testnet.sentry.lcd.injective.network` |
 | RFQ contract | `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q` |
 | INJ/USDC PERP | `0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6` |
-{/* TODO : CK to add mainnet indexer info */}
+{/* TODO: to add mainnet indexer info */}
 
 > **API key – currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key – the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/takers/best-practices#rate-limiting) for the breakdown.
 >
-> {/* TODO: CK – once the gateway is live, add `RFQ_API_KEY` to this `.env` block, document the API key request process, and update all the example code to pass the key via `?api_key=` (WebSocket) and `X-API-Key` header (HTTP/REST). */}
+> {/* TODO: once the gateway is live, add `RFQ_API_KEY` to this `.env` block, document the API key request process, and update all the example code to pass the key via `?api_key=` (WebSocket) and `X-API-Key` header (HTTP/REST). */}
 
 ---
 
@@ -215,7 +215,7 @@ const best = quotes.sort(
 )[0];
 ```
 
-A sub-second collection window is typical – quotes are only valid for a short window, so waiting longer just eats into your settlement budget. See [Best practices](/takers/best-practices) for tuning. {/* TODO: CK to add precise collection window guidance once benchmarked */}
+A sub-second collection window is typical – quotes are only valid for a short window, so waiting longer just eats into your settlement budget. See [Best practices](/takers/best-practices) for tuning. {/* TODO: to add precise collection window guidance once benchmarked */}
 
 ---
 

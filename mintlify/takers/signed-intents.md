@@ -233,7 +233,7 @@ You sign the JSON-serialized `SignedTakerIntent` with your taker private key, se
 3. Hash and sign with your taker private key. Encode the 64-byte signature as base64.
 4. Ship the intent + signature to the relayer (today: the TrueCurrent indexer's HTTP endpoint).
 
-{/* TODO: CK – add a Python + TypeScript signing snippet once the rfq-testing helper lands. Until then, the canonical reference is verify_signature() in rfq-contract/contracts/rfq/src/handler/signature.rs and the tests in test_signed_intent.rs. */}
+{/* TODO: add a Python + TypeScript signing snippet once the rfq-testing helper lands. Until then, the canonical reference is verify_signature() in rfq-contract/contracts/rfq/src/handler/signature.rs and the tests in test_signed_intent.rs. */}
 
 ---
 
@@ -241,7 +241,7 @@ You sign the JSON-serialized `SignedTakerIntent` with your taker private key, se
 
 Before signing, query the contract for your current `epoch` and `lane_version` — otherwise you'll sign against stale values and the intent will reject at execution.
 
-{/* TODO: CK – document the exact query message and response shape once the query entrypoints are finalized (see msg.rs TakerIntentStateResponse). */}
+{/* TODO: document the exact query message and response shape once the query entrypoints are finalized (see msg.rs TakerIntentStateResponse). */}
 
 ---
 

@@ -147,7 +147,7 @@ await mm_ws.send_quote(quote_data)
 | Environment | Indexer WebSocket |
 |-------------|-------------------|
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| Mainnet | *(TBD)* {/* TODO: CK to add mainnet indexer info when ready */} |
+| Mainnet | *(TBD)* {/* TODO: to add mainnet indexer info when ready */} |
 
 Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
 

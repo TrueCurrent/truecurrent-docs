@@ -26,7 +26,7 @@ Rather than making you sign each of these messages individually at settlement ti
 
 ## Required grants
 
-{/* TODO: CK – confirm the canonical taker authz grant list against the contract source (rfq-contract/src/handler/). The rfq-contract's own admin.md lists three grants for takers (MsgSend, MsgWithdraw, MsgBatchUpdateOrders) while this page lists four. Specifically: (a) is MsgWithdraw actually required when the contract needs to pull from the exchange subaccount?; (b) is MsgPrivilegedExecuteContract granted by the taker or only by the maker, given the synthetic trade opens the maker's position from the contract's authz context?; (c) is MsgCreateDerivativeMarketOrder needed separately or does MsgBatchUpdateOrders cover both limit and market fallback (see handler/orderbook.rs:27 comment)? Resolve before shipping to mainnet. */}
+{/* TODO: confirm the canonical taker authz grant list against the contract source (rfq-contract/src/handler/). The rfq-contract's own admin.md lists three grants for takers (MsgSend, MsgWithdraw, MsgBatchUpdateOrders) while this page lists four. Specifically: (a) is MsgWithdraw actually required when the contract needs to pull from the exchange subaccount?; (b) is MsgPrivilegedExecuteContract granted by the taker or only by the maker, given the synthetic trade opens the maker's position from the contract's authz context?; (c) is MsgCreateDerivativeMarketOrder needed separately or does MsgBatchUpdateOrders cover both limit and market fallback (see handler/orderbook.rs:27 comment)? Resolve before shipping to mainnet. */}
 
 A programmatic taker must grant the following four message types to the TrueCurrent contract address:
 

@@ -54,7 +54,7 @@ This is secure because:
 
 ---
 
-{/* TODO: CK – authz grant lists on this page need reconciliation against rfq-contract source. See the TODO on /takers/authz-setup for the specific questions (MsgWithdraw for takers, MsgPrivilegedExecuteContract scope, MsgBatchUpdateOrders vs MsgCreateDerivativeMarketOrder). */}
+{/* TODO: authz grant lists on this page need reconciliation against rfq-contract source. See the TODO on /takers/authz-setup for the specific questions (MsgWithdraw for takers, MsgPrivilegedExecuteContract scope, MsgBatchUpdateOrders vs MsgCreateDerivativeMarketOrder). */}
 
 ## Required grants for traders
 
