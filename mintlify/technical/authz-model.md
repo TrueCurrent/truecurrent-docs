@@ -14,16 +14,16 @@ When you accept a quote on TrueCurrent, the onchain settlement involves the True
 
 ```mermaid
 flowchart LR
-    subgraph Granters["Granters (one-time setup)"]
+    subgraph Granters ["Granters (one-time setup)"]
         Taker["Taker wallet"]
         Maker["Market Maker wallet"]
     end
 
-    subgraph Grantee["Grantee"]
+    subgraph Grantee ["Grantee"]
         Contract["TrueCurrent Contract"]
     end
 
-    subgraph Chain["Injective Chain modules"]
+    subgraph Chain ["Injective Chain modules"]
         Exchange["Exchange Module<br/>open positions, orderbook"]
         Bank["Bank Module<br/>move funds"]
     end
@@ -31,16 +31,17 @@ flowchart LR
     Taker -.->|"authz grants<br/>(specific msg types only)"| Contract
     Maker -.->|"authz grants<br/>(specific msg types only)"| Contract
 
-    Contract -->|MsgPrivilegedExecuteContract| Exchange
-    Contract -->|MsgBatchUpdateOrders<br/>(unfilled fallback)| Exchange
-    Contract -->|MsgSend<br/>(margin moves)| Bank
+    Contract -->|"MsgPrivilegedExecuteContract"| Exchange
+    Contract -->|"MsgBatchUpdateOrders<br/>(unfilled fallback)"| Exchange
+    Contract -->|"MsgSend<br/>(margin moves)"| Bank
 
     classDef wallet fill:#fff4e8,stroke:#c88a40,color:#111
     classDef contract fill:#eef4ff,stroke:#4a6db8,color:#111
     classDef module fill:#eefbf0,stroke:#3c9c60,color:#111
     class Taker,Maker wallet
     class Contract contract
-    class Exchange,Bank module
+    class Exchange,Bank Module
+
 ```
 
 The dotted lines are one-time grants. The solid lines are what the contract can do *because of* those grants — scoped to the specific message types you authorized.
