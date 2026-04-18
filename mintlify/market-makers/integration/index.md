@@ -4,31 +4,15 @@ description: "The complete guide for market makers to integrate with the TrueCur
 updatedAt: "2026-04-17"
 ---
 
-1. [System Architecture](/market-makers/integration/architecture)
-    - Component Overview
-    - Architecture Diagram
-    - Testnet Endpoints
-2. [Quick Start](/market-makers/integration/quick-start)
-    - Prerequisites
-    - Environment Setup
-    - One-Time Registration
-    - Run the MM Bot
-3. [The RFQ Flow](/market-makers/integration/rfq-flow)
-    - End-to-End Sequence
-    - WebSocket Protocol
-    - Message Formats
-4. [Quote Signing](/market-makers/integration/quote-signing)
-    - SignQuote Payload
-    - Signing Process
-    - Critical Rules
-5. Full Code Examples
-    - [TypeScript](/market-makers/integration/example-ts)
-    - [Python](/market-makers/integration/example-py)
-    - [Go](/market-makers/integration/example-go)
-6. [Contract Behavior](/market-makers/integration/contract)
-    - AcceptQuote Message
-    - Signature Verification
-    - Partial Fills and Orderbook
-7. [Supported Markets](/market-makers/integration/markets)
-8. [Testing & Validation](/market-makers/integration/testing)
-9. [Troubleshooting](/market-makers/integration/troubleshooting)
+1. [Architecture overview](/market-makers/integration/architecture)
+1. [Quick start checklist](/market-makers/integration/quick-start)
+1. [One-time setup](/market-makers/integration/setup)
+1. [Connecting to the RFQ stream](/market-makers/integration/connecting)
+1. [Receiving RFQ requests](/market-makers/integration/rfq-requests)
+1. [Building &amp; signing quotes](/market-makers/integration/rfq-quotes-sign)
+1. [Sending quotes](/market-makers/integration/rfq-quotes-send)
+1. [Blind quotes (for TP/SL support)](/market-makers/integration/rfq-quotes-blind)
+1. [Protocol reference](/market-makers/integration/protocol-reference)
+1. [Reference implementations](/market-makers/integration/reference-implementations)
+1. [Testnet configuration](/market-makers/integration/testnet-configuration)
+1. [FAQ &amp; troubleshooting](/market-makers/integration/faq)
