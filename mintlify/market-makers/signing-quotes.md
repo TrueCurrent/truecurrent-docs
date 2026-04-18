@@ -19,52 +19,92 @@ The signature is verified onchain during the `AcceptQuote` transaction. If the s
 
 ---
 
+## Flow at a glance
+
+```mermaid
+sequenceDiagram
+    actor MM as Market Maker
+    participant Indexer
+    actor Taker
+    participant Contract as TrueCurrent Contract
+
+    MM->>MM: Build canonical quote payload<br/>(fields in fixed order)
+    MM->>MM: secp256k1 ECDSA sign<br/>with MM private key
+    Note over MM: signature = hex (0x-prefixed)
+
+    MM->>Indexer: Send quote + signature
+    Indexer->>Taker: Deliver quote (hex sig)
+
+    Note over Taker: Convert hex → base64<br/>before building AcceptQuote
+
+    Taker->>Contract: AcceptQuote (base64 sig)
+    Contract->>Contract: Reconstruct canonical payload<br/>from tx params
+    Contract->>Contract: Recover signer address<br/>from ECDSA signature
+    Contract->>Contract: Compare to quote.maker<br/>(✓ or revert)
+```
+
+The contract **does not receive** your pre-built payload — it reconstructs the canonical payload from the transaction parameters. Any mismatch between what you signed and what the contract rebuilds causes a verification failure, even if the signature itself is valid for your original bytes.
+
+---
+
 ## What is signed
 
-The signature covers the full set of quote parameters, in a specific order and encoding:
+The signature covers the canonical JSON serialization of 14 fields (+ one optional) with abbreviated keys, in a fixed order. The contract rebuilds this exact shape from the settlement tx and verifies.
 
-- `rfq_id` – the unique request identifier
-- `market_id` – the Injective market ID
-- `direction` – taker's direction (`long` or `short`)
-- `taker` – taker's Injective address
-- `taker_margin` – taker's margin amount
-- `taker_quantity` – taker's quantity
-- `maker` – your Injective address
-- `maker_margin` – your margin commitment
-- `maker_quantity` – quantity you're filling
-- `price` – your quoted price
-- `expiry` – quote expiry timestamp (Unix ms)
-- `chain_id` – Injective chain ID (prevents cross-chain replay)
-- `contract_address` – TrueCurrent contract address (prevents cross-contract replay)
+| # | Key | Field | Type | Notes |
+|---|---|---|---|---|
+| 1 | `c` | chain_id | string | Prevents cross-chain replay. |
+| 2 | `ca` | contract_address | string | Prevents cross-contract replay. |
+| 3 | `mi` | market_id | string | |
+| 4 | `id` | rfq_id | **number (u64)** | JSON number, not string. |
+| 5 | `t` | taker | string | Taker's `inj1...` address. |
+| 6 | `td` | taker_direction | string | Lowercase `"long"` or `"short"`. |
+| 7 | `tm` | taker_margin | string | Normalized decimal. |
+| 8 | `tq` | taker_quantity | string | Normalized decimal. |
+| 9 | `m` | maker | string | Your `inj1...`. |
+| 10 | `ms` | maker_subaccount_nonce | **number (u32)** | Subaccount index. **Required** — use `0` if you don't use subaccounts. |
+| 11 | `mq` | maker_quantity | string | Normalized decimal. |
+| 12 | `mm` | maker_margin | string | Normalized decimal. |
+| 13 | `p` | price | string | Pre-quantized to market tick size. |
+| 14 | `e` | expiry | **object** | `{"ts": <unix_ms>}` or `{"h": <block_height>}` — not a raw integer. |
+| 15 | `mfq` | min_fill_quantity | string \| omitted | Optional V2 field. Append only when declaring a minimum partial fill. |
 
-**Correct field ordering and encoding is critical.** The smart contract reconstructs the signed message from the settlement transaction parameters and verifies it against your signature. Any mismatch – including wrong field order, incorrect number encoding, or wrong encoding format – will cause a signature verification failure and rejected settlement.
+Field order is enforced by the contract's `SignQuote` struct. **Any mismatch** — wrong order, missing field, raw-int `e`, stringified `id`, missing `ms`, unnormalized decimal — causes a signature verification failure at settlement.
+
+**Decimal normalization:** strip trailing zeros after the decimal point. `"15.500000"` → `"15.5"`; `"500"` stays `"500"`; never scientific notation. Both `rfq-testing` and `rfq-qa-python-tests` implement this as `_normalize_decimal_str`.
+
+**Serialize with no spaces** (`separators=(",", ":")` in Python, default `JSON.stringify` in TS/JS). Never sort keys.
 
 ---
 
 ## Signing in Python
 
-Using the `rfq_test` library:
+Using the `rfq_test` library (canonical reference — matches the contract byte-for-byte):
 
 ```python
 from rfq_test.crypto.signing import sign_quote
 
 signature = sign_quote(
-    private_key=mm_wallet.private_key,   # raw private key bytes or hex string
-    rfq_id=str(rfq_id),                  # stringify the integer rfq_id
+    private_key=mm_wallet.private_key,       # hex, 0x-prefixed ok
+    rfq_id=str(rfq_id),
     market_id=market_id,
-    direction="long",                     # taker's direction
+    direction="long",                         # taker's direction
     taker=taker_wallet.inj_address,
-    taker_margin="200",                   # string representation of USDT amount
-    taker_quantity="100",                 # string representation of contracts
+    taker_margin="200",                       # decimal string, USDC amount
+    taker_quantity="100",
     maker=mm_wallet.inj_address,
     maker_margin="200",
     maker_quantity="100",
-    price="4.4550",                       # string with 4 decimal places
-    expiry=quote_expiry,                  # Unix millisecond timestamp as int
-    chain_id=chain_id,                    # e.g., "injective-1" for mainnet
-    contract_address=contract_address,   # TrueCurrent contract addr
+    price="4.455",                            # pre-quantized to tick size
+    expiry=quote_expiry,                      # Unix ms; helper wraps as {"ts": ...}
+    chain_id=chain_id,                        # e.g. "injective-1" for mainnet
+    contract_address=contract_address,
+    maker_subaccount_nonce=0,                 # ms — required (default 0)
+    min_fill_quantity=None,                   # mfq — optional V2 field
 )
 ```
+
+The helper returns a 65-byte hex signature (no `0x` prefix). The indexer expects a `0x` prefix when you send the quote, so prepend it on the wire: `signature = "0x" + sign_quote(...)`.
 
 The returned `signature` is a hex string that you include in your quote payload.
 

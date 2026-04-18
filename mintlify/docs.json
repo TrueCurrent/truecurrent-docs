@@ -79,6 +79,20 @@
                 ]
               },
               {
+                "group": "Takers",
+                "icon": "",
+                "expanded": false,
+                "pages": [
+                  "takers/overview",
+                  "takers/quickstart",
+                  "takers/authz-setup",
+                  "takers/taker-stream",
+                  "takers/accepting-quotes",
+                  "takers/signed-intents",
+                  "takers/best-practices"
+                ]
+              },
+              {
                 "group": "Market Makers",
                 "icon": "",
                 "expanded": false,

@@ -17,6 +17,8 @@ Connect to the MakerStream WebSocket endpoint:
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
 | Mainnet | *(TBD)* {/* TODO: add mainnet MakerStream URL when ready */} |
 
+The MakerStream is the `MakerStream` bidirectional stream on the indexer's `injective_rfq_rpc.InjectiveRfqRPC` gRPC service — takers call `TakerStream` (see [TakerStream](/takers/taker-stream)); you call `MakerStream` to receive incoming RFQ requests and send signed quotes over the same connection.
+
 The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing – see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
 
 Authentication is based on your wallet address – the endpoint routes requests to your system based on your whitelisted maker address.

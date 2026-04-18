@@ -12,6 +12,40 @@ TrueCurrent uses Injective's native `authz` module to allow the smart contract t
 
 When you accept a quote on TrueCurrent, the onchain settlement involves the TrueCurrent contract calling Injective's exchange module to open positions for both you and the market maker. Rather than requiring both parties to sign separate transactions at settlement time, TrueCurrent uses pre-granted authorizations so the contract can bundle everything into a single atomic transaction.
 
+```mermaid
+flowchart LR
+    subgraph Granters ["Granters (one-time setup)"]
+        Taker["Taker wallet"]
+        Maker["Market Maker wallet"]
+    end
+
+    subgraph Grantee ["Grantee"]
+        Contract["TrueCurrent Contract"]
+    end
+
+    subgraph Chain ["Injective Chain modules"]
+        Exchange["Exchange Module<br/>open positions, orderbook"]
+        Bank["Bank Module<br/>move funds"]
+    end
+
+    Taker -.->|"authz grants<br/>(specific msg types only)"| Contract
+    Maker -.->|"authz grants<br/>(specific msg types only)"| Contract
+
+    Contract -->|"MsgPrivilegedExecuteContract"| Exchange
+    Contract -->|"MsgBatchUpdateOrders<br/>(unfilled fallback)"| Exchange
+    Contract -->|"MsgSend<br/>(margin moves)"| Bank
+
+    classDef wallet fill:#fff4e8,stroke:#c88a40,color:#111
+    classDef contract fill:#eef4ff,stroke:#4a6db8,color:#111
+    classDef module fill:#eefbf0,stroke:#3c9c60,color:#111
+    class Taker,Maker wallet
+    class Contract contract
+    class Exchange,Bank Module
+
+```
+
+The dotted lines are one-time grants. The solid lines are what the contract can do *because of* those grants — scoped to the specific message types you authorized.
+
 This is secure because:
 
 1. **Grants are message-type specific.** You're only authorizing specific message types (`MsgPrivilegedExecuteContract`, `MsgBatchUpdateOrders`, `MsgSend`) – not blanket wallet access.
@@ -20,6 +54,8 @@ This is secure because:
 4. **Onchain verification.** The Injective chain enforces that only the authorized grantee can submit authorized messages – this is not just convention, it's chain-level enforcement.
 
 ---
+
+{/* TODO: authz grant lists on this page need reconciliation against rfq-contract source. See the TODO on /takers/authz-setup for the specific questions (MsgWithdraw for takers, MsgPrivilegedExecuteContract scope, MsgBatchUpdateOrders vs MsgCreateDerivativeMarketOrder). */}
 
 ## Required grants for traders
 
