@@ -12,10 +12,10 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 
 | Environment | WebSocket URL |
 |---|---|
-| Testnet | `wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService/StreamQuote` |
+| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
 | Mainnet | *(not yet deployed)* |
 
-The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `rfq.v1.RfqService` and the method for takers is `StreamQuote` (market makers use `StreamRequest`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (market makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 
 ---
 
@@ -232,11 +232,9 @@ You can also use a **first-fit pattern**: accept the first quote that satisfies 
 
 ## How `rfq_id` correlation works
 
-{/* TODO: CK – verify this section against the actual wire protocol. The current indexer proto (rfq-indexer/proto/rfq/v1/api.proto + types.proto) has `CreateRequest { Request }` where `Request` carries `rfq_id: uint64` directly. No `client_id` / UUID field is visible in the proto. Either (a) the `client_id` described here is a library abstraction in rfq-testing that wraps a local UUID in the Python/TS client but doesn't appear on the wire, or (b) this section is describing a non-testnet flow (e.g. gateway-era) that's not yet live. Re-validate against the indexer source before leaving this in. */}
-
 The wire protocol is slightly different from what most of the examples suggest. It's worth understanding if you're building a production taker.
 
-**On the wire, the taker's outgoing request (`CreateRFQRequestType`) carries a `client_id` (UUID), not an `rfq_id`.** The indexer assigns the `rfq_id` when it receives the request, then broadcasts an inbound request (`RFQRequestType`) to all MMs with both `client_id` and the newly-minted `rfq_id`. MMs quote against the assigned `rfq_id`. When the taker calls `collect_quotes(rfq_id=...)`, it's matching on that indexer-assigned value.
+**On the wire, the taker's outgoing request (`RFQRequestInputType`) carries a `client_id` (UUID), not an `rfq_id`.** The indexer assigns the `rfq_id` when it receives the request, then broadcasts an inbound request (`RFQRequestType`) to all MMs with both `client_id` and the newly-minted `rfq_id`. MMs quote against the assigned `rfq_id`. When the taker calls `collect_quotes(rfq_id=...)`, it's matching on that indexer-assigned value. The `Request` unary RPC's `RequestResponse` returns `{status, client_id, rfq_id}` so you can learn the assigned id synchronously — see the `injective_rfq_rpc.proto` message definitions in `rfq-testing/src/rfq_test/proto/`.
 
 **Two correlation patterns:**
 
@@ -364,7 +362,7 @@ If you send a request and see nothing come back:
 
 - Check that `request_address` exactly matches the wallet you're using
 - Verify there are active whitelisted makers on testnet – query the contract's `list_makers` entry
-- Check `configs/testnet.yaml` for the current indexer URL; the path component matters (`/rfq.v1.RfqService/StreamQuote` for takers, `/StreamRequest` for makers)
+- Check `configs/testnet.yaml` for the current indexer URL; the path component matters (`/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` for takers, `/MakerStream` for makers)
 - If using gRPC-web framing manually, confirm your length-prefix and compression flag bytes are correct
 
 ---

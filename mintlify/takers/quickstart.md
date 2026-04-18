@@ -19,7 +19,7 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 - An Injective wallet (a 32-byte secp256k1 private key)
 - A small amount of **INJ** for gas on `injective-888` (testnet) – [testnet faucet](https://testnet-faucet.injective.dev)
 - **USDC** in the wallet's exchange subaccount to cover your margin
-- Network connectivity to `wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService/StreamQuote`
+- Network connectivity to `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream`
 {/* TODO : CK to add mainnet WS info */}
 - Python 3.11+ or Node.js 18+
 
@@ -60,7 +60,7 @@ The testnet config (`configs/testnet.yaml`) already points at:
 
 | Setting | Value |
 |---|---|
-| Indexer WebSocket (TakerStream) | `wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService/StreamQuote` |
+| Indexer WebSocket (TakerStream) | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
 | Indexer HTTP | `https://testnet.rfq.injective.network` |
 | Chain gRPC | `testnet-grpc.injective.dev:443` |
 | Chain LCD | `https://testnet.sentry.lcd.injective.network` |
@@ -153,7 +153,7 @@ This is the exact pattern used by the reference scripts – see [`examples/test_
 import WebSocket from "ws";
 
 const ws = new WebSocket(
-  "wss://testnet.rfq.ws.injective.network/rfq.v1.RfqService/StreamQuote",
+  "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream",
 );
 const rfqId = Date.now();
 
