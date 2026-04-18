@@ -111,15 +111,16 @@
                       "market-makers/integration/index",
                       "market-makers/integration/architecture",
                       "market-makers/integration/quick-start",
-                      "market-makers/integration/rfq-flow",
-                      "market-makers/integration/quote-signing",
-                      "market-makers/integration/example-ts",
-                      "market-makers/integration/example-py",
-                      "market-makers/integration/example-go",
-                      "market-makers/integration/contract",
-                      "market-makers/integration/markets",
-                      "market-makers/integration/testing",
-                      "market-makers/integration/troubleshooting"
+                      "market-makers/integration/setup",
+                      "market-makers/integration/connecting",
+                      "market-makers/integration/rfq-requests",
+                      "market-makers/integration/rfq-quotes-sign",
+                      "market-makers/integration/rfq-quotes-send",
+                      "market-makers/integration/rfq-quotes-blind",
+                      "market-makers/integration/protocol-reference",
+                      "market-makers/integration/reference-implementations",
+                      "market-makers/integration/testnet-configuration",
+                      "market-makers/integration/faq"
                     ]
                   }
                 ]
