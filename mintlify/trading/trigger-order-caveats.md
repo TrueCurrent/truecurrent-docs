@@ -4,7 +4,7 @@ description: "Key caveats and edge cases for take-profit and stop-loss trigger o
 updatedAt: "2026-04-23"
 ---
 
-Trigger orders (TP/SL) on TrueCurrent behave differently from traditional exchange stop orders. If you are building against the SDK or API, you need to understand how they work under the hood and where they can fail.
+Trigger orders (Take Profit/ Stop Loss, or TP/SL) on TrueCurrent behave differently from traditional exchange stop orders. If you are building against the SDK or API, you need to understand how they work under the hood and where they can fail.
 
 This page covers the operational caveats. For the user-facing explanation, see [Trigger orders (TP/SL)](/trading/trigger-orders). For the full technical specification, see [Signed taker intents](/takers/signed-intents).
 
@@ -12,7 +12,7 @@ This page covers the operational caveats. For the user-facing explanation, see [
 
 ## TP/SL orders are off-chain until triggered
 
-When you create a TP or SL order, it is **not** submitted to the Injective chain. Instead:
+When you create a TP or SL order, it is **not** submitted to the Injective network. Instead:
 
 1. You sign a `SignedTakerIntent` with your taker private key.
 2. The signed intent is submitted to the **RFQ indexer**, which stores it off-chain.
