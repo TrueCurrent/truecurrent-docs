@@ -1,12 +1,12 @@
 ---
-title: "TP/SL caveats for SDK and API users"
-description: "Key caveats and edge cases for take-profit and stop-loss trigger orders on TrueCurrent, including off-chain execution, silent failures, worst_price gaps in fast markets, and differences between frontend and SDK behavior."
-updatedAt: "2026-04-23"
+title: "Advanced trigger orders (TP/SL) for API and SDK"
+description: "Advanced operational details for take-profit and stop-loss trigger orders on TrueCurrent, including off-chain execution, silent failures, worst_price gaps in fast markets, and differences between frontend and SDK behavior."
+updatedAt: "2026-04-24"
 ---
 
 Trigger orders (Take Profit/ Stop Loss, or TP/SL) on TrueCurrent behave differently from traditional exchange stop orders. If you are building against the SDK or API, you need to understand how they work under the hood and where they can fail.
 
-This page covers the operational caveats. For the user-facing explanation, see [Trigger orders (TP/SL)](/trading/trigger-orders). For the full technical specification, see [Signed taker intents](/takers/signed-intents).
+This page covers more advanced operational use cases. For the user-facing explanation, see [Trigger orders (TP/SL)](/trading/trigger-orders). For the full technical specification, see [Signed taker intents](/takers/signed-intents).
 
 ---
 
