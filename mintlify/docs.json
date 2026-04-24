@@ -71,6 +71,7 @@
                   "trading/perpetual-markets",
                   "trading/prices",
                   "trading/trigger-orders",
+                  "trading/trigger-orders-advanced",
                   "trading/funding-rates",
                   "trading/fees",
                   "trading/margin-trading",

@@ -92,3 +92,9 @@ You can set a custom price tolerance for your trigger orders the same way you wo
 **Consider the spread between entry and SL.** Setting a stop loss very close to your entry price (e.g., 0.1% away at high leverage) risks being stopped out by normal market noise. Give your position room to breathe while still protecting against a meaningful adverse move.
 
 See [Liquidation](/trading/liquidation) to understand the difference between a stop loss (which you control) and a liquidation (which happens automatically when margin runs out).
+
+---
+
+## API and SDK users
+
+If you are using the API or SDK to place trigger orders, check out [advanced operational use cases for TP/SL](/trading/trigger-orders-advanced) — including off-chain execution details, silent failure modes, `worst_price` gap scenarios, and differences between frontend and programmatic behavior.
