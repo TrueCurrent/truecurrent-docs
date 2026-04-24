@@ -18,7 +18,7 @@ When you create a TP or SL order, it is **not** submitted to the Injective netwo
 2. The signed intent is submitted to the **RFQ indexer**, which stores it off-chain.
 3. The indexer monitors the mark price. When your trigger condition is met, the indexer's relayer submits `AcceptSignedIntent` onchain with maker quotes.
 
-The order only touches the chain at step 3. Until then, it exists exclusively in the indexer's database. This means:
+The order only gets added to the Injective network at step 3, at which point, it is *onchain*. Until then, it exists exclusively in the indexer's database. This means:
 
 - **No onchain record** of the pending order exists before it fires.
 - **If the indexer goes down**, your trigger order won't execute until it recovers.
