@@ -51,15 +51,15 @@ When you create a TP/SL, you sign a `worst_price` — the worst execution price 
 In a fast-moving market, this creates a gap scenario:
 
 **Stop loss example:**
-1. You open a long at $5.00 and set a stop loss at $4.80 with `worst_price = $4.75`.
-2. The market drops sharply. The mark price blows through $4.80 and reaches $4.60 before the relayer can land the transaction.
-3. At execution time, the trigger condition (mark ≤ $4.80) is satisfied. But no market maker is willing to quote at $4.75 or better when the mark price is at $4.60 — the asset is now worth less than your floor.
+1. You open a long at \$5.00 and set a stop loss at \$4.80 with `worst_price = $4.75`.
+2. The market drops sharply. The mark price blows through \$4.80 and reaches \$4.60 before the relayer can land the transaction.
+3. At execution time, the trigger condition (mark ≤ \$4.80) is satisfied. But no market maker is willing to quote at \$4.75 or better when the mark price is at \$4.60 — the asset is now worth less than your floor.
 4. The settlement fails. Your stop loss did not execute.
 
 **Take profit example:**
-1. You open a short at $5.00 and set a take profit at $4.80 with `worst_price = $4.85`.
-2. The market drops rapidly through $4.80 to $4.50.
-3. At execution time, makers are quoting around $4.50. Your `worst_price` of $4.85 is the *minimum* you'll accept (for a short, this is the ceiling). Quotes at $4.50 are actually *more favorable* than $4.85, so this fills successfully.
+1. You open a short at \$5.00 and set a take profit at \$4.80 with `worst_price = $4.85`.
+2. The market drops rapidly through \$4.80 to \$4.50.
+3. At execution time, makers are quoting around \$4.50. Your `worst_price` of \$4.85 is the *minimum* you'll accept (for a short, this is the ceiling). Quotes at \$4.50 are actually *more favorable* than \$4.85, so this fills successfully.
 
 The risk is directional: `worst_price` gaps hurt when the market moves **through** your trigger level and keeps going in the adverse direction. For stop losses, this means the market moved too far against you. For take profits on the wrong side, it means you might miss a fill — but the more common case is that take profits fill fine because the price moved in your favor.
 
@@ -112,7 +112,7 @@ When you create a new TP/SL for a lane that already has an active intent:
 
 In practice: **submitting a new TP or SL for the same market replaces the previous one.** The indexer handles this by cancelling the prior intent when you submit a new one for the same trigger type on the same lane.
 
-This means you cannot have, for example, two different stop loss levels active simultaneously on the same position. If you set a SL at $4.80 and then change it to $4.50, the $4.80 order is gone.
+This means you cannot have, for example, two different stop loss levels active simultaneously on the same position. If you set a SL at \$4.80 and then change it to \$4.50, the \$4.80 order is gone.
 
 ---
 
