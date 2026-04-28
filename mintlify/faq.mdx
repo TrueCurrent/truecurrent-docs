@@ -1,93 +1,177 @@
 ---
 title: "Frequently asked questions"
 description: "Comprehensive FAQ covering TrueCurrent's RFQ trading model, non-custodial security, zero fees, market maker program, liquidation mechanics, funding rates, and wallet authorization on Injective."
-updatedAt: "2026-04-06"
----
-
+updatedAt: "2026-04-28"
 ---
 
 ## General
 
-**What is TrueCurrent?**
+<AccordionGroup>
+  <Accordion title="What is TrueCurrent?">
+    TrueCurrent is a non-custodial perpetuals exchange on Injective that uses a Request for Quote (RFQ) system.
 
-TrueCurrent is a non-custodial perpetuals exchange on Injective that uses a Request for Quote (RFQ) system. Instead of trading against an automated market maker or a passive order book, you receive live, competitive quotes from professional market makers and execute at the locked-in price with no slippage.
+    Instead of trading against an automated market maker or a passive order book, you receive live, competitive quotes from professional market makers and execute at the locked-in price with no slippage.
+  </Accordion>
 
-**Is TrueCurrent non-custodial?**
+  <Accordion title="Is TrueCurrent non-custodial?">
+    Yes - your funds stay in your Injective subaccount at all times, and no TrueCurrent team member or infrastructure can access your wallet.
 
-Yes. Your funds stay in your Injective subaccount at all times. TrueCurrent's smart contract only accesses your funds during settlement, via narrow `authz` permissions that you control and can revoke at any time. No TrueCurrent team member or infrastructure can access your wallet.
+    TrueCurrent's smart contract only accesses your funds during settlement, via narrow `authz` permissions that you control and can revoke at any time.
+  </Accordion>
 
-**What chain is TrueCurrent on?**
+  <Accordion title="What network is TrueCurrent on?">
+    TrueCurrent is built on the Injective network, with all settlement happening on the Injective blockchain.
 
-Injective. All settlement happens on the Injective blockchain, which provides sub-second finality and zero gas fees for users.
+    Injective provides sub-second finality and zero gas fees for users.
+  </Accordion>
 
-**Do I need to pay gas fees?**
+  <Accordion title="Do I need to pay network transaction fees?">
+    No - Injective covers all transaction costs so you pay zero gas for any action on TrueCurrent.
+  </Accordion>
 
-No. Injective covers transaction costs for users. You pay no gas for any action on TrueCurrent.
+  <Accordion title="What fees does TrueCurrent charge?">
+    TrueCurrent charges zero protocol fees to traders — no taker fee, no gas fee, and no deposit or withdrawal fee.
+
+    Market makers pay a 4 bps (0.04%) protocol fee on filled volume, which is how the protocol sustains itself while keeping trading free for users. See [Fees](/trading/fees) for the full breakdown.
+  </Accordion>
+
+  <Accordion title="Which wallets are supported?">
+    TrueCurrent supports Rabby (recommended), Rainbow, MetaMask, Keplr, Leap, and Phantom.
+
+    No KYC or account creation is required. After connecting, you complete a one-time `authz` authorization (~30 seconds) that scopes the contract's access to your wallet. See [Connect a wallet](/getting-started/connect-wallet) for setup instructions.
+  </Accordion>
+</AccordionGroup>
 
 ---
 
 ## Trading
 
-**What is an RFQ?**
+<AccordionGroup>
+  <Accordion title="What is an RFQ?">
+    RFQ (Request for Quote) is TrueCurrent's trading model where professional market makers compete in real time to fill your order at a fixed, firm price.
 
-RFQ stands for Request for Quote. When you want to trade, TrueCurrent asks professional market makers to compete for your order in real time. You receive firm, signed quotes and can accept the best one. Unlike AMMs, the price is fixed at quote time and doesn't change during settlement. See [RFQ explained](/overview/rfq-explained) for a full explanation.
+    Unlike Automated Market Makers (AMMs), the price is locked at *quote time* and doesn't change during settlement. See [RFQ explained](/overview/rfq-explained) for a full explanation.
+  </Accordion>
 
-**What happens if no market maker responds to my request?**
+  <Accordion title="What happens if no market maker responds to my request?">
+    Your order automatically routes to Injective's onchain central limit order book if no market maker responds within the 2-second window.
 
-If no market maker quotes within the 2-second window, your order routes automatically to Injective's onchain order book. You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+    You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+  </Accordion>
 
-**What is the worst price setting?**
+  <Accordion title="What is the worst price setting?">
+    Worst price is the maximum price (for longs) or minimum price (for shorts) that you're willing to accept.
 
-Worst price is the maximum (for longs) or minimum (for shorts) price you're willing to accept. It's like a slippage tolerance. The TrueCurrent smart contract enforces this onchain – your trade will not execute at a price worse than your worst price. See [Slippage and worst price](/trading/slippage-and-worst-price).
+    It is enforced onchain so your trade never executes at a worse price. It works like a slippage tolerance. See [Slippage and worst price](/trading/slippage-and-worst-price) for details.
+  </Accordion>
 
-**Why did my quote expire before I could accept?**
+  <Accordion title="Why did my quote expire before I could accept?">
+    Quotes expire after a short window (typically 30 seconds) because market makers need to manage price risk in fast-moving markets.
 
-Quotes are valid for a limited window (typically 30 seconds). Market makers need short expiry windows to manage price risk in fast-moving markets. If a quote expires, request a new one – the process is fast.
+    If a quote expires, simply request a new one - the process is fast.
+  </Accordion>
 
-**Can I get liquidated?**
+  <Accordion title="Can I get liquidated?">
+    Yes - perpetual positions can be liquidated if the mark price moves far enough against your position.
 
-Yes. Perpetual positions use margin and can be liquidated if the mark price moves enough against your position. Your liquidation price is displayed in the Positions panel. Monitor it, and add margin or reduce your position size if it's getting close. See [Perpetual markets](/trading/perpetual-markets) for details.
+    Your liquidation price is displayed in the Positions panel. Monitor it, and add margin or reduce your position size if it's getting close. See [Perpetual markets](/trading/perpetual-markets) for details.
+  </Accordion>
 
-**What leverage is available?**
+  <Accordion title="What leverage is available?">
+    Up to 20x leverage is available on supported markets, depending on position size.
 
-Up to 20x on supported markets, depending on position size. Higher leverage means a closer liquidation price. Start with lower leverage while you're getting familiar with the platform.
+    Higher leverage means a closer liquidation price, so start with lower leverage while getting familiar with the platform.
+  </Accordion>
+
+  <Accordion title="What are funding rates and how do they affect my position?">
+    Funding rates are hourly payments exchanged between longs and shorts to keep the perpetual price anchored to the spot index price.
+
+    When the perpetual trades at a premium, longs pay shorts (positive rate); when at a discount, shorts pay longs (negative rate). Payments are applied automatically to your margin, so they can meaningfully erode a position held for extended periods. The current rate is shown as a per-hour figure in the UI. See [Funding rates](/trading/funding-rates) for the full explanation.
+  </Accordion>
+
+  <Accordion title="Can I set take profit and stop loss (TP/SL) orders?">
+    Yes - TrueCurrent supports take profit (TP) and stop loss (SL) orders that can be set at entry or added to any existing position at any time.
+
+    TP/SL orders are evaluated against the *quoted price* (not the mark price), which prevents being stopped out by mark-price wicks that have no real liquidity behind them. See [Trigger orders](/trading/trigger-orders) for details.
+  </Accordion>
+</AccordionGroup>
 
 ---
 
 ## Market makers
 
-**How do I become a market maker?**
+<AccordionGroup>
+  <Accordion title="How do I become a market maker?">
+    Apply for whitelist access by contacting the TrueCurrent team and completing a testnet integration.
 
-Apply for whitelist access by contacting the TrueCurrent team. You'll need to complete a testnet integration first to demonstrate your system is working correctly. See [Getting whitelisted](/market-makers/getting-whitelisted).
+    You'll need to demonstrate your system is working correctly on testnet before being approved. See [Getting whitelisted](/market-makers/getting-whitelisted) for the full process.
+  </Accordion>
 
-**What programming languages/SDKs are supported?**
+  <Accordion title="What programming languages/SDKs are supported?">
+    The underlying protocol is language-agnostic - any language that can maintain a WebSocket connection, sign quotes, and submit Injective transactions can be used.
 
-The testnet E2E reference implementation is in Python, using the `rfq-qa-python-tests` framework. The underlying protocol (WebSocket messages + Injective chain interactions) is language-agnostic. Any language that can maintain a WebSocket connection, implement the quote signing specification, and submit Injective transactions can be used.
+    The testnet E2E reference implementation is in Python: `rfq-qa-python-tests`.
+  </Accordion>
 
-**Why is my quote not winning trades?**
+  <Accordion title="Why is my quote not winning trades?">
+    Your price is likely less competitive than other market makers.
 
-Your price may be less competitive than other market makers. Review your pricing model and reference data sources. Also verify that your `authz` grants are current and your margin is sufficient – quote wins that fail at settlement still count against your metrics.
+    Review your pricing model and reference data sources. Also verify that your `authz` grants are current and your margin is sufficient. Quote wins that fail at settlement still count against your metrics.
+  </Accordion>
 
-**Can I see who other market makers are?**
+  <Accordion title="Can I see who other market makers are?">
+    Market maker addresses are visible onchain via `AcceptQuote` transaction history, but the whitelist is not publicly published.
 
-Market maker addresses are visible onchain (in the `AcceptQuote` transaction history), but the list of whitelisted makers is not publicly published. You can observe trade history to infer active makers.
+    You can observe trade history to infer which makers are currently active.
+  </Accordion>
+
+  <Accordion title="What fees do market makers pay?">
+    Market makers pay a 4 bps (0.04%) protocol fee on filled volume; traders pay nothing.
+
+    Revenue for market makers comes from the spread between bid and ask, net of the 4 bps fee. See [Fees](/trading/fees) and [Market maker overview](/market-makers/overview) for details.
+  </Accordion>
+
+  <Accordion title="How is market maker performance monitored?">
+    TrueCurrent monitors market makers on response rate, price competitiveness, settlement success rate, and overall quoting behavior.
+
+    Consistently failing to respond within the 2-second window, quoting off-market prices, or allowing settlements to fail due to insufficient margin will negatively affect your standing and may result in removal from the whitelist. See [Getting whitelisted](/market-makers/getting-whitelisted) for the full criteria.
+  </Accordion>
+</AccordionGroup>
 
 ---
 
 ## Security and technical
 
-**Has TrueCurrent been audited?**
+<AccordionGroup>
+  <Accordion title="Has TrueCurrent been audited?">
+    A security audit of the TrueCurrent smart contract is planned before mainnet launch, with the report to be published and linked here upon completion.
+  </Accordion>
 
-A security audit of the TrueCurrent smart contract is planned before mainnet launch. The audit report will be published and linked here upon completion.
+  <Accordion title="What happens if TrueCurrent's servers go down?">
+    Your existing positions, margin, and funds are fully onchain and unaffected even if TrueCurrent's servers go down.
 
-**What happens if TrueCurrent's servers go down?**
+    If the off-chain RFQ indexer is unavailable, new trades cannot be initiated through the RFQ system. However, you can still manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app).
+  </Accordion>
 
-If the off-chain RFQ indexer is unavailable, new trades can't be initiated through the RFQ system. However, your existing positions, margin, and funds are fully onchain and unaffected. You can manage existing positions directly through Injective's native tooling (Helix or any Injective wallet app) even without TrueCurrent's frontend.
+  <Accordion title="Can TrueCurrent be upgraded or changed?">
+    The smart contract's upgrade policy will be documented upon mainnet launch, with any core settlement logic changes announced in advance through official TrueCurrent channels.
+  </Accordion>
 
-**Can TrueCurrent be upgraded or changed?**
+  <Accordion title="How do I revoke TrueCurrent's access to my wallet?">
+    Go to your wallet's `authz` settings and revoke the grants you gave to the TrueCurrent contract address to immediately stop the contract from acting on your behalf.
 
-The smart contract's upgrade policy will be documented upon mainnet launch. Any upgrades to core settlement logic will be announced in advance through official TrueCurrent channels.
+    See [Authorization model](/technical/authz-model) for full instructions.
+  </Accordion>
 
-**How do I revoke TrueCurrent's access to my wallet?**
+  <Accordion title="Where can I find TrueCurrent's smart contract address?">
+    The testnet smart contract address is `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q`; the mainnet smart contract address will be published here upon launch.
 
-Go to your wallet's authz settings and revoke the grants you gave to the TrueCurrent contract address. This immediately stops the contract from acting on your behalf. See [Authorization model](/technical/authz-model).
+    TrueCurrent uses a CosmWasm smart contract on Injective. Its source code and security audit report will both be published prior to mainnet launch. See [Smart contract](/technical/smart-contract) for the full message reference.
+  </Accordion>
+
+  <Accordion title="Can I access TrueCurrent programmatically or via API?">
+    Yes - TrueCurrent exposes a WebSocket-based RFQ API for programmatic trading, supporting use cases such as arbitrage, systematic strategies, and integrations.
+
+    The protocol uses gRPC-web framing over WebSocket. Reference implementations are available in Python and TypeScript. See the [Taker quickstart](/takers/quickstart) for a complete walkthrough.
+  </Accordion>
+</AccordionGroup>
