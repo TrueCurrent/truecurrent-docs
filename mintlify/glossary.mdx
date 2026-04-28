@@ -1,0 +1,271 @@
+---
+title: "Glossary"
+description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and market-making used throughout this documentation."
+updatedAt: "2026-04-28"
+---
+
+## A
+
+**AcceptQuote**:
+
+The primary TrueCurrent smart contract entrypoint that a taker calls to settle an RFQ trade by submitting one or more maker-signed quotes onchain. The contract validates every quote, opens positions for both sides atomically, and enforces `worst_price`.
+
+**AcceptSignedIntent**:
+
+Smart contract entrypoint used by a relayer to execute a pre-signed conditional order (take profit or stop loss) when its trigger condition is satisfied. Unlike `AcceptQuote`, the taker does not need to be online at execution time.
+
+**atomic settlement**:
+
+A guarantee that both the taker's and the maker's positions open in the same Injective block. The transaction either fully succeeds or fully reverts — there is no partial state.
+
+**authz**:
+
+The Cosmos SDK authorization module that lets one address delegate the right to send specific message types on its behalf. TrueCurrent uses `authz` so the settlement contract can open and manage positions without requiring a separate user signature for every trade.
+
+**available margin**:
+
+The portion of your account equity that exceeds what is required to maintain all open positions. It represents the buffer between your current state and liquidation and can be withdrawn or used as margin for new positions.
+
+## B
+
+**bankruptcy price**:
+
+The mark price at which unrealized losses would fully consume a position's margin, reducing account equity to zero. If a liquidation closes below the bankruptcy price, the insurance fund covers the shortfall.
+
+**basis**:
+
+The premium or discount at which a perpetual contract trades relative to the spot index price. Basis is incorporated into the mark price formula: `mark_price = index_price + basis`.
+
+**blind quote**:
+
+A market maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind quotes are pre-posted to the indexer so that take-profit and stop-loss orders can settle even when the maker is not actively online at the moment a trigger fires.
+
+## C
+
+**cid** (client identifier)
+An optional string field set by the taker on a trade request that is echoed back in settlement events. Used for correlating requests with outcomes in programmatic or multi-wallet setups.
+
+**CosmWasm**:
+
+A WebAssembly smart contract framework for the Cosmos ecosystem. TrueCurrent's settlement logic is deployed as a CosmWasm contract on Injective.
+
+**cross-margin**:
+
+An account structure where all open positions share a single margin pool. Unrealized profits on one position reduce the effective margin requirement of others, but a large loss on one position can affect the margin ratio of the entire account.
+
+## E
+
+**epoch**:
+
+A per-taker global counter used for bulk intent cancellation. Incrementing the epoch via `CancelAllIntents` immediately invalidates every outstanding signed intent across all lanes for that taker.
+
+**exchange module**:
+
+Injective's native on-chain derivatives trading primitive (not a smart contract). TrueCurrent settles taker and maker positions into the exchange module atomically via `authz`-delegated messages.
+
+## F
+
+**funding factor**:
+
+A protocol parameter that controls how aggressively the funding rate responds to divergence between mark price and index price. A higher funding factor causes faster convergence.
+
+**funding rate**:
+
+An hourly payment exchanged between long and short position holders to keep the perpetual price anchored to the spot index price. A positive rate means longs pay shorts (perpetual at a premium); a negative rate means shorts pay longs (perpetual at a discount). Payments are applied automatically to your margin.
+
+## G
+
+**gRPC-web**:
+
+The wire protocol used by TrueCurrent's WebSocket streams. Messages are length-prefixed using HTTP/2-style framing rather than raw JSON; clients must frame and deframe accordingly.
+
+## I
+
+**index price**:
+
+A real-time spot price aggregated from multiple external exchanges and published by the Injective oracle. The index price is the foundation for mark price calculations and funding rate payments.
+
+**initial margin rate (IMR)**:
+
+The minimum collateral required to open a new position, expressed as a fraction of notional value. Equal to `1 / leverage`. For example, 10x leverage requires an IMR of 10%.
+
+**insurance fund**:
+
+A protocol reserve that covers shortfalls when a liquidated position is closed below its bankruptcy price. The fund is replenished from a portion of liquidation proceeds, preventing losses from being socialized across other users.
+
+**inventory**:
+
+A market maker's net open position accumulated from filled trades. Managing inventory is central to market-making economics — makers typically hedge inventory promptly to remain directionally neutral and capture the spread.
+
+## L
+
+**lane**:
+
+A unique trading context scoped to the tuple `(taker, market_id, subaccount_nonce)`. Each lane enforces one-shot semantics: only one active signed intent can exist per lane at a time, controlled by the monotonically increasing `lane_version`.
+
+**lane_version**:
+
+A monotonically increasing counter scoped to a specific lane. It advances on each successful settlement or explicit `CancelIntentLane` call, consuming the current intent and preventing replay.
+
+**leverage**:
+
+A multiplier applied to margin that determines the total notional size of a position. At 10x leverage, $100 of margin controls a $1,000 position; both gains and losses are amplified by the same factor.
+
+**liquidation**:
+
+Automatic closure of a position by the exchange engine when the margin ratio falls to or below the maintenance margin rate. The engine takes over the position and closes it at the best available price, returning any surplus margin to the trader.
+
+**liquidation price**:
+
+The mark price at which a position's margin ratio will equal the maintenance margin rate and liquidation will be triggered. Displayed in the Positions panel and updated continuously as the mark price moves.
+
+## M
+
+**MakerStream**:
+
+The WebSocket endpoint used by whitelisted market makers to receive live RFQ requests broadcast by the indexer and to submit signed quotes in response.
+
+**maintenance margin rate (MMR)**:
+
+The minimum margin ratio required to keep an open position. MMR is lower than the initial margin rate, providing a buffer before liquidation. Liquidation is triggered when `margin_ratio ≤ MMR`.
+
+**margin**:
+
+USDC collateral deposited into your exchange subaccount to back a leveraged position. Margin absorbs losses and is returned (net of P&L and fees) when a position is closed.
+
+**margin ratio**:
+
+Account equity divided by position notional value. Liquidation triggers when this ratio falls to or below the maintenance margin rate: `margin_ratio = (margin + uPnL) / (quantity × mark_price)`.
+
+**mark price**:
+
+The fair-value price of a perpetual, derived from the index price plus a funding basis adjustment. Mark price is used for P&L calculations, margin ratio checks, liquidation triggers, and trigger-order evaluation — it is not the execution price.
+
+**market maker**:
+
+A whitelisted institutional liquidity provider that connects to the MakerStream, evaluates RFQ requests, and responds with signed price quotes. Market makers take the opposite side of each trade and typically hedge their resulting inventory.
+
+**min_fill_quantity**:
+
+The minimum aggregate quantity that must be filled across all quotes in an `AcceptQuote` or signed intent settlement. If the total filled quantity falls below this threshold, the transaction reverts.
+
+**MsgBatchUpdateOrders**:
+
+An Injective exchange message type. TrueCurrent uses this (via `authz`) to post limit orders to the onchain order book when a trader's `unfilled_action` is set to a limit order fallback.
+
+**MsgCreateDerivativeMarketOrder**:
+
+An Injective exchange message type. TrueCurrent uses this (via `authz`) to submit immediate-or-cancel market orders to the order book when a trader's `unfilled_action` is set to `{"market": {}}`.
+
+**MsgPrivilegedExecuteContract**:
+
+An Injective exchange message type that allows the TrueCurrent contract to open and manage derivative positions on behalf of a user. This is the core `authz` grant required by both traders and market makers.
+
+**MsgSend**:
+
+A Cosmos bank module message type. TrueCurrent uses this (via `authz`) to transfer collateral between a user's bank account and their exchange subaccount during settlement.
+
+## N
+
+**nonce**:
+
+A sequential number used for replay protection. Blind quotes use maker-controlled nonces (the maker tracks which nonces have been consumed). Taker-specific quotes use contract-tracked nonces that advance on each settlement.
+
+**notional value**:
+
+The total USD value of an open position at the current mark price: `quantity × mark_price`. Notional value determines the margin required to maintain a position and is used to calculate the margin ratio.
+
+## O
+
+**order book fallback**:
+
+Automatic routing to Injective's native central limit order book when no RFQ quote is available or quotes do not cover the full requested quantity. The `worst_price` protection still applies to any fills from the order book.
+
+## P
+
+**perpetual** (perpetual futures)
+A leveraged derivative that tracks an asset's price with no expiration date. Unlike traditional futures, perpetuals use a periodic funding rate mechanism to keep their price anchored to the underlying spot price.
+
+**price tolerance**:
+
+The maximum acceptable slippage expressed as a percentage deviation from the current mark price (or as an absolute price). Price tolerance is used to derive `worst_price` before submitting a trade.
+
+## Q
+
+**quoted price**:
+
+The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price (fair value estimate) and index price (spot reference). Trigger orders are evaluated against the quoted price, not the mark price.
+
+## R
+
+**RFQ** (Request for Quote)
+TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted market makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
+
+**rfq_id**:
+
+A unique per-request identifier (u64) that acts as a nonce for replay protection. It must be unique per taker; generating it from a microsecond timestamp or UUID is recommended.
+
+## S
+
+**signed intent** (SignedTakerIntent)
+A pre-authorized, cryptographically signed conditional order created by a taker and stored off-chain. A relayer submits it to the TrueCurrent contract when the specified mark-price trigger condition is satisfied. Used for take-profit and stop-loss orders.
+
+**slippage**:
+
+The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. If the order falls back to the order book, `worst_price` caps the maximum slippage.
+
+**spread**:
+
+The difference between a market maker's ask price (for longs) and bid price (for shorts). Market makers earn the spread, net of the 4 bps protocol fee, as compensation for providing liquidity and managing risk.
+
+**stop loss (SL)**:
+
+A trigger order that automatically closes a position when the quoted price reaches or crosses a specified loss threshold. Stop losses cap downside risk without requiring the trader to monitor their position continuously.
+
+**subaccount**:
+
+An indexed account within an Injective exchange account that holds margin and open derivative positions. TrueCurrent settles trades into and from a trader's exchange subaccount (index 0 by default).
+
+**subaccount_nonce**:
+
+The numeric index identifying which subaccount to use within an Injective exchange account. Defaults to 0 for most users; part of the lane key for signed intents.
+
+## T
+
+**take profit (TP)**:
+
+A trigger order that automatically closes a position when the quoted price reaches a favorable target, locking in gains without requiring active monitoring.
+
+**TakerStream**:
+
+The WebSocket endpoint used by traders (and programmatic takers) to submit RFQ requests and receive signed quotes from market makers.
+
+**trigger order**:
+
+A conditional order — take profit or stop loss — that is stored off-chain and executes automatically when a price condition is met. Trigger orders on TrueCurrent evaluate against the *quoted price*, not the mark price, to prevent spurious fills from mark-price wicks that have no real liquidity behind them.
+
+## U
+
+**unfilled_action**:
+
+A field on `AcceptQuote` that specifies what to do with any quantity not covered by RFQ quotes: route to the order book as a market order (`{"market": {}}`), post a limit order (`{"limit": {"price": "..."}}`), or cancel the remainder (`null`).
+
+**unrealized P&L (uPnL)**:
+
+Profit or loss on an open position based on the current mark price, updated continuously. Unrealized P&L is added to your margin when calculating account equity and margin ratio.
+
+## W
+
+**whitelist**:
+
+The registry of market maker addresses approved to submit quotes on TrueCurrent. Gaining whitelist status requires completing a testnet integration and passing a team review. The contract rejects settlement attempts from non-whitelisted maker addresses.
+
+**worst_price**:
+
+A hard price limit enforced by the TrueCurrent smart contract on every trade. For longs, it is the maximum price the taker is willing to pay; for shorts, it is the minimum price the taker is willing to receive. A trade will never execute at a worse price than `worst_price`.
+
+## Z
+
+**zero-margin settlement**:
+
+Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is restricted to signed intents (take-profit and stop-loss exits).
