@@ -30,10 +30,10 @@
     "dark": "#000000"
   },
   "logo": {
-    "light": "/img/truecurrent-logo-192x192.png",
-    "dark": "/img/truecurrent-logo-192x192.png"
+    "light": "/img/logo-light-2.png",
+    "dark": "/img/logo-light-dark-2.png"
   },
-  "favicon": "/img/truecurrent-logo-192x192.png",
+  "favicon": "/img/logo-light-dark-1.png",
   "navigation": {
     "languages": [
       {
