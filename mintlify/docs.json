@@ -59,7 +59,8 @@
                 "pages": [
                   "getting-started/connect-wallet",
                   "getting-started/deposit-funds",
-                  "getting-started/first-trade"
+                  "getting-started/first-trade",
+                  "getting-started/how-referrals-work"
                 ]
               },
               {
@@ -153,27 +154,7 @@
               }
             ]
           }
-        ],
-        "footer": {
-          "socials": {
-            "website": "https://tx.xyz/",
-            "x": "https://x.com/TrueCurrentX"
-          },
-          "links": [
-            {
-              "header": "About docs",
-              "items": [
-                { "label": "Maintained by TrueCurrent", "href": "https://tc.xyz/" }
-              ]
-            },
-            {
-              "header": "Resources",
-              "items": [
-                { "label": "Blog", "href": "https://tc.xyz/blog" }
-              ]
-            }
-          ]
-        }
+        ]
       }
     ]
   },
