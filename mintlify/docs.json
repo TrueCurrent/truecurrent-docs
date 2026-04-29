@@ -67,7 +67,10 @@
                 "icon": "",
                 "expanded": false,
                 "pages": [
+                  "trading/markets",
                   "trading/how-to-trade",
+                  "trading/placing-a-trade",
+                  "trading/understanding-quotes",
                   "trading/perpetual-markets",
                   "trading/prices",
                   "trading/trigger-orders",
