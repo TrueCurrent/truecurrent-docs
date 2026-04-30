@@ -1,7 +1,7 @@
 ---
 title: "Funding rates"
 description: "Understand perpetual funding rates on TrueCurrent including hourly payments between longs and shorts, rate calculations, funding factor, and strategic implications for position holding costs."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-30"
 ---
 
 Perpetual contracts have no expiry, so they use **funding rates** to keep the perpetual price anchored to the underlying spot price. Funding is a periodic payment exchanged between long and short positions.
@@ -24,24 +24,68 @@ Funding payments are automatically applied to your margin. You don't need to do 
 The funding rate on TrueCurrent is derived from the difference between the perpetual mark price and the underlying index price:
 
 ```
-Funding rate = (Mark price − Index price) / Index price × Funding factor
+Premium = (Mark price − Index price) / Index price
+
+Funding rate = clamp(Premium × Funding factor, −Cap, +Cap)
 ```
 
-The funding factor controls how aggressively the rate adjusts. The resulting rate is clamped to prevent extreme payments in highly dislocated markets.
+**Premium sampling:** The premium is not taken at a single snapshot. Instead, mark and index prices are sampled once per minute throughout the settlement window. The funding rate applied at settlement is the time-weighted average of these per-minute samples. This smoothing prevents brief price dislocations from producing outsized funding payments.
 
-On TrueCurrent, funding settles **hourly**. The rate displayed in the UI is the per-hour rate. To estimate your daily funding cost, multiply by 24.
+**Funding factor:** Controls how aggressively the rate responds to premium. A funding factor of `1/24` maps a sustained 1% premium to approximately a 0.042% hourly rate.
+
+**Clamping:** The resulting rate is bounded by a maximum cap in each direction. This prevents extreme payments in highly dislocated markets. Current parameters are governed by the Injective exchange module; see the [Injective exchange documentation](https://docs.injective.network) for the exact values per market.
+
+On TrueCurrent, funding settles **hourly**. The rate displayed in the UI is the per-hour rate.
+
+### Funding parameter reference
+
+| Parameter | Description | Typical value |
+|-----------|-------------|---------------|
+| Settlement interval | How often funding is paid | 1 hour |
+| Sampling method | Price samples per settlement window | Once per minute, time-weighted average |
+| Funding factor | Premium-to-rate multiplier | ~1/24 (varies by market) |
+| Rate cap | Maximum absolute hourly rate | Set per market via governance |
 
 ---
 
-## Impact on your position
+## Worked examples
 
-**If you're long and funding is positive:**
-You pay a small amount per hour to short holders. This is a cost of holding a long position when the perpetual trades at a premium.
+### Example 1 — Small long position (1 INJ)
 
-**If you're short and funding is negative:**
-You pay a small amount per hour to long holders. This is a cost of holding a short when the perpetual trades at a discount.
+- **Position:** 1 INJ long
+- **Mark price:** $25.05
+- **Index price:** $25.00
+- **Premium:** ($25.05 − $25.00) / $25.00 = **+0.20%**
+- **Hourly funding rate (after funding factor ≈ 1/24):** 0.20% / 24 ≈ **+0.0083% per hour**
+- **Position notional:** 1 × $25.05 = $25.05
+- **Hourly funding payment (long pays short):** $25.05 × 0.0083% ≈ **$0.0021 per hour** (~$0.05 per day)
 
-Funding is automatically deducted from (or added to) your margin each hour. If your funding payments are large enough relative to your remaining margin, they could accelerate your approach to liquidation.
+At this rate, holding 1 INJ long for a week costs roughly $0.35 in funding — a negligible drag at this position size.
+
+---
+
+### Example 2 — Mid-size long position (100 INJ)
+
+- **Position:** 100 INJ long
+- **Mark price:** $25.05
+- **Index price:** $25.00
+- **Hourly funding rate:** +0.0083% per hour (same market conditions as above)
+- **Position notional:** 100 × $25.05 = $2,505
+- **Hourly funding payment:** $2,505 × 0.0083% ≈ **$0.21 per hour** (~$5.00 per day)
+
+A week of holding costs roughly $35. At 10× leverage (initial margin ~$250), daily funding is about 2% of your initial margin — a meaningful holding cost in a directional trend.
+
+---
+
+### Example 3 — Short position benefiting from positive funding
+
+- **Position:** 100 INJ short
+- **Mark price:** $25.05
+- **Index price:** $25.00
+- **Hourly funding rate:** +0.0083% (positive, so shorts receive)
+- **Hourly funding receipt:** $2,505 × 0.0083% ≈ **+$0.21 per hour** (~+$5.00 per day)
+
+A short position in a market trading at a premium receives funding as income. Over a week, a 100 INJ short collects approximately $35 — equivalent to a ~14% annualised yield on $250 of initial margin at 10× leverage, from funding alone.
 
 ---
 
@@ -55,6 +99,50 @@ In the market header, TrueCurrent shows:
 A positive rate means longs are currently paying shorts. A negative rate means shorts are paying longs.
 
 Funding rates close to zero indicate the perpetual price is well-anchored to spot – a healthy market condition.
+
+### Converting hourly rate to daily and annual
+
+| Frequency | Conversion | Formula |
+|-----------|------------|---------|
+| Hourly (displayed in UI) | — | Rate as shown |
+| Daily | × 24 | Hourly rate × 24 |
+| Annual (indicative) | × 8,760 | Hourly rate × 8,760 |
+
+**Example:** An hourly rate of +0.005% equals +0.12% per day and approximately +43.8% annualised. This is a moderate bull-market condition.
+
+### Typical funding rate ranges by market condition
+
+| Condition | Hourly rate range | Daily range | What it signals |
+|-----------|-------------------|-------------|-----------------|
+| Calm / sideways | ±0.000% – ±0.003% | ±0.00% – ±0.07% | Perp well-anchored; balanced longs and shorts |
+| Trending (mild) | ±0.003% – ±0.010% | ±0.07% – ±0.24% | Market leaning one way; moderate premium or discount |
+| Trending (strong) | ±0.010% – ±0.030% | ±0.24% – ±0.72% | Persistent directional pressure; noticeable holding cost |
+| Highly volatile / squeezed | ±0.030%+ | ±0.72%+ | Extreme dislocation; holding cost can be significant |
+
+These ranges are indicative. Rates during market dislocations or short squeezes can briefly exceed the volatile range before the clamp takes effect.
+
+---
+
+## Funding rate history
+
+Historical funding rates for each market are accessible through:
+
+- **TrueCurrent explorer** — per-market funding history with settlement timestamps
+- **Indexer API** — the `/derivatives/markets/{marketId}/funding` endpoint returns historical funding rate snapshots and can be queried for any date range
+
+Reviewing funding history before entering a long-duration position helps set realistic expectations for holding cost, particularly in markets with a track record of persistent positive or negative rates.
+
+---
+
+## Impact on your position
+
+**If you're long and funding is positive:**
+You pay a small amount per hour to short holders. This is a cost of holding a long position when the perpetual trades at a premium.
+
+**If you're short and funding is negative:**
+You pay a small amount per hour to long holders. This is a cost of holding a short when the perpetual trades at a discount.
+
+Funding is automatically deducted from (or added to) your margin each hour. If your funding payments are large enough relative to your remaining margin, they could accelerate your approach to liquidation.
 
 ---
 

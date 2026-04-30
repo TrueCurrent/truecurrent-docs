@@ -1,7 +1,7 @@
 ---
 title: "Liquidation"
-description: "Technical explanation of liquidation mechanics on TrueCurrent including margin ratio calculations, liquidation price formulas, bankruptcy price, insurance fund protection, and strategies to prevent forced position closure."
-updatedAt: "2026-04-06"
+description: "Technical explanation of liquidation mechanics on TrueCurrent including margin ratio calculations, liquidation price formulas, bankruptcy price, insurance fund protection, ADL, and strategies to prevent forced position closure."
+updatedAt: "2026-04-30"
 ---
 
 When a position's margin ratio falls to or below the maintenance margin rate (MMR), TrueCurrent's liquidation engine automatically closes it. This page explains exactly when and how that happens, how to calculate your liquidation price, and how to protect yourself.
@@ -60,7 +60,9 @@ $$P_{liq}^{short} = P_{entry} \times \frac{1 + \frac{1}{L}}{1 + MMR}$$
 
 ---
 
-## Worked example
+## Worked examples
+
+### Single leverage — basic example
 
 Suppose you open a **long** on an asset at $P_{entry} = \$100$ with $L = 10\times$ leverage and $MMR = 2.5\%$:
 
@@ -73,6 +75,27 @@ For the equivalent **short** at the same parameters:
 $$P_{liq} = 100 \times \frac{1 + \frac{1}{10}}{1 + 0.025} = 100 \times \frac{1.1}{1.025} \approx \$107.32$$
 
 If the mark price rises to $107.32, the short is liquidated.
+
+---
+
+### Multi-leverage comparison — $1,000 long position
+
+Assumptions: $P_{entry} = \$100$, initial margin = $1,000 total account, long position, MMR = 2.5%.
+
+| Leverage | Position size | Initial margin used | Liquidation price | Distance from entry | Loss at liquidation |
+|----------|--------------|---------------------|-------------------|---------------------|---------------------|
+| **2×** | 20 units | $1,000 | ~$51.28 | −48.7% | ~$975 (97.5% of margin) |
+| **5×** | 50 units | $1,000 | ~$79.49 | −20.5% | ~$975 (97.5% of margin) |
+| **10×** | 100 units | $1,000 | ~$92.31 | −7.7% | ~$975 (97.5% of margin) |
+| **20×** | 200 units | $1,000 | ~$96.15 | −3.9% | ~$975 (97.5% of margin) |
+
+**Key insight:** Higher leverage does not change the *dollar loss* at liquidation — you always lose approximately 97.5% of your initial margin (the MMR buffer is 2.5%). What changes is the *price distance* required to trigger it. At 20× leverage, a 3.9% adverse move liquidates you. At 2× leverage, you need a nearly 49% move.
+
+The loss at liquidation formula is:
+
+$$\text{Loss} = M \times (1 - MMR)$$
+
+With MMR = 2.5%, you retain approximately $25 of your $1,000 margin at liquidation — the liquidation engine recovers this for the insurance fund.
 
 ---
 
@@ -105,9 +128,67 @@ When the mark price reaches your liquidation price:
 
 ## Insurance fund
 
-TrueCurrent maintains an insurance fund to cover situations where liquidated positions cannot be closed before reaching the bankruptcy price. This ensures that winning traders are always paid in full, even when counterparties are liquidated at a loss.
+<Note>
+TrueCurrent maintains an insurance fund to protect the system against insolvent liquidations. You never owe beyond your deposited margin — the fund covers any shortfall.
+</Note>
 
-The insurance fund grows from a portion of liquidation proceeds when positions are closed between $P_{liq}$ and $P_{bankrupt}$.
+**Purpose:** The insurance fund ensures that winning traders are always paid in full, even when a counterparty is liquidated at a loss beyond their margin.
+
+**Accrual:** The fund grows whenever a liquidation closes between $P_{liq}$ and $P_{bankrupt}$. The margin buffer captured in that price range (the difference between the position's equity at $P_{liq}$ and zero) is transferred to the insurance fund, not returned to the trader.
+
+**Depletion:** If the insurance fund is exhausted — meaning a catastrophic liquidation event exceeds its reserves — the system activates Auto-Deleveraging (ADL) as a last resort. See the [ADL section](#auto-deleveraging-adl) below.
+
+The onchain insurance fund address can be queried on the Injective explorer for real-time balance transparency. Refer to the [Injective exchange documentation](https://docs.injective.network) for the contract address specific to each market.
+
+---
+
+## Auto-Deleveraging (ADL)
+
+ADL is the system's last-resort backstop when the insurance fund cannot cover an insolvent position. It is rare and only activates after the insurance fund is depleted.
+
+### The full liquidation waterfall
+
+| Stage | Trigger | What happens |
+|-------|---------|--------------|
+| **Partial liquidation** | MR approaches MMR | A portion of the position is closed to restore margin ratio above MMR |
+| **Full liquidation** | MR ≤ MMR after partial attempt | Entire position is closed at best available price |
+| **Insurance fund** | Liquidation close price < bankruptcy price | Fund covers the gap (negative equity) |
+| **ADL** | Insurance fund exhausted | Profitable positions are forcibly closed to cover the shortfall |
+
+### When ADL activates
+
+ADL is triggered when:
+1. A position reaches its bankruptcy price without being fully liquidated, **and**
+2. The insurance fund has insufficient balance to cover the resulting deficit.
+
+In practice, TrueCurrent's competitive liquidity network fills most liquidations well before the bankruptcy price, making insurance fund depletion — and therefore ADL — an extreme-tail-risk event.
+
+### ADL queue ranking
+
+When ADL is required, the system selects positions from the **opposite side** of the market (profitable positions) to be deleveraged. Positions are ranked by:
+
+$$\text{ADL rank} = \text{Effective leverage} \times \text{Normalised unrealised PnL}$$
+
+Where effective leverage = notional value / account equity, and normalised uPnL = uPnL / notional value.
+
+Positions with the **highest leverage and the largest unrealised profits** are ranked first in the ADL queue. This prioritises deleveraging positions that have benefited most from the market move that caused the insolvency, and whose margin requirements are smallest relative to their profit.
+
+### What ADL means for affected traders
+
+If your position is selected for ADL:
+
+1. **Your position is partially or fully closed** — without your action, at the ADL reference price.
+2. **Exit price** — ADL closes positions at the bankruptcy price of the insolvent counterparty, not at mid-market. This is typically a favourable price relative to current market (the bankrupt position lost, so its bankruptcy price is worse than current mark for the winning side), but may be slightly different from the prevailing mark price.
+3. **Notification** — the ADL event and the price at which your position was reduced will appear in your trade history.
+4. **Unrealised profit becomes realised** — the deleveraged portion of your position is crystallised as realised P&L at the ADL price.
+
+### Reducing ADL risk
+
+- **Lower leverage** reduces your ADL rank score, making you less likely to be selected.
+- **Smaller unrealised profit** (by taking partial profits) lowers your normalised uPnL rank.
+- **Monitoring the ADL indicator** in the positions panel (where available) shows your current queue position.
+
+For full technical detail on the ADL mechanism, see the [Injective exchange module documentation](https://docs.injective.network/develop/modules/injective/exchange/).
 
 ---
 
