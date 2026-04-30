@@ -68,9 +68,11 @@
                 "expanded": false,
                 "pages": [
                   "trading/markets",
+                  "trading/contract-specifications",
                   "trading/how-to-trade",
                   "trading/placing-a-trade",
                   "trading/understanding-quotes",
+                  "trading/order-types",
                   "trading/perpetual-markets",
                   "trading/prices",
                   "trading/trigger-orders",
@@ -79,6 +81,7 @@
                   "trading/fees",
                   "trading/margin-trading",
                   "trading/liquidation",
+                  "trading/adl",
                   "trading/slippage-and-worst-price"
                 ]
               },
@@ -88,6 +91,7 @@
                 "expanded": false,
                 "pages": [
                   "takers/overview",
+                  "takers/sdk",
                   "takers/quickstart",
                   "takers/authz-setup",
                   "takers/taker-stream",
