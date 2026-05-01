@@ -74,55 +74,6 @@ Below is a worked example of building a competitive two-sided quote for an INJ/U
 
 ---
 
-## Performance metrics
-
-TrueCurrent monitors market maker performance continuously. Understanding these metrics lets you self-monitor your standing and take corrective action before reaching review thresholds.
-
-### Metric definitions
-
-**Response rate**
-
-$$\text{Response rate} = \frac{\text{Quotes submitted within the 2 s window}}{\text{RFQ requests received}} \times 100\%$$
-
-Measured over a rolling 24-hour window. A response is counted only if the quote arrives within the 2-second deadline; late quotes are treated as no-quote.
-
-**Price competitiveness**
-
-The percentage of your submitted quotes that are selected as the best price across all competing market makers for the same RFQ. Measured over the same rolling 24-hour window. A low competitiveness score indicates your spreads are systematically wider than competitors — review your spread model.
-
-**Settlement success rate**
-
-$$\text{Settlement success rate} = \frac{\text{Quotes accepted by takers that settle successfully}}{\text{Quotes accepted by takers}} \times 100\%$$
-
-Settlement failures occur when your subaccount has insufficient margin at the time the taker accepts your quote, or when a signature validation error occurs. A low settlement success rate is a serious standing issue.
-
-### Threshold table
-
-| Metric | Green (healthy) | Amber (monitor) | Red (review risk) |
-|--------|----------------|-----------------|-------------------|
-| Response rate | ≥ 80% | 60% – 79% | < 60% |
-| Price competitiveness | ≥ 20% | 10% – 19% | < 10% |
-| Settlement success rate | ≥ 98% | 95% – 97% | < 95% |
-
-**Amber:** No immediate action from TrueCurrent, but you should investigate the cause. Sustained amber performance may trigger a standing review.
-
-**Red:** TrueCurrent will initiate a standing review. Persistent red performance in any metric, particularly settlement success rate, may result in temporary whitelist suspension until the issue is resolved.
-
-{/*
-TODO replace with actual API endpoint
-
-### Self-querying your metrics
-
-You can retrieve your own performance metrics via the TrueCurrent indexer API:
-
-```
-GET (... API endpoint URL)
-```
-
-This endpoint returns response rate, fill rate, and settlement success rate for the specified window. Build a monitoring dashboard or alert to track these in real time.
-*/}
----
-
 ## Inventory and hedging
 
 **Hedge promptly.** When you fill a taker long, you take on a short perpetuals position. Your goal as a market maker is typically to be market-neutral – capture the spread while hedging away directional risk.
@@ -133,18 +84,6 @@ Common hedging approaches:
 - Allow inventory to build within limits and hedge periodically
 
 **Set inventory limits.** Don't let any single position grow large enough to threaten your capital. Define hard limits on net delta per market and stop quoting (or skew heavily) when those limits are approached.
-
-### Oracle basis risk
-
-TrueCurrent's mark price (and the reference mid most makers use) is derived from the Injective oracle, which updates on each block (~1–2 seconds). Your pricing model likely consumes a CEX mid that updates faster (milliseconds). The gap between your reference price and the oracle means:
-
-- When a major CEX price move occurs, there is a brief window before the oracle updates during which informed takers can pick off stale quotes at the pre-move oracle mid.
-- This is the primary source of adverse selection for market makers on oracle-based systems.
-
-**Mitigations:**
-1. **Widen spread during oracle lag.** When your CEX feed shows a fast move (e.g., >0.1% in 1 second), temporarily widen or pause quoting until the oracle has had time to catch up (1–2 block times).
-2. **Track block times.** If block times lengthen (e.g., during network congestion), oracle updates slow down and your oracle-lag risk increases.
-3. **Quote against the oracle, not just the CEX mid.** Incorporate the current oracle price into your reference mid. If CEX mid and oracle diverge by more than your spread, either pause or price relative to the oracle to avoid selling taker longs at a price that will immediately be underwater when the oracle catches up.
 
 ---
 

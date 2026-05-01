@@ -18,7 +18,7 @@ This makes TrueCurrent one of the most cost-effective venues to trade perpetuals
 | $10,000 | $0.00 | $4.00 |
 | $1,000,000 | $0.00 | $400.00 |
 
-As a trader you pay zero regardless of trade size. The maker fee is borne entirely by the institutional liquidity provider who fills your order.
+As a taker you pay zero regardless of trade size. The maker fee is borne entirely by the institutional liquidity provider who fills your order.
 
 ### No volume tiers or fee discounts
 

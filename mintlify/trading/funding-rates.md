@@ -48,46 +48,7 @@ On TrueCurrent, funding settles **hourly**. The rate displayed in the UI is the 
 
 ---
 
-## Worked examples
-
-### Example 1 — Small long position (1 INJ)
-
-- **Position:** 1 INJ long
-- **Mark price:** $25.05
-- **Index price:** $25.00
-- **Premium:** ($25.05 − $25.00) / $25.00 = **+0.20%**
-- **Hourly funding rate (after funding factor ≈ 1/24):** 0.20% / 24 ≈ **+0.0083% per hour**
-- **Position notional:** 1 × $25.05 = $25.05
-- **Hourly funding payment (long pays short):** $25.05 × 0.0083% ≈ **$0.0021 per hour** (~$0.05 per day)
-
-At this rate, holding 1 INJ long for a week costs roughly $0.35 in funding — a negligible drag at this position size.
-
----
-
-### Example 2 — Mid-size long position (100 INJ)
-
-- **Position:** 100 INJ long
-- **Mark price:** $25.05
-- **Index price:** $25.00
-- **Hourly funding rate:** +0.0083% per hour (same market conditions as above)
-- **Position notional:** 100 × $25.05 = $2,505
-- **Hourly funding payment:** $2,505 × 0.0083% ≈ **$0.21 per hour** (~$5.00 per day)
-
-A week of holding costs roughly $35. At 10× leverage (initial margin ~$250), daily funding is about 2% of your initial margin — a meaningful holding cost in a directional trend.
-
----
-
-### Example 3 — Short position benefiting from positive funding
-
-- **Position:** 100 INJ short
-- **Mark price:** $25.05
-- **Index price:** $25.00
-- **Hourly funding rate:** +0.0083% (positive, so shorts receive)
-- **Hourly funding receipt:** $2,505 × 0.0083% ≈ **+$0.21 per hour** (~+$5.00 per day)
-
-A short position in a market trading at a premium receives funding as income. Over a week, a 100 INJ short collects approximately $35 — equivalent to a ~14% annualised yield on $250 of initial margin at 10× leverage, from funding alone.
-
----
+{/* TODO DR-144 add worked examples section */}
 
 ## Reading the funding rate display
 
