@@ -1,10 +1,14 @@
 ---
-title: "Contract specifications"
-description: "Full contract and margin parameters for TrueCurrent perpetual markets: tick size, lot size, max open interest, oracle source, funding cap, leverage tiers, initial margin rate, maintenance margin rate, and the governance process that sets them."
-updatedAt: "2026-04-30"
+title: "Contract parameters"
+description: "Reference for TrueCurrent perpetual-market parameters: where to query the live onchain values, which public testnet values are currently confirmed, and how margin parameters affect position sizing."
+updatedAt: "2026-05-01"
 ---
 
-This page is the reference for all quantitative parameters that govern trading on TrueCurrent. These are the inputs required for a quoting model, a risk management system, or a position-sizing calculation. Parameters are set at market creation via Injective governance and may be updated through subsequent governance votes.
+This page explains the quantitative parameters that govern trading on TrueCurrent. These are inputs for quoting models, risk systems, and position-sizing calculations.
+
+<Warning>
+Use the onchain `DerivativeMarket` response as the source of truth for production systems. This page can explain the fields and list confirmed public values, but market parameters can change through governance and deployment updates.
+</Warning>
 
 ---
 
@@ -18,7 +22,7 @@ This page is the reference for all quantitative parameters that govern trading o
 | **Initial margin rate (IMR) at max leverage** | 5.0% |
 | **Funding interval** | Hourly |
 | **Oracle source** | Injective onchain oracle |
-| **Tick size** | TBD |
+| **Tick size** | `0.01` on the current INJ/USDC PERP testnet market |
 | **Lot size (min quantity per order)** | TBD |
 | **Min notional order size** | TBD |
 | **Max open interest** | TBD |
@@ -30,11 +34,11 @@ TBD values will be confirmed and published here once finalized. In the meantime,
 
 ---
 
-## Margin tier table
+## Margin tiers
 
 Perpetual markets use a tiered margin structure: as your notional position size increases, the required margin rate rises. This protects the insurance fund by ensuring larger positions carry proportionally more equity as a buffer.
 
-The current rate for INJ/USDC PERP at launch:
+The exact live tiers must be read from the onchain market/config response. The table below is an example of how tiered parameters are interpreted; do not treat it as a launch schedule unless the same values are present onchain.
 
 | Notional (USDC) | Initial margin rate | Maintenance margin rate | Max leverage |
 |---|---|---|---|
@@ -43,15 +47,15 @@ The current rate for INJ/USDC PERP at launch:
 | 500,001 – 2,000,000 | 20.0% | 10.0% | 5× |
 | 2,000,001+ | 50.0% | 25.0% | 2× |
 
-<Warning>
-These tiers are illustrative. Confirm the current values in the app before opening a position, as tiers may be updated through governance. The on-chain source of truth is the Injective exchange module's `DerivativeMarket` response for this market.
-</Warning>
+<Note>
+The onchain source of truth is the Injective exchange module's `DerivativeMarket` response for this market. Confirm current values before opening a position or deploying an automated quoting system.
+</Note>
 
 ---
 
 ## Worked example — large position increases IMR
 
-Margin tiers are not always intuitive. Here is a concrete example showing how scaling into a larger position increases the initial margin requirement.
+Margin tiers are not always intuitive. Here is a concrete example, using the illustrative tiers above, showing how scaling into a larger position increases the initial margin requirement.
 
 **Scenario:** You want to open a long position on INJ/USDC PERP when INJ is priced at $10.
 
