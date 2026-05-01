@@ -1,7 +1,7 @@
 ---
 title: "Quoting guidelines"
 description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 This page covers best practices for market makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your market maker standing in good shape.
@@ -10,7 +10,7 @@ This page covers best practices for market makers on TrueCurrent. Following thes
 
 ## Pricing fundamentals
 
-**Always reference a reliable mid-market price.** Your quote price should be derived from a real-time reference price – typically the best available mid from a liquid CEX (e.g., Binance INJ/USDT), Injective's onchain oracle, or a composite of both. Never quote blind.
+**Always reference a reliable mid-market price.** Your quote price should be derived from a real-time reference price – typically the best available mid from a liquid CEX (for example, INJ/USDC or a tightly correlated INJ/USD venue), Injective's onchain oracle, or a composite of both. Never quote blind.
 
 **Quote around mid, not just on one side.** Your spread should be symmetric around mid unless you have a deliberate inventory reason to skew. Systematically quoting wide on one side makes you easier to pick off.
 
