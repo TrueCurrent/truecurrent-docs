@@ -79,8 +79,9 @@ An RFQ request declares what you want to trade. The indexer broadcasts it to eve
 | `margin` | string | Your margin in USDC, as a decimal string (e.g. `"200"`) |
 | `quantity` | string | Contracts requested (e.g. `"100"`) |
 | `worst_price` | string | Hard price limit. Quotes worse than this are rejected onchain. |
-| `request_address` | string | Your `inj1...` bech32 address |
 | `expiry` | uint64 | Unix ms after which the request is ignored. Typically now + 5 min. |
+
+`request_address` is required as TakerStream connection metadata. With `rfq-testing`, set it on `TakerStreamClient`; do not put it in the RFQ request body.
 
 **Python:**
 
@@ -99,7 +100,6 @@ await taker_ws.connect()
 expiry_ms = int(time.time() * 1000) + 5 * 60 * 1000
 
 request_data = {
-    "request_address": taker.inj_address,
     "client_id": str(uuid.uuid4()),
     "market_id": config.default_market.id,
     "direction": "long",
@@ -135,10 +135,10 @@ const request = {
   margin: "200",
   quantity: "100",
   worst_price: "5",
-  request_address: takerInjAddress,
   expiry,
 };
 
+// request_address is sent as TakerStream metadata when opening the stream.
 ws.send(JSON.stringify(request));
 
 const ack = await waitForRequestAck(ws, clientId);
@@ -250,7 +250,6 @@ Use ACK-based correlation. Generating a local millisecond timestamp and treating
 
 ```python
 request_data = {
-    "request_address": taker.inj_address,
     "client_id": str(uuid.uuid4()),
     "market_id": market.id,
     "direction": "long",
