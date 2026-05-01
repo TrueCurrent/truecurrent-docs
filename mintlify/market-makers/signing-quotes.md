@@ -1,135 +1,163 @@
 ---
 title: "Signing quotes"
-description: "Technical documentation for cryptographically signing quotes on TrueCurrent, including signature format, field ordering, Python signing implementation, common errors, and security considerations for market makers."
-updatedAt: "2026-04-06"
+description: "Technical documentation for signing TrueCurrent RFQ quotes with the EIP-712 v2 schema used by public testnet and mainnet integrations."
+updatedAt: "2026-05-01"
 ---
 
-Every quote you submit must be signed with your market maker wallet's private key. This signature is a cryptographic commitment to your quoted terms – it allows the TrueCurrent smart contract to verify authenticity at settlement without requiring you to be online at that moment.
+Every quote you submit must be signed with your market maker wallet. The signature is verified by the TrueCurrent contract when a taker accepts the quote, so the signed fields must match the quote payload exactly.
+
+<Warning>
+Public integrations use EIP-712 v2 quote signing only. Send `sign_mode: "v2"` with every quote and do not sign manually serialized JSON strings.
+</Warning>
 
 ---
 
 ## Why quotes must be signed
 
-Signed quotes provide two critical guarantees:
+Signed quotes provide two guarantees:
 
-1. **Authenticity.** The contract can verify that this quote genuinely came from your wallet and wasn't tampered with in transit.
-2. **Binding commitment.** Once signed and submitted, you cannot alter or retract a quote within its validity window. This protects traders from bait-and-switch pricing.
+1. **Authenticity.** The contract can verify that the quote came from the maker address in the payload.
+2. **Binding commitment.** The maker cannot change price, quantity, expiry, or taker binding after the quote is signed.
 
-The signature is verified onchain during the `AcceptQuote` transaction. If the signature is invalid, the transaction reverts.
+The contract verifies the signature during `AcceptQuote`. If any signed field differs from the payload accepted by the taker, settlement reverts.
 
 ---
 
-## Flow at a glance
+## EIP-712 domain
 
-```mermaid
-sequenceDiagram
-    actor MM as Market Maker
-    participant Indexer
-    actor Taker
-    participant Contract as TrueCurrent Contract
+The v2 quote digest uses this EIP-712 domain:
 
-    MM->>MM: Build canonical quote payload<br/>(fields in fixed order)
-    MM->>MM: secp256k1 ECDSA sign<br/>with MM private key
-    Note over MM: signature = hex (0x-prefixed)
+| Field | Value |
+|---|---|
+| `name` | `"RFQ"` |
+| `version` | `"1"` |
+| `chainId` testnet | `1439` |
+| `chainId` mainnet | `1776` |
+| `verifyingContract` | EVM form of the RFQ contract address |
 
-    MM->>Indexer: Send quote + signature
-    Indexer->>Taker: Deliver quote (hex sig)
+The domain `chainId` is the EVM chain ID. Do not use the Cosmos chain ID (`injective-888` or `injective-1`) in the EIP-712 domain.
 
-    Note over Taker: Convert hex → base64<br/>before building AcceptQuote
+Current public testnet RFQ contract:
 
-    Taker->>Contract: AcceptQuote (base64 sig)
-    Contract->>Contract: Reconstruct canonical payload<br/>from tx params
-    Contract->>Contract: Recover signer address<br/>from ECDSA signature
-    Contract->>Contract: Compare to quote.maker<br/>(✓ or revert)
+```text
+inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
 ```
-
-The contract **does not receive** your pre-built payload — it reconstructs the canonical payload from the transaction parameters. Any mismatch between what you signed and what the contract rebuilds causes a verification failure, even if the signature itself is valid for your original bytes.
 
 ---
 
 ## What is signed
 
-The signature covers the canonical JSON serialization of 14 fields (+ one optional) with abbreviated keys, in a fixed order. The contract rebuilds this exact shape from the settlement tx and verifies.
+The v2 signature covers the `SignQuote` typed-data struct:
 
-| # | Key | Field | Type | Notes |
-|---|---|---|---|---|
-| 1 | `c` | chain_id | string | Prevents cross-chain replay. |
-| 2 | `ca` | contract_address | string | Prevents cross-contract replay. |
-| 3 | `mi` | market_id | string | |
-| 4 | `id` | rfq_id | **number (u64)** | JSON number, not string. |
-| 5 | `t` | taker | string | Taker's `inj1...` address. |
-| 6 | `td` | taker_direction | string | Lowercase `"long"` or `"short"`. |
-| 7 | `tm` | taker_margin | string | Normalized decimal. |
-| 8 | `tq` | taker_quantity | string | Normalized decimal. |
-| 9 | `m` | maker | string | Your `inj1...`. |
-| 10 | `ms` | maker_subaccount_nonce | **number (u32)** | Subaccount index. **Required** — use `0` if you don't use subaccounts. |
-| 11 | `mq` | maker_quantity | string | Normalized decimal. |
-| 12 | `mm` | maker_margin | string | Normalized decimal. |
-| 13 | `p` | price | string | Pre-quantized to market tick size. |
-| 14 | `e` | expiry | **object** | `{"ts": <unix_ms>}` or `{"h": <block_height>}` — not a raw integer. |
-| 15 | `mfq` | min_fill_quantity | string \| omitted | Optional V2 field. Append only when declaring a minimum partial fill. |
+| Field | Notes |
+|---|---|
+| `marketId` | Injective market ID. |
+| `rfqId` | Indexer-assigned RFQ ID. Use the ID from the request or ACK. |
+| `taker` | Taker `inj1...` address for taker-bound quotes, or empty for blind quotes. |
+| `takerDirection` | Taker direction, `"long"` or `"short"`. |
+| `takerMargin` / `takerQuantity` | Exact decimal strings from the RFQ request. |
+| `maker` | Maker `inj1...` address. |
+| `makerSubaccountNonce` | Usually `0`; must match the wire payload. |
+| `makerQuantity` / `makerMargin` | Exact decimal strings you quote. |
+| `price` | Exact decimal string you quote, quantized to market tick. |
+| `expiryKind` / `expiryValue` | Timestamp milliseconds or block height. |
+| `minFillQuantity` | Optional partial-fill floor; omit unless you intentionally require it. |
+| `bindingKind` | Derived from whether `taker` is set. It is not a wire field. |
 
-Field order is enforced by the contract's `SignQuote` struct. **Any mismatch** — wrong order, missing field, raw-int `e`, stringified `id`, missing `ms`, unnormalized decimal — causes a signature verification failure at settlement.
-
-**Decimal normalization:** strip trailing zeros after the decimal point. `"15.500000"` → `"15.5"`; `"500"` stays `"500"`; never scientific notation. Both `rfq-testing` and `rfq-qa-python-tests` implement this as `_normalize_decimal_str`.
-
-**Serialize with no spaces** (`separators=(",", ":")` in Python, default `JSON.stringify` in TS/JS). Never sort keys.
+`chain_id` and `contract_address` may still appear in the quote payload for indexer compatibility, but v2 binds chain and contract through the EIP-712 domain above.
 
 ---
 
 ## Signing in Python
 
-Using the `rfq_test` library (canonical reference — matches the contract byte-for-byte):
+Use `sign_quote_v2` from `rfq-testing`. The helper returns a `0x`-prefixed 65-byte signature, so send it as-is.
 
 ```python
-from rfq_test.crypto.signing import sign_quote
+import time
 
-signature = sign_quote(
-    private_key=mm_wallet.private_key,       # hex, 0x-prefixed ok
-    rfq_id=str(rfq_id),
+from rfq_test.crypto.eip712 import sign_quote_v2
+
+expiry_ms = int(time.time() * 1000) + 2_000
+
+signature = sign_quote_v2(
+    private_key=MM_PRIVATE_KEY,
+    evm_chain_id=1439,
+    verifying_contract_bech32="inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
+    rfq_id=int(rfq_id),
     market_id=market_id,
-    direction="long",                         # taker's direction
-    taker=taker_wallet.inj_address,
-    taker_margin="200",                       # decimal string, USDC amount
+    direction="long",
+    taker=taker_address,
+    taker_margin="200",
     taker_quantity="100",
-    maker=mm_wallet.inj_address,
+    maker=maker_address,
+    maker_subaccount_nonce=0,
     maker_margin="200",
     maker_quantity="100",
-    price="4.455",                            # pre-quantized to tick size
-    expiry=quote_expiry,                      # Unix ms; helper wraps as {"ts": ...}
-    chain_id=chain_id,                        # e.g. "injective-1" for mainnet
-    contract_address=contract_address,
-    maker_subaccount_nonce=0,                 # ms — required (default 0)
-    min_fill_quantity=None,                   # mfq — optional V2 field
+    price="14.85",
+    expiry_ms=expiry_ms,
+    min_fill_quantity=None,
 )
 ```
 
-The helper returns a 65-byte hex signature (no `0x` prefix). The indexer expects a `0x` prefix when you send the quote, so prepend it on the wire: `signature = "0x" + sign_quote(...)`.
+Send the same values on the quote:
 
-The returned `signature` is a hex string that you include in your quote payload.
+```python
+await mm_ws.send_quote({
+    "rfq_id": rfq_id,
+    "market_id": market_id,
+    "taker_direction": "long",
+    "margin": "200",
+    "quantity": "100",
+    "price": "14.85",
+    "expiry": expiry_ms,
+    "maker": maker_address,
+    "taker": taker_address,
+    "signature": signature,
+    "sign_mode": "v2",
+    "maker_subaccount_nonce": 0,
+    "chain_id": "injective-888",
+    "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
+})
+```
+
+Do not prepend `0x` again, do not sign a manually serialized JSON string, and do not pass `binding_kind` into the helper or quote payload.
+
+---
+
+## Decimal formatting
+
+Decimal fields are hashed as raw UTF-8 strings. `"14.85"` and `"14.850"` produce different digests.
+
+- Quantize price to the market tick before signing. The current INJ/USDC PERP testnet tick is `0.01`.
+- Send the exact same decimal strings you signed.
+- Use plain notation without trailing zeros.
+- Do not use locale commas, scientific notation, or integer-scaled token units.
+
+```python
+from decimal import Decimal, ROUND_DOWN
+
+TICK = Decimal("0.01")
+price = format(Decimal(str(raw_price)).quantize(TICK, rounding=ROUND_DOWN).normalize(), "f")
+```
 
 ---
 
 ## Common signing errors
 
-**`signature verification failed`** – The most common cause is incorrect field serialization. Check:
-- Are you using the correct field order?
-- Are numeric values encoded as strings (not raw integers)?
-- Is the price string in the correct decimal format?
-
-**`quote expired`** – Your quote's `expiry` timestamp was in the past by the time the trader accepted. Ensure your system clocks are synchronized (use NTP) and set a sufficient expiry window. {/* TODO: confirm the precise minimum quote expiry once benchmarked */}
-
-**`unauthorized` / wrong maker address** – The signing wallet doesn't match the `maker` field in your quote, or the `maker` address is not whitelisted.
-
-**`invalid chain_id`** – You're using testnet chain ID on mainnet or vice versa. Verify your environment configuration.
+| Error | Fix |
+|---|---|
+| Missing or empty `sign_mode` | Send `"sign_mode": "v2"` on every quote. |
+| `invalid_signature` | Check EVM chain ID, RFQ contract address, maker address, compact `v=0/1`, and exact signed decimal strings. |
+| Settlement reverts after quote ACK | Confirm the taker is accepting the same signed price, quantity, expiry, maker, taker, nonce, and signature. |
+| Price rejected as non-canonical | Send `3.4`, not `3.40`, after quantizing to tick size. |
 
 ---
 
 ## Security considerations
 
-Your private key is used to sign quotes. Treat it with the same care as any high-value cryptographic secret:
+Your private key signs binding price commitments. Store it like any production signing key:
 
-- Never hardcode private keys in source code or commit them to version control
-- Use environment variables or a dedicated secrets management system
-- Consider using a hardware security module (HSM) for production market making
-- Your signing key only needs to be able to sign messages – it doesn't need to hold large balances directly if you structure your wallet setup carefully
+- Never commit private keys to source control.
+- Use environment variables or a secrets manager.
+- Separate signing keys from wallets that hold large balances when possible.
+- Monitor failed signature and quote-expiry errors; they usually indicate a serialization mismatch or stale clock.
