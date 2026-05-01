@@ -1,7 +1,7 @@
 ---
 title: "Order types"
 description: "Complete reference for all order types on TrueCurrent: RFQ fill, order book market and limit fallback, take profit, stop loss, and signed intents — when each executes, its price guarantee, and when to use it."
-updatedAt: "2026-04-30"
+updatedAt: "2026-05-01"
 ---
 
 TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the system solicits competitive signed quotes from professional market makers and fills at the best available price — with zero taker fees. An order book fallback is available for residual unfilled quantity, and conditional trigger orders automate exits. This page documents every order type, what guarantee it carries, and when to reach for it.
@@ -13,7 +13,7 @@ TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the 
 | Execution path | Who fills | Price guarantee | Taker fee |
 |---|---|---|---|
 | RFQ | Competing market makers | `worst_price` enforced onchain | Zero |
-| Order book market fallback | Injective CLOB | None (market price) | Standard |
+| Order book market fallback | Injective CLOB | `worst_price` still enforced | Standard |
 | Order book limit fallback | Injective CLOB | At or better than limit price | Standard |
 | Trigger (TP/SL) | Market makers via relayer | `worst_price` in signed intent | Zero |
 
@@ -25,7 +25,7 @@ Every trade on TrueCurrent starts as an RFQ. When you submit a trade, TrueCurren
 
 **When it executes:** immediately on trade submission; fills within the quote collection window (typically under one second)
 
-**Price guarantee:** your `worst_price` parameter is enforced by the contract — the trade cannot settle at a less favorable price. If no maker can beat your worst price, the trade does not execute and your margin is returned.
+**Price guarantee:** your `worst_price` parameter is enforced by the contract — the RFQ fill cannot settle at a less favorable price. If no maker can satisfy your `worst_price` and you are using strict RFQ-only execution (`unfilled_action: null`), the trade does not execute and your margin is returned. If fallback is enabled, any remaining quantity can continue to the configured order book path below.
 
 **When to use:** always — this is the default path for every trade opened or closed through the UI or API
 
@@ -42,7 +42,7 @@ If an RFQ returns quotes that only partially fill your requested quantity — or
 
 **When it executes:** immediately after the RFQ phase, for any quantity not covered by RFQ quotes
 
-**Price guarantee:** none on the unfilled portion — the order book fill executes at whatever price is available
+**Price guarantee:** `worst_price` is still enforced by the contract. The market fallback is not a fixed quote, so the final fill can be worse than the RFQ fill price, but it cannot cross the taker's `worst_price`.
 
 **When to use:** when fill certainty matters more than exact price; useful for larger sizes where a single maker may not cover the full quantity
 
@@ -55,7 +55,7 @@ If an RFQ returns quotes that only partially fill your requested quantity — or
 ```
 
 <Warning>
-The order book market fill carries no price protection. In a fast-moving market, the fill price on the unfilled portion may be significantly worse than the RFQ fill price. Set an appropriate `worst_price` tolerance or use the limit fallback if price protection on the full quantity matters.
+The order book market fallback is protected by `worst_price`, but it is still market execution. In a fast-moving market, the unfilled portion may execute significantly worse than the RFQ fill price up to that limit, or fail/underfill if the book cannot fill within the limit. Use a tight `worst_price` or the limit fallback if price certainty matters more than immediate fill.
 </Warning>
 
 ---
@@ -70,11 +70,11 @@ If an RFQ partially fills your quantity, the remaining unfilled quantity is plac
 
 **When to use:** when you want price protection on the full quantity and are willing to wait for the unfilled residual to fill later; more appropriate than the market fallback when you have a price target
 
-**How to enable:** pass `unfilled_action: { "limit": {} }` in your API/SDK trade request
+**How to enable:** pass `unfilled_action: { "limit": { "price": "..." } }` in your API/SDK trade request
 
 ```json
 {
-  "unfilled_action": { "limit": {} }
+  "unfilled_action": { "limit": { "price": "4.93" } }
 }
 ```
 
@@ -88,8 +88,8 @@ A resting limit order from this fallback continues to sit on the order book unti
 
 A take profit order closes your position automatically when the price reaches a favorable level you specify in advance.
 
-- **Long TP:** triggers when the quoted price rises to or above your target
-- **Short TP:** triggers when the quoted price falls to or below your target
+- **Long TP:** triggers when the mark price rises to or above your target
+- **Short TP:** triggers when the mark price falls to or below your target
 
 **When it executes:** when the mark price crosses your trigger level; the TrueCurrent relayer executes `AcceptSignedIntent` onchain and closes the position at the best available quote
 
@@ -171,7 +171,7 @@ These two paths have materially different properties:
 | Who provides liquidity | Institutional market makers | Any order book participant |
 | Price competition | Makers compete on every request | Best resting order wins |
 | Taker fee | Zero | Standard (see [Fees](/trading/fees)) |
-| Fill guarantee | `worst_price` enforced | None for market; limit price for limit |
+| Fill guarantee | `worst_price` enforced | `worst_price` for market fallback; limit price for limit fallback |
 | Latency | Sub-second (quote collection window) | Block time |
 | Partial fill handling | Configurable via `unfilled_action` | Standard CLOB partial fill |
 
