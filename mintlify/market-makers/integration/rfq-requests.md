@@ -9,7 +9,7 @@ updatedAt: "2026-04-18"
   "message_type": "request",
   "request": {
     "rfq_id": 1770848375348,
-    "market_id": "0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6",
+    "market_id": "0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e",
     "direction": "long",
     "margin": "100",
     "quantity": "10",
@@ -24,10 +24,10 @@ updatedAt: "2026-04-18"
 
 | Field | Type | Description |
 |---|---|---|
-| `rfq_id` | uint64 | Unique request identifier (timestamp-based nonce). |
+| `rfq_id` | uint64 | Indexer-assigned unique request identifier. |
 | `market_id` | string | Injective derivative market ID (hex, `0x…`). |
 | `direction` | string | Taker's direction: `"long"` or `"short"`. |
-| `margin` | string | Taker's margin (decimal string, USDT on testnet). |
+| `margin` | string | Taker's margin (decimal string, USDC on the current testnet market). |
 | `quantity` | string | Taker's quantity (decimal string). |
 | `worst_price` | string | Max price the taker accepts (long) or min (short). |
 | `request_address` | string | Taker's `inj1...` address. |
