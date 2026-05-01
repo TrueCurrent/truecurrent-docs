@@ -1,7 +1,7 @@
 ---
 title: "Connecting to MakerStream"
 description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocket endpoint, receiving RFQ requests, submitting signed quotes within the 2-second window, and handling concurrent market making operations."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to market makers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
@@ -46,10 +46,10 @@ Once connected, you'll receive RFQ request events in real time. Each request con
 | `rfq_id` | integer | Unique identifier for this RFQ |
 | `market_id` | string | Injective market ID (hex string) |
 | `direction` | string | `"long"` or `"short"` (taker's direction) |
-| `margin` | string | Taker's margin in quote currency (USDT) |
+| `margin` | string | Taker's margin in quote currency (USDC on the current testnet market) |
 | `quantity` | string | Number of contracts requested |
 | `worst_price` | string | Taker's worst acceptable price |
-| `taker_address` | string | Taker's Injective `inj1...` address |
+| `request_address` | string | Taker's Injective `inj1...` address |
 | `expiry` | integer | Unix millisecond timestamp – request expires |
 
 **Note on direction:** The `direction` field is the *taker's* direction. If the taker is `long`, you as the market maker are taking the *short* side. Price accordingly.
@@ -64,7 +64,7 @@ market_id = request["market_id"]
 direction = request["direction"]     # taker's direction
 margin = request["margin"]
 quantity = request["quantity"]
-taker = request["taker_address"]
+taker = request["request_address"]
 ```
 
 ---
@@ -86,21 +86,24 @@ Your quote must include:
 | `expiry` | integer | Quote expiry (Unix ms) – recommend 30s from now |
 | `maker` | string | Your Injective address |
 | `taker` | string | Taker's Injective address (from request) |
-| `signature` | string | Your cryptographic signature (see [Signing quotes](/market-makers/signing-quotes)) |
-| `chain_id` | string | Injective chain ID |
-| `contract_address` | string | TrueCurrent contract address |
+| `signature` | string | `0x`-prefixed EIP-712 v2 signature (see [Signing quotes](/market-makers/signing-quotes)) |
+| `sign_mode` | string | Must be `"v2"` |
+| `maker_subaccount_nonce` | integer | Usually `0`; must match what you signed |
+| `chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet |
+| `contract_address` | string | RFQ contract address for indexer compatibility |
 
 **Example (Python):**
 
 ```python
-from rfq_test.crypto.signing import sign_quote
+from rfq_test.crypto.eip712 import sign_quote_v2
 
-quote_expiry = int(time.time() * 1000) + 2_000  # ~2 seconds from now – must meet the minimum of 1.5s
-{/* TODO: confirm the precise minimum quote expiry once benchmarked */}
+quote_expiry = int(time.time() * 1000) + 2_000  # short-lived quote, timestamp in ms
 
-signature = sign_quote(
+signature = sign_quote_v2(
     private_key=mm_wallet.private_key,
-    rfq_id=str(rfq_id),
+    evm_chain_id=1439,
+    verifying_contract_bech32=contract_address,
+    rfq_id=int(rfq_id),
     market_id=market_id,
     direction=direction,           # taker's direction
     taker=taker_address,
@@ -110,9 +113,9 @@ signature = sign_quote(
     maker_margin=margin,           # your margin commitment
     maker_quantity=quantity,
     price=your_quoted_price,
-    expiry=quote_expiry,
-    chain_id=chain_id,
-    contract_address=contract_address,
+    expiry_ms=quote_expiry,
+    maker_subaccount_nonce=0,
+    min_fill_quantity=None,
 )
 
 quote_data = {
@@ -125,7 +128,9 @@ quote_data = {
     "expiry": quote_expiry,
     "maker": mm_wallet.inj_address,
     "taker": taker_address,
-    "signature": signature,
+    "signature": signature,         # already 0x-prefixed
+    "sign_mode": "v2",
+    "maker_subaccount_nonce": 0,
     "chain_id": chain_id,
     "contract_address": contract_address,
 }
