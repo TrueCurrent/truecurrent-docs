@@ -1,7 +1,7 @@
 ---
 title: "Error reference"
 description: "Troubleshooting guide for common TrueCurrent integration errors including signature verification failures, quote expiry, authz grants, insufficient margin, and WebSocket connection issues."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 This page lists common errors you may encounter when integrating with TrueCurrent, along with their causes and resolutions.
@@ -15,10 +15,10 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **Cause:** The market maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
 
 **Common causes:**
-- Incorrect field ordering in the signed message
-- Numeric values not serialized as strings (e.g., passing integer `100` instead of string `"100"`)
-- Price decimal format mismatch (e.g., `4.455` vs `4.4550`)
-- Wrong `chain_id` or `contract_address` in the signed message
+- Using the old JSON-signing path instead of `rfq_test.crypto.eip712.sign_quote_v2`
+- Price decimal format mismatch (for example, signing `4.45` but sending `4.450`)
+- Wrong EVM chain ID in the EIP-712 domain (`1439` on testnet, `1776` on mainnet)
+- Wrong RFQ contract address in the EIP-712 domain
 
 **Resolution:** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
 
@@ -60,7 +60,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 ### `insufficient funds` / `insufficient margin`
 
-**Cause:** The taker's or maker's subaccount doesn't have enough USDT to cover the required margin for the trade.
+**Cause:** The taker's or maker's subaccount doesn't have enough quote-asset margin to cover the trade. On the current testnet RFQ market, the quote asset is USDC.
 
 **Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
 
@@ -105,7 +105,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **Symptom:** Quotes arrive with a different `rfq_id` than expected, or no quotes arrive for the submitted `rfq_id`.
 
 **Common causes:**
-- Multiple concurrent requests from the same address with different IDs
-- ID generation collision (avoid using sequential small integers; use timestamps or UUIDs)
+- Multiple concurrent requests from the same address with different ACK-assigned IDs
+- Client code is collecting quotes using a locally generated ID instead of the indexer's ACK-returned `rfq_id`
 
-**Resolution:** Use millisecond timestamps as `rfq_id` values to ensure uniqueness. Ensure your quote collection is filtering by the correct `rfq_id`.
+**Resolution:** Send a unique `client_id`, wait for the request ACK, and use `ack["rfq_id"]` for quote collection and settlement.
