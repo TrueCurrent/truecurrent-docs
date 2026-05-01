@@ -1,7 +1,7 @@
 ---
 title: "TakerStream"
 description: "Reference for TrueCurrent's TakerStream WebSocket API including connection setup, gRPC-web framing, request message schema, quote subscription, collection windows, filtering, and reconnection patterns for programmatic takers."
-updatedAt: "2026-04-08"
+updatedAt: "2026-05-01"
 ---
 
 The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ requests and receive quotes. It is the offchain half of the RFQ flow – once you've picked a quote, everything after is onchain.
@@ -73,7 +73,7 @@ An RFQ request declares what you want to trade. The indexer broadcasts it to eve
 
 | Field | Type | Description |
 |---|---|---|
-| `rfq_id` | uint64 | A client-side identifier for this request. Use `int(time.time() * 1000)` or a monotonic counter. See [How `rfq_id` correlation works](#how-rfq-id-correlation-works) below for what actually happens on the wire. |
+| `client_id` | string | A UUID you generate for request/ACK correlation. The indexer assigns the `rfq_id`; use the ACK's `rfq_id` for quote collection and settlement. |
 | `market_id` | string | Injective derivative market ID (hex) |
 | `direction` | string | Lowercase `"long"` or `"short"` |
 | `margin` | string | Your margin in USDC, as a decimal string (e.g. `"200"`) |
@@ -86,6 +86,7 @@ An RFQ request declares what you want to trade. The indexer broadcasts it to eve
 
 ```python
 import time
+import uuid
 from rfq_test.clients.websocket import TakerStreamClient
 
 taker_ws = TakerStreamClient(
@@ -95,44 +96,53 @@ taker_ws = TakerStreamClient(
 )
 await taker_ws.connect()
 
-rfq_id = int(time.time() * 1000)
+expiry_ms = int(time.time() * 1000) + 5 * 60 * 1000
 
 request_data = {
     "request_address": taker.inj_address,
-    "rfq_id": rfq_id,
+    "client_id": str(uuid.uuid4()),
     "market_id": config.default_market.id,
     "direction": "long",
     "margin": "200",
     "quantity": "100",
-    "worst_price": "5.00",
-    "expiry": rfq_id + 5 * 60 * 1000,
+    "worst_price": "5",
+    "expiry": expiry_ms,
 }
 
-await taker_ws.send_request(request_data)
+ack = await taker_ws.send_request(
+    request_data,
+    wait_for_response=True,
+    response_timeout=5.0,
+)
+rfq_id = int(ack["rfq_id"])
 ```
 
-This is the same pattern the reference scripts use – see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py) for a full working example.
+This ACK-based pattern is the one to use for production and testnet validation. It avoids silently filtering out every quote when the local clock and indexer-assigned `rfq_id` differ.
 
 > A convenience wrapper, `rfq_test.factories.request.RequestFactory.create_indexer_request(...)`, produces the same dict shape if you'd rather not hand-build it. Both approaches are equivalent.
 
 **TypeScript:**
 
 ```ts
-const rfqId = Date.now();
+const clientId = crypto.randomUUID();
+const expiry = Date.now() + 5 * 60 * 1000;
 
 const request = {
   type: "rfq_request",
-  rfq_id: rfqId,
+  client_id: clientId,
   market_id: INJUSDC_MARKET_ID,
   direction: "long",                   // lowercase string – NOT an integer
   margin: "200",
   quantity: "100",
-  worst_price: "5.00",
+  worst_price: "5",
   request_address: takerInjAddress,
-  expiry: rfqId + 5 * 60 * 1000,
+  expiry,
 };
 
 ws.send(JSON.stringify(request));
+
+const ack = await waitForRequestAck(ws, clientId);
+const rfqId = Number(ack.rfq_id);
 ```
 
 > **Note:** some older examples in the repo use `direction: 0` against a local dev JSON-RPC indexer. On testnet (gRPC-web framed over WebSocket), the indexer expects the lowercase string form – `"long"` or `"short"`.
@@ -236,50 +246,26 @@ The wire protocol is slightly different from what most of the examples suggest. 
 
 **On the wire, the taker's outgoing request (`RFQRequestInputType`) carries a `client_id` (UUID), not an `rfq_id`.** The indexer assigns the `rfq_id` when it receives the request, then broadcasts an inbound request (`RFQRequestType`) to all MMs with both `client_id` and the newly-minted `rfq_id`. MMs quote against the assigned `rfq_id`. When the taker calls `collect_quotes(rfq_id=...)`, it's matching on that indexer-assigned value. The `Request` unary RPC's `RequestResponse` returns `{status, client_id, rfq_id}` so you can learn the assigned id synchronously — see the `injective_rfq_rpc.proto` message definitions in `rfq-testing/src/rfq_test/proto/`.
 
-**Two correlation patterns:**
-
-### Pattern A – Simple (used by `test_settlement.py`)
-
-Generate `rfq_id = int(time.time() * 1000)` locally, pass it in the request dict, and use the same value for `collect_quotes()`:
+Use ACK-based correlation. Generating a local millisecond timestamp and treating it as the settlement `rfq_id` is not reliable: the indexer assigns the actual `rfq_id`, and makers quote against that assigned value.
 
 ```python
-rfq_id = int(time.time() * 1000)
-
 request_data = {
     "request_address": taker.inj_address,
-    "rfq_id": rfq_id,      # client-side; the send path ignores this and uses a UUID client_id
+    "client_id": str(uuid.uuid4()),
     "market_id": market.id,
     "direction": "long",
     "margin": "200",
     "quantity": "100",
-    "worst_price": "5.00",
-    "expiry": rfq_id + 300_000,
+    "worst_price": "5",
+    "expiry": int(time.time() * 1000) + 300_000,
 }
-await taker_ws.send_request(request_data)
 
-quotes = await taker_ws.collect_quotes(rfq_id=rfq_id, timeout=0.5, min_quotes=1)
-```
-
-This works *in practice* because the indexer assigns `rfq_id` from its own millisecond clock, which matches the taker's local clock within a few ms. It's what every reference script uses on testnet today.
-
-**When it can fail:** significant clock skew between taker and indexer, or long network delay between `send_request` and the indexer processing the request. The taker's local `rfq_id` won't match the indexer's assignment, and `collect_quotes()` will silently skip every quote.
-
-### Pattern B – Robust (ACK-based correlation)
-
-For production takers where you can't tolerate silent correlation failures, wait for the indexer ACK after sending the request. The ACK carries the real assigned `rfq_id`:
-
-```python
-# wait_for_response=True blocks until the indexer ACKs (or errors)
-ack = await taker_ws.send_request(request_data, wait_for_response=True, response_timeout=2.0)
-# ack is a dict: {"type": "ack", "rfq_id": indexer_assigned, "client_id": uuid, "status": ...}
-
+ack = await taker_ws.send_request(request_data, wait_for_response=True, response_timeout=5.0)
 real_rfq_id = int(ack["rfq_id"])
 quotes = await taker_ws.collect_quotes(rfq_id=real_rfq_id, timeout=0.5, min_quotes=1)
 ```
 
-Slightly more latency (one extra round-trip for the ACK), but zero risk of a correlation miss.
-
-> **When to use which:** if you're iterating on a testnet integration, Pattern A is fine and matches what the reference scripts do. For any taker running unattended in production, prefer Pattern B.
+The ACK adds one round-trip, but it removes the main silent failure mode in quote collection.
 
 ---
 
