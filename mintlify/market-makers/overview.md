@@ -1,7 +1,7 @@
 ---
 title: "Market makers: overview"
 description: "Overview of TrueCurrent's market maker program including RFQ liquidity provision, MakerStream integration, quote signing requirements, fee structure, and whitelist application process for professional liquidity providers on Injective."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 TrueCurrent's liquidity is powered by professional market makers. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
@@ -47,7 +47,7 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 ## Technical requirements
 
-- An Injective wallet with sufficient USDT margin
+- An Injective wallet with sufficient USDC margin for the current RFQ market
 - WebSocket connectivity to TrueCurrent's MakerStream
 - An automated quoting system that responds within 2 seconds
 - Implementation of TrueCurrent's quote signing specification
@@ -64,4 +64,4 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 ## Capital requirements
 
-There is no hard minimum, but you must maintain sufficient USDT in your subaccount to back the quotes you submit. Quotes submitted without adequate margin result in failed settlements. A healthy market maker maintains enough capital to cover the maximum aggregate notional of their open quotes.
+There is no hard minimum, but you must maintain sufficient quote-asset margin in your subaccount to back the quotes you submit. On the current testnet market, that quote asset is USDC. Quotes submitted without adequate margin result in failed settlements. A healthy market maker maintains enough capital to cover the maximum aggregate notional of their open quotes.
