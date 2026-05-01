@@ -77,7 +77,7 @@ These fields are sent to the indexer and contract. The v2 signature covers the `
 | `min_total_fill_quantity` | `string` | Minimum aggregate fill quantity required for settlement. |
 | `trigger_type` | `string` | `"mark_price_gte"`, `"mark_price_lte"`, or `"immediate"`. |
 | `trigger_price` | `string \| null` | Trigger threshold. Use `"0"` or `null` for `immediate`, depending on the helper path. |
-| `unfilled_action` | `object \| null` | Wire-only and not part of the v2 digest. Use `null` unless your integration explicitly supports fallback handling. |
+| `unfilled_action` | `object \| null` | Wire-only and not part of the v2 digest. For current signed taker intents, there is no order book fallback, so this field must be `null`. |
 | `cid` | `string \| null` | Optional client identifier. Bound by the v2 signature. |
 | `allowed_relayer` | `string \| null` | Optional relayer address. Bound by the v2 signature when set. |
 
