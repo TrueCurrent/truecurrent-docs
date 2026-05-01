@@ -37,7 +37,7 @@ Authentication: Connect with the taker's Injective address as an identifier. The
 }
 ```
 
-`rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
+`request_address` is required as TakerStream connection metadata, not as a request-body field. With `rfq-testing`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
 
 ### Receiving quotes
 
