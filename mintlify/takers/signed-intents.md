@@ -1,27 +1,27 @@
 ---
 title: "Signed taker intents (TP/SL)"
-description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a trade in advance, gated by a trigger (mark-price GTE/LTE). A relayer executes it when the trigger fires via AcceptSignedIntent. V1 scope is TP/SL protective flow only: zero-margin settlement with either blind or taker-specific quotes (contract 0.1.0-alpha.6)."
-updatedAt: "2026-04-17"
+description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a reduce-only exit in advance, gated by mark-price trigger conditions and signed with the EIP-712 v2 schema."
+updatedAt: "2026-05-01"
 ---
 
-A **signed taker intent** is a pre-authorized, conditional instruction to the TrueCurrent contract. You sign the trade parameters offline, hand the signature to a relayer (the indexer's cron runs the canonical relayer), and the relayer submits `AcceptSignedIntent` onchain once the trigger condition is satisfied.
+A **signed taker intent** is a pre-authorized conditional order. You sign the exit parameters ahead of time, submit them to the indexer, and the relayer settles the trade when the mark-price trigger is satisfied.
 
-This is how **take-profit / stop-loss** orders work on TrueCurrent: you sign the exit intent at the same time as (or any time after) opening the position, and the relayer fires it when the mark price crosses your trigger.
+This is how **take-profit / stop-loss** orders work on TrueCurrent. You can create the signed exit when opening a position or later, while the position is already open.
 
 <Warning>
-**V1 scope: protective flow only.** The contract currently restricts signed intents to **zero-margin** settlements with **no orderbook fallback** (`unfilled_action` must be `null`). In practice this means signed intents are for exiting an existing position, not opening or adjusting margin. Both quote binding modes are supported: **blind quotes** (nonce-based, pre-posted) and **taker-specific quotes** (bound to a live `rfq_id`), gated by the optional `quote_rfq_id` field on `AcceptSignedIntent` — see [Quote binding modes](#quote-binding-modes) below.
+Current trigger orders are reduce-only close-position orders. Set `margin` to `"0"` and use `sign_mode: "v2"` on the wire. Do not use JSON-string signing for conditional orders.
 </Warning>
 
 ---
 
 ## When to use signed intents
 
-Use this mechanism when **you can't be online to submit at the right moment**, but you can sign in advance for the condition that should trigger the trade. Today that's:
+Use a signed intent when you cannot be online to submit at the exact trigger moment, but you can decide the trigger and exit constraints in advance.
 
-- **Take-profit:** exit long at mark ≥ target price, or exit short at mark ≤ target price
-- **Stop-loss:** exit long at mark ≤ stop price, or exit short at mark ≥ stop price
+- **Take profit:** exit long when mark price is greater than or equal to target, or exit short when mark price is less than or equal to target.
+- **Stop loss:** exit long when mark price is less than or equal to stop, or exit short when mark price is greater than or equal to stop.
 
-If you *are* online and want a trade to fire right now, use [`AcceptQuote`](/takers/accepting-quotes) — it's the direct path and doesn't need the relayer hop.
+If you want to trade immediately while online, use [`AcceptQuote`](/takers/accepting-quotes).
 
 ---
 
@@ -30,234 +30,208 @@ If you *are* online and want a trade to fire right now, use [`AcceptQuote`](/tak
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Taker as Taker
-    participant Indexer as Indexer (Relayer)
+    participant Taker
+    participant Indexer as Indexer / Relayer
     participant MMs as Market Makers
     participant Chain as Injective Chain
     participant Contract as RFQ Contract
 
-    Note over Taker,Contract: 1. Sign
-
-    Taker->>Taker: Build SignedTakerIntent<br/>(trigger, deadline, direction, ...)
-    Taker->>Taker: ECDSA-sign JSON payload<br/>with taker private key
-    Taker->>Indexer: Submit intent + signature
-
-    Note over Indexer: Persist (status = UNTRIGGERED)<br/>Precompute trigger side
-
-    Note over Taker,Contract: 2. Wait for trigger
-
-    loop Price monitoring
-        Chain-->>Indexer: Mark price updates
-        Indexer->>Indexer: Compare mark vs intent.trigger
-    end
-
-    Note over Taker,Contract: 3. Trigger fires
-
-    alt Blind-quote path (pre-posted liquidity)
-        Indexer->>MMs: (makers already posted blind quotes)
-        MMs-->>Indexer: pre-posted quotes w/ nonce
-    else Taker-specific path (live RFQ)
-        Indexer->>MMs: Request live quotes for exit size
-        MMs-->>Indexer: Fresh quotes bound to rfq_id
-    end
-    Indexer->>Indexer: Select best quote(s)
-
-    Note over Taker,Contract: 4. Settle
-
-    Indexer->>Chain: MsgExecuteContract<br/>AcceptSignedIntent(intent, sig, quotes,<br/>quote_rfq_id if taker-specific)
-    Chain->>Contract: Verify taker signature (ECDSA)
-    Contract->>Contract: ensure_trigger_satisfied(mark_price)
-    Contract->>Contract: Check epoch + lane_version<br/>(not cancelled)
-    Contract->>Contract: Settle as AcceptQuote
-    Contract-->>Indexer: Tx success
-    Indexer-->>Taker: Stream settlement event
+    Taker->>Taker: Build conditional order body
+    Taker->>Taker: Sign SignedTakerIntent EIP-712 v2 digest
+    Taker->>Indexer: Submit order + signature + sign_mode="v2"
+    Indexer->>Indexer: Persist as untriggered
+    Chain-->>Indexer: Mark-price updates
+    Indexer->>Indexer: Check mark_price_gte / mark_price_lte
+    Indexer->>MMs: Request exit quotes when trigger fires
+    MMs-->>Indexer: Return signed v2 quotes
+    Indexer->>Chain: Execute triggered settlement
+    Chain->>Contract: Verify taker signature and quote signatures
+    Contract->>Contract: Re-check mark-price trigger
+    Contract-->>Indexer: Settlement result
 ```
+
+The trigger is not latched. If the mark price moves back before the transaction lands, the contract can reject the settlement as `trigger_not_satisfied`.
 
 ---
 
-## Message structures
+## Conditional order body
 
-### `SignedTakerIntent`
-
-The signed payload. Every field is covered by the signature — any mutation invalidates it.
+These fields are sent to the indexer and contract. The v2 signature covers the `SignedTakerIntent` typed-data fields; `chain_id`, `contract_address`, and `unfilled_action` are wire/runtime fields.
 
 | Field | Type | Description |
 |---|---|---|
-| `version` | `u8` | Always `1` in v1. The contract rejects other versions. |
-| `chain_id` | `string` | Must equal the runtime chain ID at execution (e.g. `injective-888` on testnet). |
-| `contract_address` | `string` | Must equal the TrueCurrent contract address at execution. Prevents cross-contract replay. |
-| `taker` | `string` | Your `inj1...` address — the account that will own the resulting trade. |
-| `epoch` | `u64` | Your current taker epoch. Incremented by `CancelAllIntents`. Stale intents (wrong epoch) are rejected. |
-| `rfq_id` | `u64` | Unique per-taker identifier. Used as a nonce against replay. |
-| `market_id` | `string` | Injective derivative market hex ID. |
-| `subaccount_nonce` | `u32` | Subaccount index this intent targets. Pair with `market_id` to define the *lane*. |
-| `lane_version` | `u64` | Current version of the `(taker, market_id, subaccount_nonce)` lane. Incremented by `CancelIntentLane` *and* by every successful settlement. One-shot by construction. |
-| `deadline_ms` | `u64` | Unix millisecond timestamp after which the intent is invalid. Max TTL is 30 days. |
-| `direction` | `"long" \| "short"` | Direction of the trade to open (i.e. the exit side of your existing position). |
-| `quantity` | `FPDecimal` | Size to trade, as a decimal string. |
-| `margin` | `FPDecimal` | **Must be `0`** in v1 (protective flow only). |
-| `worst_price` | `FPDecimal` | Hard price limit — same semantics as `AcceptQuote.worst_price`. |
-| `min_total_fill_quantity` | `FPDecimal` | Minimum aggregate fill required across all quotes. If the relayer can't hit this, the whole tx reverts. Must be > 0 and ≤ `quantity`. |
-| `trigger` | `Trigger` | Enum. See below. |
-| `unfilled_action` | `null` | **Must be null** in v1 (no orderbook fallback for signed intents). |
-| `cid` | `string \| null` | Optional client identifier echoed in the settlement event. |
-| `allowed_relayer` | `string \| null` | Optional. If set, only this address can submit `AcceptSignedIntent` with this intent. Typical value: the indexer's relayer address. |
+| `version` | `uint8` | Use `1`. This is the intent schema version, not the signing mode. |
+| `chain_id` | `string` | Cosmos chain ID, for example `"injective-888"` on testnet. Wire/runtime field. |
+| `contract_address` | `string` | RFQ contract address. Wire/runtime field; the signature binds the contract via the EIP-712 domain. |
+| `taker` | `string` | Taker `inj1...` address. |
+| `epoch` | `uint64` | Current taker epoch. Incremented by global intent cancellation. |
+| `rfq_id` | `uint64` | Unique order ID. Use a fresh timestamp or generated ID. |
+| `market_id` | `string` | Injective derivative market ID. |
+| `subaccount_nonce` | `uint32` | Subaccount index, usually `0`. |
+| `lane_version` | `uint64` | Current `(taker, market, subaccount)` lane version. Incremented by lane cancellation and successful settlement. |
+| `deadline_ms` | `uint64` | Unix millisecond deadline. |
+| `direction` | `"long" \| "short"` | Exit trade direction. |
+| `quantity` | `string` | Quantity to close, as a canonical decimal string. |
+| `margin` | `string` | Use `"0"` for reduce-only trigger orders. |
+| `worst_price` | `string` | Worst acceptable quoted fill price. |
+| `min_total_fill_quantity` | `string` | Minimum aggregate fill quantity required for settlement. |
+| `trigger_type` | `string` | `"mark_price_gte"`, `"mark_price_lte"`, or `"immediate"`. |
+| `trigger_price` | `string \| null` | Trigger threshold. Use `"0"` or `null` for `immediate`, depending on the helper path. |
+| `unfilled_action` | `object \| null` | Wire-only and not part of the v2 digest. Use `null` unless your integration explicitly supports fallback handling. |
+| `cid` | `string \| null` | Optional client identifier. Bound by the v2 signature. |
+| `allowed_relayer` | `string \| null` | Optional relayer address. Bound by the v2 signature when set. |
 
-### `Trigger`
+---
 
-```json
-// Fire immediately on first submission
-{ "immediate": {} }
+## EIP-712 domain
 
-// Fire when mark price >= target (take-profit for longs, stop-loss for shorts)
-{ "mark_price_gte": "5.20" }
+Signed intents use the same domain separator as maker quotes:
 
-// Fire when mark price <= target (stop-loss for longs, take-profit for shorts)
-{ "mark_price_lte": "4.80" }
+| Field | Value |
+|---|---|
+| `name` | `"RFQ"` |
+| `version` | `"1"` |
+| `chainId` testnet | `1439` |
+| `chainId` mainnet | `1776` |
+| `verifyingContract` | EVM form of the RFQ contract address |
+
+The domain `chainId` is the EVM chain ID, not the Cosmos chain ID.
+
+---
+
+## Sign a conditional order
+
+Use `sign_conditional_order_v2` from `rfq-testing`. The helper signs the custom `SignedTakerIntent` typed-data digest and returns a `0x`-prefixed 65-byte signature.
+
+```python
+from rfq_test.crypto.eip712 import sign_conditional_order_v2
+
+signature = sign_conditional_order_v2(
+    private_key=TAKER_PRIVATE_KEY,
+    evm_chain_id=1439,
+    verifying_contract_bech32="inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
+    version=1,
+    taker=taker_address,
+    epoch=epoch,
+    rfq_id=rfq_id,
+    market_id=market_id,
+    subaccount_nonce=0,
+    lane_version=lane_version,
+    deadline_ms=deadline_ms,
+    direction="short",
+    quantity="1",
+    margin="0",
+    worst_price="132",
+    min_total_fill_quantity="1",
+    trigger_type="mark_price_gte",
+    trigger_price="120",
+    cid=None,
+    allowed_relayer=None,
+)
 ```
 
-The contract re-evaluates the trigger at execution time. Triggers are not latched — if price moves back before the relayer lands the tx, the settlement reverts with *"trigger not satisfied"*.
+Use the same values in the order body:
 
-### `AcceptSignedIntent` execute message
-
-```json
-{
-  "accept_signed_intent": {
-    "intent": { /* SignedTakerIntent JSON */ },
-    "taker_signature": "Kg8z...base64...",
-    "quotes": [
-      {
-        "maker": "inj1maker...",
-        "margin": "0",
-        "quantity": "100",
-        "price": "5.20",
-        "expiry": { "ts": 1708000800000 },
-        "signature": "Sj9a...base64...",
-        "nonce": 42
-      }
-    ],
-    "quote_rfq_id": null
-  }
+```python
+order_body = {
+    "version": 1,
+    "chain_id": "injective-888",
+    "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
+    "taker": taker_address,
+    "epoch": epoch,
+    "rfq_id": rfq_id,
+    "market_id": market_id,
+    "subaccount_nonce": 0,
+    "lane_version": lane_version,
+    "deadline_ms": deadline_ms,
+    "direction": "short",
+    "quantity": "1",
+    "margin": "0",
+    "worst_price": "132",
+    "min_total_fill_quantity": "1",
+    "trigger_type": "mark_price_gte",
+    "trigger_price": "120",
+    "unfilled_action": None,
+    "cid": None,
+    "allowed_relayer": None,
 }
 ```
 
-- `taker_signature` — your ECDSA signature over the JSON-serialized `intent` object. Same secp256k1 + base64 encoding as maker quote signatures ([Accepting quotes](/takers/accepting-quotes)).
-- `quotes` — one or more maker quotes. Can be a mix of **blind** (each has a `nonce`) and **taker-specific** (bound to a live `rfq_id`, no `nonce`). The mix determines whether `quote_rfq_id` is required — see [Quote binding modes](#quote-binding-modes).
-- `quote_rfq_id` — *optional* `u64`. Required **iff** any quote in `quotes` is taker-specific. When set, it becomes the `rfq_id` used for settlement (instead of `intent.rfq_id`) and the contract adds a taker-nonce entry for replay protection. If every quote is blind, this field must be `null` — the contract errors on `quote_rfq_id` without taker-specific quotes.
-
 ---
 
-## Quote binding modes
+## Submit via TakerStream
 
-Signed intents accept either flavor of quote; the two behave differently:
+`TakerStreamClient.send_conditional_order` sends `conditional_order_sign_mode="v2"` by default.
 
-| Mode | Identifier | Replay protection | When to use |
-|---|---|---|---|
-| **Blind** | quote carries a `nonce`, no per-taker binding | Maker-side nonce — the maker tracks consumed nonces themselves | Pre-posted liquidity. MM publishes standing "I'll fill up to X at price P" quotes; takers (or the relayer on a trigger) pick them up without the MM needing to be live at that instant. |
-| **Taker-specific** | quote has no `nonce` but is bound to a live `rfq_id` | Contract-side nonce — a `taker_info` entry is inserted at settlement, keyed on the `quote_rfq_id` you pass | Live RFQ response. The relayer fires off an RFQ when the trigger hits, collects fresh signed quotes, and submits them with `quote_rfq_id` set to the id assigned by the indexer. |
+```python
+from rfq_test.clients.websocket import TakerStreamClient
 
-The contract lets you mix both in one `quotes` array. If **any** entry is taker-specific, `quote_rfq_id` is required and applies to the whole settlement.
+async with TakerStreamClient(
+    base_url=env_config.indexer.ws_endpoint,
+    request_address=taker_address,
+) as client:
+    ack = await client.send_conditional_order(
+        order_body=order_body,
+        signature=signature,
+        wait_for_ack=True,
+        response_timeout=10.0,
+    )
 
-**Rules** (enforced by `resolve_accept_quote_rfq_id`):
-
-- All-blind + no `quote_rfq_id` → OK (uses `intent.rfq_id` as the nonce bucket; no taker-nonce insert).
-- Any-taker-specific + `quote_rfq_id` set → OK (uses the provided id; inserts a taker-nonce entry).
-- Any-taker-specific + no `quote_rfq_id` → **reverts**: *"signed intent with taker-specific quotes requires quote_rfq_id"*.
-- All-blind + `quote_rfq_id` set → **reverts**: *"only supported when taker-specific quotes are provided"*.
-
----
-
-## Lanes, epochs, and cancellation
-
-Signed intents are designed to be one-shot per *lane*, with two levels of cancellation:
-
-**Lane** = `(taker, market_id, subaccount_nonce)`. Each lane has a monotonically increasing `lane_version`. An intent is tied to a specific version — once that version is consumed (by a successful settlement *or* by an explicit cancel), the signed intent is dead.
-
-**Epoch** = per-taker global counter. Bumping it invalidates *every* outstanding intent for the taker across all lanes.
-
-### Cancel a single lane
-
-```json
-{
-  "cancel_intent_lane": {
-    "market_id": "0x17ef4803...",
-    "subaccount_nonce": 0
-  }
-}
+print(ack)
 ```
 
-Bumps `lane_version` for that lane. All outstanding intents for the lane are now stale.
+For REST submissions, include the same signing mode explicitly:
 
-Use when: you want to replace a TP/SL on one market/subaccount. You'll need to sign and submit a new intent with the new `lane_version`.
-
-### Cancel all intents
-
-```json
-{ "cancel_all_intents": {} }
+```python
+await http.post(
+    f"{indexer_http_endpoint}/v1/conditionalOrder",
+    json={
+        "order": order_body,
+        "signature": signature,
+        "sign_mode": "v2",
+    },
+)
 ```
 
-Bumps your taker `epoch`. Every outstanding intent anywhere becomes stale.
+---
 
-Use when: killswitch — e.g. you suspect your signing key is compromised, or you're migrating wallets, or you just want to rage-cancel everything.
+## Trigger types
+
+```json
+{ "trigger_type": "immediate", "trigger_price": "0" }
+{ "trigger_type": "mark_price_gte", "trigger_price": "5.20" }
+{ "trigger_type": "mark_price_lte", "trigger_price": "4.80" }
+```
+
+- Use `mark_price_gte` for long take-profit and short stop-loss.
+- Use `mark_price_lte` for long stop-loss and short take-profit.
+- The contract re-evaluates the mark-price trigger during settlement.
 
 ---
 
-## Execution semantics
+## Epochs and lanes
 
-At `AcceptSignedIntent` time the contract enforces, in order:
+Before signing, read the current `epoch` and `lane_version` for the taker. A signed intent is valid only for the exact values it signs.
 
-1. **Shape validation** — version must be 1, required fields non-empty, quantity > 0, margin == 0 (v1), worst_price > 0, min_total_fill_quantity > 0 and ≤ quantity, unfilled_action absent.
-2. **Runtime context matches** — `intent.chain_id == env.block.chain_id`, `intent.contract_address == env.contract.address`, deadline not passed, deadline within 30-day max TTL.
-3. **Quote binding resolved** — `resolve_accept_quote_rfq_id` inspects the quotes for taker-specific entries and either accepts the provided `quote_rfq_id` or reverts (see [Quote binding modes](#quote-binding-modes)).
-4. **Allowed relayer** — if `intent.allowed_relayer` is set, `info.sender` must match.
-5. **Taker signature valid** — ECDSA over `to_json_binary(intent)` recovers to the intent's `taker`.
-6. **Epoch current** — `intent.epoch == load_taker_epoch(taker)`.
-7. **Lane version current** — `intent.lane_version == load_taker_lane_version(taker, market_id, subaccount_nonce)`.
-8. **Trigger satisfied** — mark price meets the trigger condition right now.
-9. **Settlement** — quotes are validated and filled using the same path as `AcceptQuote`. If taker-specific quotes are present, a taker-nonce is inserted under the resolved `quote_rfq_id`.
-10. **Minimum fill** — aggregate filled quantity must be ≥ `intent.min_total_fill_quantity`, otherwise the whole tx reverts.
-11. **Lane advance** — on success, `lane_version` is incremented, killing any other intents for this lane.
-
-Any check failure reverts the transaction.
+- `CancelAllIntents` increments the taker's epoch and invalidates every outstanding intent for that taker.
+- `CancelIntentLane` increments the lane version for one `(taker, market_id, subaccount_nonce)` lane.
+- Successful settlement also advances the lane version, making trigger intents one-shot by construction.
 
 ---
 
-## Signing the intent
+## Common failures
 
-You sign the JSON-serialized `SignedTakerIntent` with your taker private key, secp256k1 ECDSA. The contract verifies using `verify_signature(payload, signature, taker_address)` — the same primitive used for maker quote signatures.
-
-**Steps:**
-
-1. Build the `SignedTakerIntent` struct with every field populated (including the current `epoch` and `lane_version` from the contract).
-2. JSON-encode it (CosmWasm-canonical — i.e. what `cosmwasm_std::to_json_binary` produces).
-3. Hash and sign with your taker private key. Encode the 64-byte signature as base64.
-4. Ship the intent + signature to the relayer (today: the TrueCurrent indexer's HTTP endpoint).
-
-{/* TODO: add a Python + TypeScript signing snippet once the rfq-testing helper lands. Until then, the canonical reference is verify_signature() in rfq-contract/contracts/rfq/src/handler/signature.rs and the tests in test_signed_intent.rs. */}
-
----
-
-## Reading the current epoch and lane version
-
-Before signing, query the contract for your current `epoch` and `lane_version` — otherwise you'll sign against stale values and the intent will reject at execution.
-
-{/* TODO: document the exact query message and response shape once the query entrypoints are finalized (see msg.rs TakerIntentStateResponse). */}
-
----
-
-## What's deliberately out of scope in v1
-
-- **Entry flow.** Intents can't open new positions; `margin` must be zero.
-- **Orderbook fallback.** `unfilled_action` must be null. No limit/market rest behind the quote fill.
-- **Relayer freedom.** If you set `allowed_relayer`, only that relayer can submit. Today this will typically point at the indexer's relayer address to stop random parties from front-running your trigger.
-
-**Note:** v1 *did* previously require blind-quote-only settlement. That restriction was lifted in [`InjectiveLabs/rfq#27`](https://github.com/InjectiveLabs/rfq/pull/27) (contract `0.1.0-alpha.6`) — taker-specific quotes are now supported alongside blind quotes, gated by the `quote_rfq_id` field documented above.
-
-The design leaves room to expand — higher version numbers will carry richer semantics — but any integration you build today should assume v1 constraints.
+| Symptom | Fix |
+|---|---|
+| Missing conditional order signing mode | Send `sign_mode: "v2"` on REST or let `send_conditional_order` set it on TakerStream. |
+| Invalid signature | Check EVM `chainId`, verifying contract, exact decimal strings, trigger fields, `epoch`, and `lane_version`. |
+| Trigger not satisfied | The mark price moved back before settlement. The relayer should retry when the trigger is satisfied again. |
+| Stale lane or epoch | Refresh state from the contract and sign a new intent. |
 
 ---
 
 ## Next
 
-- [Accepting quotes](/takers/accepting-quotes) — the synchronous `AcceptQuote` path, which shares most of the settlement logic with `AcceptSignedIntent`.
-- [Best practices](/takers/best-practices) — expiry races, idempotency, and `cid` usage all apply equally to signed intents.
+- [Accepting quotes](/takers/accepting-quotes) covers the synchronous `AcceptQuote` path.
+- [Trigger orders](/trading/trigger-orders) explains TP/SL behavior at the product level.
+- [Best practices](/takers/best-practices) covers expiry races, idempotency, and `cid` usage.
