@@ -1,7 +1,7 @@
 ---
 title: "SDK"
 description: "Canonical SDK reference for programmatic takers on TrueCurrent: repository links, installation, a minimal hello-world, and a table of available SDK helpers."
-updatedAt: "2026-04-30"
+updatedAt: "2026-05-01"
 ---
 
 This page is the starting point for programmatic takers. It covers where to find the SDK, how to install it, a minimal end-to-end example, and the available helper components.
@@ -27,14 +27,17 @@ For market maker reference implementations (both Python and TypeScript), see [Re
 
 ## Installation
 
-**Python** — clone the testnet repo and install the `rfq_test` package:
+**Python** — clone the testnet repo and install the `rfq_test` package with its development dependencies:
 
 ```bash
 git clone https://github.com/InjectiveLabs/rfq-testing.git
 cd rfq-testing
 python -m venv .venv && source .venv/bin/activate
-pip install -e .
+pip install -U pip
+pip install -e ".[dev]"
 ```
+
+The `.[dev]` extra is intentional. The live testnet flow depends on the current `injective-py` client stack; installing only the base package can leave you with an older resolver result that cannot run the chain client.
 
 **TypeScript** — install the Injective SDK:
 
@@ -48,9 +51,13 @@ npm install @injectivelabs/sdk-ts @injectivelabs/networks
 
 Three steps: connect to the TakerStream, submit an RFQ request, and accept the best quote.
 
+This example uses ACK-based correlation. The indexer assigns the real `rfq_id`; do not assume a locally generated timestamp is the same ID that makers quote against.
+
 ```python
 import asyncio
+import os
 import time
+import uuid
 from decimal import Decimal
 from rfq_test.clients.websocket import TakerStreamClient
 from rfq_test.clients.contract import ContractClient
@@ -58,7 +65,7 @@ from rfq_test.config import get_environment_config
 from rfq_test.crypto.wallet import Wallet
 from rfq_test.models.types import Direction
 
-PRIVATE_KEY = "0x..."  # taker wallet private key
+PRIVATE_KEY = os.environ["TESTNET_RETAIL_PRIVATE_KEY"]
 
 async def main():
     config = get_environment_config()  # reads RFQ_ENV from .env
@@ -71,43 +78,47 @@ async def main():
     )
     await ws.connect()
 
-    # 2. Request quote
-    rfq_id = int(time.time() * 1000)
-    await ws.send_request({
-        "request_address": taker.inj_address,
-        "rfq_id": rfq_id,
-        "market_id": config.default_market.id,
-        "direction": "long",
-        "margin": "200",
-        "quantity": "100",
-        "worst_price": "5.00",
-        "expiry": rfq_id + 5 * 60 * 1000,
-    })
+    try:
+        # 2. Request quote; wait for the indexer-assigned rfq_id.
+        expiry_ms = int(time.time() * 1000) + 5 * 60 * 1000
+        ack = await ws.send_request({
+            "request_address": taker.inj_address,
+            "client_id": str(uuid.uuid4()),
+            "market_id": config.default_market.id,
+            "direction": "long",
+            "margin": "200",
+            "quantity": "100",
+            "worst_price": "5",
+            "expiry": expiry_ms,
+        }, wait_for_response=True, response_timeout=5.0)
+        rfq_id = int(ack["rfq_id"])
 
-    # 3. Accept best quote
-    quotes = await ws.collect_quotes(rfq_id=rfq_id, timeout=0.5, min_quotes=1)
-    best = min(quotes, key=lambda q: float(q["price"]))
+        # 3. Accept best quote
+        quotes = await ws.collect_quotes(rfq_id=rfq_id, timeout=0.5, min_quotes=1)
+        best = min(quotes, key=lambda q: float(q["price"]))
 
-    contract = ContractClient(config.contract, config.chain)
-    tx_hash = await contract.accept_quote(
-        private_key=PRIVATE_KEY,
-        quotes=[{
-            "maker": best["maker"],
-            "margin": best["margin"],
-            "quantity": best["quantity"],
-            "price": best["price"],
-            "expiry": int(best["expiry"]),
-            "signature": best["signature"],
-        }],
-        rfq_id=str(rfq_id),
-        market_id=config.default_market.id,
-        direction=Direction.LONG,
-        margin=Decimal("200"),
-        quantity=Decimal("100"),
-        worst_price=Decimal("5.00"),
-        unfilled_action={"market": {}},
-    )
-    print(f"Settled: {tx_hash}")
+        contract = ContractClient(config.contract, config.chain)
+        tx_hash = await contract.accept_quote(
+            private_key=PRIVATE_KEY,
+            quotes=[{
+                "maker": best["maker"],
+                "margin": best["margin"],
+                "quantity": best["quantity"],
+                "price": best["price"],
+                "expiry": int(best["expiry"]),
+                "signature": best["signature"],
+            }],
+            rfq_id=str(rfq_id),
+            market_id=config.default_market.id,
+            direction=Direction.LONG,
+            margin=Decimal("200"),
+            quantity=Decimal("100"),
+            worst_price=Decimal("5"),
+            unfilled_action={"market": {}},
+        )
+        print(f"Settled: {tx_hash}")
+    finally:
+        await ws.close()
 
 asyncio.run(main())
 ```
@@ -121,7 +132,7 @@ Before this runs, you must complete [authz setup](/takers/authz-setup) once per 
 | Helper | Module | Description |
 |---|---|---|
 | `Wallet.from_private_key` | `rfq_test.crypto.wallet` | Load a wallet from a raw secp256k1 private key; exposes `inj_address` and signing methods |
-| `TakerStreamClient` | `rfq_test.clients.websocket` | WebSocket client for the TakerStream gRPC endpoint; handles gRPC-web framing, reconnection, and rfq_id correlation |
+| `TakerStreamClient` | `rfq_test.clients.websocket` | WebSocket client for the TakerStream gRPC endpoint; handles gRPC-web framing, reconnection, and ACK-based `rfq_id` correlation |
 | `ContractClient` | `rfq_test.clients.contract` | High-level client for submitting `AcceptQuote` and `AcceptSignedIntent` to the TrueCurrent contract; handles signature encoding (hex → base64) and expiry wrapping |
 | `ChainClient` | `rfq_test.clients.chain` | Low-level Injective chain client for broadcasting transactions and querying state |
 | `setup_authz_grants` | `rfq_test.utils.setup` | One-shot authz grant setup; submits all four required `MsgGrant` transactions for a taker wallet |
@@ -145,16 +156,22 @@ See [Quickstart](/takers/quickstart) for a complete TypeScript `AcceptQuote` exa
 
 ## Environment configuration
 
-The SDK reads connection parameters from a `.env` file at the repo root. Minimum required keys:
+The SDK reads connection parameters from a `.env` file at the repo root. Minimum testnet keys:
 
 ```bash
-RFQ_ENV=testnet                    # or: mainnet
-PRIVATE_KEY=0x...                  # taker secp256k1 private key
-CONTRACT_ADDRESS=inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q
-CHAIN_ID=injective-888             # injective-1 for mainnet
+RFQ_ENV=testnet
+TESTNET_RETAIL_PRIVATE_KEY=0x...   # taker secp256k1 private key
 ```
 
-The `configs/testnet.yaml` file in the repo pre-populates all testnet endpoints. See the [Quickstart config table](/takers/quickstart#2-configure-environment) for the full list of testnet values.
+The `configs/testnet.yaml` file in the repo pre-populates all testnet endpoints and the current testnet contract:
+
+```text
+RFQ contract: inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
+Cosmos chain ID: injective-888
+EIP-712 chainId: 1439
+```
+
+Do not override the contract address or chain IDs unless you are intentionally pointing at a different deployment. See the [Quickstart config table](/takers/quickstart#2-configure-environment) for the full list of testnet values.
 
 ---
 
