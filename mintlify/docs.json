@@ -25,15 +25,15 @@
     }
   },
   "colors": {
-    "primary": "#999999",
-    "light": "#EEEEEE",
+    "primary": "#fd9a00",
+    "light": "#ecaa83",
     "dark": "#000000"
   },
   "logo": {
-    "light": "/img/logo-light-2.png",
-    "dark": "/img/logo-light-dark-2.png"
+    "light": "/img/logo-light.png",
+    "dark": "/img/logo-dark.png"
   },
-  "favicon": "/img/logo-light-dark-1.png",
+  "favicon": "/img/logo-dark.png",
   "navigation": {
     "languages": [
       {
