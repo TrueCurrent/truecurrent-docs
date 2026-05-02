@@ -194,7 +194,7 @@ The maximum acceptable slippage expressed as a percentage deviation from the cur
 
 **quoted price**:
 
-The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price (fair value estimate) and index price (spot reference). Trigger orders are evaluated against the quoted price, not the mark price.
+The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price (fair value estimate) and index price (spot reference). Trigger orders execute against quotes, but the trigger condition itself is evaluated against mark price.
 
 ## R
 
@@ -203,7 +203,7 @@ TrueCurrent's primary trading model. A trader broadcasts the parameters of a des
 
 **rfq_id**:
 
-A unique per-request identifier (u64) that acts as a nonce for replay protection. It must be unique per taker; generating it from a microsecond timestamp or UUID is recommended.
+A unique per-request identifier (u64) assigned by the indexer when it accepts an RFQ request. Makers sign quotes against this value, and takers must use the ACK-returned `rfq_id` for quote collection and settlement.
 
 ## S
 
@@ -220,7 +220,7 @@ The difference between a market maker's ask price (for longs) and bid price (for
 
 **stop loss (SL)**:
 
-A trigger order that automatically closes a position when the quoted price reaches or crosses a specified loss threshold. Stop losses cap downside risk without requiring the trader to monitor their position continuously.
+A trigger order that automatically closes a position when mark price reaches or crosses a specified loss threshold. Stop losses cap downside risk without requiring the trader to monitor their position continuously.
 
 **subaccount**:
 
@@ -234,7 +234,7 @@ The numeric index identifying which subaccount to use within an Injective exchan
 
 **take profit (TP)**:
 
-A trigger order that automatically closes a position when the quoted price reaches a favorable target, locking in gains without requiring active monitoring.
+A trigger order that automatically closes a position when mark price reaches a favorable target, locking in gains without requiring active monitoring.
 
 **TakerStream**:
 
@@ -242,7 +242,7 @@ The WebSocket endpoint used by traders (and programmatic takers) to submit RFQ r
 
 **trigger order**:
 
-A conditional order — take profit or stop loss — that is stored off-chain and executes automatically when a price condition is met. Trigger orders on TrueCurrent evaluate against the *quoted price*, not the mark price, to prevent spurious fills from mark-price wicks that have no real liquidity behind them.
+A conditional order — take profit or stop loss — that is stored off-chain and executes automatically when a mark-price condition is met. When the trigger fires, the close still settles through the RFQ quote path and enforces the taker's `worst_price`.
 
 ## U
 

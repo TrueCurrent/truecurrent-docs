@@ -1,7 +1,7 @@
 ---
 title: "Understanding quotes"
 description: "Guide to understanding RFQ quotes on TrueCurrent including price, quantity, expiry, maker address, cryptographic signature verification, and how the best quote is selected for trade execution."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 When you request a trade on TrueCurrent, market makers respond with quotes. Understanding what a quote contains – and what it commits to – helps you trade more effectively.
@@ -41,7 +41,7 @@ Once you see a quote on screen, a countdown timer shows how long you have to acc
 
 This expiry mechanism protects market makers from being locked into stale prices in fast-moving markets. If a quote expires before you accept, simply request a new one.
 
-**Why quotes expire quickly:** Perpetuals markets can move significantly in seconds. A market maker quoting a price for INJ/USDT needs to know that if the price moves sharply before settlement, they won't be stuck trading at a price that's now well off-market. Short expiry windows protect market makers and, in turn, keep the overall RFQ system functioning – without them, makers would widen spreads to account for the risk of stale quotes.
+**Why quotes expire quickly:** Perpetuals markets can move significantly in seconds. A market maker quoting a price for INJ/USDC needs to know that if the price moves sharply before settlement, they won't be stuck trading at a price that's now well off-market. Short expiry windows protect market makers and, in turn, keep the overall RFQ system functioning – without them, makers would widen spreads to account for the risk of stale quotes.
 
 ---
 

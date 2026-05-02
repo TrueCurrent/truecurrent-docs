@@ -1,7 +1,7 @@
 ---
 title: "Best practices"
 description: "Production guidance for programmatic RFQ takers on TrueCurrent, covering slippage and worst_price strategy, quote expiry races, subaccount balance requirements, idempotency, reconnection, error handling, and safe testnet-to-mainnet progression."
-updatedAt: "2026-04-08"
+updatedAt: "2026-05-01"
 ---
 
 This page is the collected wisdom for running a programmatic taker in production. First, complete the [Quickstart](/takers/quickstart), and then implement the best practices here.
@@ -64,8 +64,6 @@ Takers trade from their Injective **exchange subaccount**, not the main bank mod
 
 **Deposit USDC to the subaccount:**
 
-{/* TODO: the denom and comments below still reference the real testnet USDT Peggy contract because a USDC denom does not yet exist on injective-888. Replace both amount comment and denom hex once USDC is bridged to testnet. */}
-
 ```python
 from pyinjective.composer_v2 import Composer
 
@@ -73,8 +71,8 @@ composer = Composer(network="testnet")
 deposit_msg = composer.msg_deposit(
     sender=taker_inj_address,
     subaccount_id=f"{taker_eth_address}000000000000000000000000",
-    amount=10_000_000_000,  # 10,000 USDT in peggy 6-decimal units
-    denom="peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5",  # testnet USDT
+    amount=10_000_000_000,  # 10,000 USDC in 6-decimal units
+    denom="erc20:0x0C382e685bbeeFE5d3d9C29e29E341fEE8E84C5d",  # testnet USDC
 )
 await broadcaster.broadcast([deposit_msg])
 ```
@@ -89,13 +87,14 @@ await broadcaster.broadcast([deposit_msg])
 
 The contract treats `rfq_id` as a per-taker nonce. Reusing the same `rfq_id` for two different `AcceptQuote` calls from the same taker causes a nonce replay error on the second.
 
-**Generate fresh IDs:**
+**Use the indexer-assigned ID:**
 
 ```python
-rfq_id = int(time.time() * 1_000_000)   # microsecond precision
+ack = await taker_ws.send_request(request_data, wait_for_response=True, response_timeout=5.0)
+rfq_id = int(ack["rfq_id"])
 ```
 
-Microsecond timestamps are collision-free for a single process. If you run multiple concurrent takers from one wallet, use a shared counter or UUID hash.
+The outgoing TakerStream request carries a `client_id`; the indexer assigns the `rfq_id` in its ACK. Use that ACK-returned `rfq_id` for quote collection and settlement.
 
 **Do not retry a failed `AcceptQuote` with the same `rfq_id`.** If a submission fails mid-flight (broadcast error, timeout, chain rejection), request fresh quotes with a new `rfq_id`. The original quotes are probably also expired or consumed.
 
@@ -168,4 +167,3 @@ async def run_with_retries():
 **Monitor staleness.** If you've sent a request and received zero quotes in your window, that's either a dead stream or a dead maker set. Alert on repeated empty windows.
 
 **Heartbeat the chain side too.** Your taker should fail-fast if the gRPC endpoint to Injective itself is unreachable – there's no point in collecting quotes you can't settle.
-

@@ -76,7 +76,7 @@ Quoted price is used for:
 
 - **Trade execution** – your entry and exit prices
 - **Realized P&L** – what you actually bought or sold at
-- **Trigger orders (TP/SL)** – take profit and stop loss orders are evaluated against the quoted price, not mark price
+- **Trigger orders (TP/SL)** – take profit and stop loss triggers are evaluated against mark price; the resulting close executes against the best available quote within `worst_price`
 
 ---
 

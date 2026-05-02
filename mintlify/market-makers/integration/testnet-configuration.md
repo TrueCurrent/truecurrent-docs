@@ -18,7 +18,7 @@ grpc_web_endpoint: "https://testnet.rfq.grpc.injective.network/injective_rfq_rpc
 http_endpoint: "https://testnet.rfq.injective.network"
 
 # RFQ Contract
-contract_address: "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q"  # 0.1.0-alpha.6
+contract_address: "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"  # 0.1.0-alpha.6
 
 # Faucet
 faucet: "https://testnet-faucet.injective.dev"
@@ -29,5 +29,5 @@ faucet: "https://testnet-faucet.injective.dev"
 ```bash
 MM_PRIVATE_KEY=<hex>
 CHAIN_ID=injective-888
-CONTRACT_ADDRESS=inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q
+CONTRACT_ADDRESS=inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
 ```

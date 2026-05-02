@@ -1,7 +1,7 @@
 ---
 title: "WebSocket streams"
 description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs with connection details, message formats, authentication, and reconnection handling for real-time RFQ trading."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for market makers.
@@ -27,15 +27,17 @@ Authentication: Connect with the taker's Injective address as an identifier. The
 ```json
 {
   "type": "rfq_request",
-  "taker_address": "inj1...",
+  "client_id": "8f1c4b6e-0d7f-44ed-9f86-3fdfd381ba48",
   "market_id": "0xabc123...",
   "direction": "long",
   "margin": "200",
   "quantity": "100",
-  "worst_price": "4.7000",
-  "rfq_id": 1708000700000
+  "worst_price": "4.7",
+  "expiry": 1708000800000
 }
 ```
+
+`request_address` is required as TakerStream connection metadata, not as a request-body field. With `rfq-testing`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
 
 ### Receiving quotes
 
@@ -45,11 +47,12 @@ Quotes arrive as WebSocket messages on the TakerStream:
 {
   "type": "rfq_quote",
   "rfq_id": 1708000700000,
-  "price": "4.4550",
+  "price": "4.45",
   "quantity": "100",
   "maker": "inj1makerwallet...",
   "expiry": 1708000830000,
-  "signature": "0x..."
+  "signature": "0x...",
+  "sign_mode": "v2"
 }
 ```
 
@@ -65,7 +68,12 @@ retail_ws = TakerStreamClient(
 )
 await retail_ws.connect()
 
-await retail_ws.send_request(request_data)
+ack = await retail_ws.send_request(
+    request_data,
+    wait_for_response=True,
+    response_timeout=10.0,
+)
+rfq_id = int(ack["rfq_id"])
 
 quotes = await retail_ws.collect_quotes(
     rfq_id=rfq_id,
@@ -102,8 +110,8 @@ RFQ requests arrive as WebSocket messages:
   "direction": "long",
   "margin": "200",
   "quantity": "100",
-  "worst_price": "4.7000",
-  "taker_address": "inj1takerwallet..."
+  "worst_price": "4.7",
+  "request_address": "inj1takerwallet..."
 }
 ```
 
@@ -116,13 +124,15 @@ RFQ requests arrive as WebSocket messages:
   "taker_direction": "long",
   "margin": "200",
   "quantity": "100",
-  "price": "4.4550",
+  "price": "4.45",
   "expiry": 1708000830000,
   "maker": "inj1makerwallet...",
   "taker": "inj1takerwallet...",
   "signature": "0x...",
-  "chain_id": "injective-1",
-  "contract_address": "inj1contract..."
+  "sign_mode": "v2",
+  "maker_subaccount_nonce": 0,
+  "chain_id": "injective-888",
+  "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"
 }
 ```
 
