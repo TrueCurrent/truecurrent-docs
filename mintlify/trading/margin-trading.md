@@ -1,12 +1,14 @@
 ---
 title: "Margin trading"
 description: "Master margin trading on TrueCurrent with cross-margin mechanics, initial and maintenance margin ratios, margin ratio calculations, available margin, and liquidation threshold management."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-30"
 ---
 
 Margin trading lets you control a position larger than your deposited collateral by using leverage. This page explains how margin is calculated, how your account equity is tracked, and how to read the key metrics in your positions panel.
 
 ---
+
+{/* TODO DR-143 add cross margin section when that has been implemented, part 1 */}
 
 ## Key terms
 
@@ -98,13 +100,60 @@ Each market has a fixed MMR. Positions are liquidated when the margin ratio fall
 
 For example, if $IMR = 5\%$ (20× leverage) and $MMR = 2.5\%$, you have a 2.5% buffer between your entry and your liquidation threshold.
 
+### Margin tier table
+
+Margin rates may increase for very large notional positions as a risk management measure. The table below shows indicative tiers; exact values are set per market and may be updated via governance.
+
+| Notional position size | Max leverage | IMR | MMR |
+|------------------------|-------------|-----|-----|
+| Up to $50,000 | 20× | 5.0% | 2.5% |
+| $50,001 – $250,000 | 10× | 10.0% | 5.0% |
+| $250,001 – $1,000,000 | 5× | 20.0% | 10.0% |
+| Above $1,000,000 | 2× | 50.0% | 25.0% |
+
+<Note>
+These are illustrative tiers. Confirm actual parameters for each market via the market specifications or the Injective exchange module before sizing large positions.
+</Note>
+
+If your position grows into a higher notional tier (e.g. due to mark price appreciation), you may be required to post additional initial margin to open further positions in that market.
+
 ---
 
-## Cross-margin
+## Worked example: position lifecycle with cross-margin
 
-TrueCurrent uses **cross-margin** across all positions in your subaccount. All open positions share the same equity pool – profits on one position offset losses on another.
+This example traces equity, margin ratio, and available margin through four steps for a single-position account. Assumptions: 10× leverage, $P_{entry} = \$100$, MMR = 2.5%, position size Q = 10 units.
 
-This is more capital-efficient than isolated margin but means a large losing position can draw on the margin of your other positions, increasing the risk of cascading liquidations if multiple positions move against you simultaneously.
+**Step 1 — Open position**
+
+- Initial margin deposited: $100 (= 10 × $100 / 10)
+- Notional: $1,000
+- uPnL: $0
+- Account equity: $100
+- Margin ratio: $100 / $1,000 = **10.0%**
+- Available margin: $100 − $1,000 × 2.5% = $100 − $25 = **$75**
+
+**Step 2 — Price moves against position (mark price = $95)**
+
+- uPnL: (95 − 100) × 10 = −$50
+- Account equity: $100 − $50 = **$50**
+- Margin ratio: $50 / (10 × $95) = $50 / $950 ≈ **5.26%** (above MMR 2.5%, safe)
+- Available margin: $50 − $950 × 2.5% = $50 − $23.75 = **$26.25**
+
+**Step 3 — Add $30 margin**
+
+- Account equity: $50 + $30 = **$80**
+- Margin ratio: $80 / $950 ≈ **8.42%** (comfortable buffer)
+- Available margin: $80 − $23.75 = **$56.25**
+
+**Step 4 — Close half the position (sell 5 units at $95)**
+
+- Realised P&L on 5 units: (95 − 100) × 5 = −$25 realised
+- Remaining position: 5 units
+- Notional: 5 × $95 = $475
+- Remaining equity: $80 − $25 = **$55**
+- Margin ratio: $55 / $475 ≈ **11.6%** (strong; leverage effectively reduced to ~4.3×)
+
+{/* TODO DR-143 add cross margin section when that has been implemented, part 2 */}
 
 ---
 
@@ -115,5 +164,7 @@ This is more capital-efficient than isolated margin but means a large losing pos
 **Reduce leverage** by partially closing a position, which releases margin and reduces your notional exposure.
 
 **Monitor the margin ratio** – if it approaches MMR, act proactively rather than waiting for liquidation.
+
+**Use separate subaccounts** if you want isolated-margin-like behavior — each subaccount maintains its own independent equity pool.
 
 See [Liquidation](/trading/liquidation) for exactly how the liquidation price is calculated.

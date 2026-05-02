@@ -1,7 +1,7 @@
 ---
 title: "Index, mark, and quoted prices"
 description: "Differentiate between index price, mark price, quoted price, and indicative price on TrueCurrent for accurate P&L tracking, liquidation monitoring, and trigger order execution on perpetual markets."
-updatedAt: "2026-04-06"
+updatedAt: "2026-04-30"
 ---
 
 TrueCurrent uses three distinct prices, each serving a specific purpose. Understanding the difference helps you interpret your P&L, anticipate liquidations, and know exactly what price you traded at.
@@ -10,9 +10,28 @@ TrueCurrent uses three distinct prices, each serving a specific purpose. Underst
 
 ## Index price
 
-The **index price** is the real-time spot price of the underlying asset, aggregated from multiple major external exchanges. It represents the broader market's consensus on where an asset is actually trading.
+The **index price** is the real-time spot price of the underlying asset, aggregated from external sources. It represents the broader market's consensus on where an asset is actually trading.
 
-The index price is the foundation for the mark price. It is not the price you trade at.
+The index price is the foundation for the mark price and funding rate calculation. It is not the price you trade at.
+
+### Oracle construction
+
+TrueCurrent's index price is sourced from the **Injective oracle module**, which aggregates prices from a set of vetted external providers. The oracle network includes:
+
+- **Major centralised exchanges** — spot price feeds from leading venues by volume
+- **Onchain oracle providers** — integrated via the Injective oracle module, which supports providers such as Band Protocol and Pyth Network for certain markets
+
+**Aggregation methodology:** The index price is computed as a **median** (or weighted average, as configured per market) of the available source prices at the time of sampling. Using a median rather than an average means a single outlier or temporarily manipulated source cannot materially move the index.
+
+**Update cadence:** Oracle prices on Injective are updated on each block (approximately every 1–2 seconds). TrueCurrent's mark price and funding rate calculations consume the latest available oracle price at each settlement event.
+
+**Staleness circuit breakers:** If oracle price feeds fall behind by more than a defined staleness threshold, the Injective exchange module halts funding settlements and may restrict new position openings until fresh prices are available. This prevents liquidations from being triggered by stale or manipulated prices.
+
+<Note>
+**TrueCurrent does not apply a CEX-weighted median.** Unlike some other perpetual venues (which weight CEX sources by volume), TrueCurrent's index price uses the Injective oracle aggregation, which is governed by the Injective protocol and treats sources according to the oracle module's configuration — not a proprietary weighting scheme controlled by TrueCurrent. This means the index price methodology is transparent and verifiable onchain.
+</Note>
+
+For the full list of oracle providers integrated with a specific market, refer to the [Injective oracle documentation](https://docs.injective.network/develop/modules/injective/oracle/) and the market's onchain parameters.
 
 ---
 
@@ -22,7 +41,17 @@ The **mark price** is TrueCurrent's fair-value price for a perpetual contract. I
 
 $$P_{mark} = P_{index} + \text{Basis}$$
 
-where the basis reflects the premium or discount at which the perpetual trades relative to spot. In practice, for well-anchored markets, mark price closely tracks index price.
+where the basis reflects the premium or discount at which the perpetual trades relative to spot.
+
+### Basis calculation
+
+The basis is not simply the instantaneous difference between the perpetual mid and spot. It is computed using a smoothed premium:
+
+- **Impact price:** The basis is measured using an impact-notional-weighted price — the average execution price for a hypothetical buy and sell order of a defined notional size against the order book. This is more manipulation-resistant than using the raw order book mid.
+- **EMA smoothing:** The raw basis is passed through an exponential moving average (EMA) to reduce the influence of transient spikes. The EMA window is set per market as a governance parameter.
+- **Blend:** The final mark price blends the smoothed basis with the index price. In liquid, well-anchored markets the mark price tracks the index closely; in dislocated markets, the EMA prevents the mark from snapping violently.
+
+**Manipulation resistance:** Because the basis is derived from impact prices rather than quoted prices, spoofing the order book mid does not directly move the mark price — an attacker would need to execute actual trades of significant notional size to shift the impact price.
 
 Mark price is the price used for:
 
@@ -32,6 +61,8 @@ Mark price is the price used for:
 - **Funding payments** – calculated based on the mark/index divergence
 
 Mark price is **not** the price your trade executes at.
+
+For how P&L is calculated across the position lifecycle (open, hold, funding, close), see [Margin trading](/trading/margin-trading).
 
 ---
 
@@ -63,7 +94,7 @@ Your [price tolerance](/trading/slippage-and-worst-price) setting determines the
 
 | Price | What it is | Used for |
 |-------|-----------|---------|
-| **Index price** | Aggregated spot from external exchanges | Mark price calculation, funding rates |
-| **Mark price** | Fair value with funding basis | P&L, margin ratio, liquidation |
+| **Index price** | Median of external oracle feeds (CEX spot + onchain oracles) | Mark price calculation, funding rates |
+| **Mark price** | Index price + EMA-smoothed impact-price basis | P&L, margin ratio, liquidation |
 | **Quoted price** | Actual execution price from liquidity providers | Trade fills, realized P&L, TP/SL triggers |
 | **Indicative price** | Pre-trade estimate of quoted price | Shown in UI before you confirm |
