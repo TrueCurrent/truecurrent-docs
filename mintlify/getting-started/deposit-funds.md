@@ -1,7 +1,7 @@
 ---
 title: "Deposit funds"
 description: "Guide to depositing USDC into TrueCurrent using CCTP cross-chain transfers or direct wallet deposits with zero fees, instant settlement, and support for EVM and IBC-compatible chains."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-04"
 ---
 
 To trade on TrueCurrent, you need USDC in your trading account. There are two ways to get it there.
@@ -19,10 +19,12 @@ TrueCurrent's built-in deposit widget supports CCTP (Circle's Cross-Chain Transf
 
 Your USDC arrives in your TrueCurrent account within seconds. Gas fees are covered – you pay nothing.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/deposit-widget.png" alt="Deposit widget" />
   <p><em>The TrueCurrent deposit widget</em></p>
 </div>
+*/}
 
 ---
 
@@ -37,10 +39,12 @@ Gas fees are covered on your behalf.
 3. Send USDC (or supported assets) from any chain to that address
 4. Funds arrive in your TrueCurrent account automatically
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/deposit-address.png" alt="Deposit address / QR code" />
   <p><em>Your unique deposit address</em></p>
 </div>
+*/}
 
 ---
 

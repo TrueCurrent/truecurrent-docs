@@ -21,10 +21,12 @@ Your profit or loss is determined by the difference between your entry price and
 
 **Leverage amplifies both gains and losses.** At 10x leverage, a 10% adverse move wipes out your margin entirely.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/pnl-explainer.png" alt="P&L explainer" />
   <p><em>How leverage affects your P&L</em></p>
 </div>
+*/}
 
 ---
 

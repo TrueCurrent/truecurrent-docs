@@ -18,10 +18,12 @@ Choose which perpetual market you want to trade,
 whether you want to go long (profit when price rises) or short (profit when price falls),
 and how much you want to trade.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-panel.png" alt="TrueCurrent trade panel" />
   <p><em>The TrueCurrent trade panel</em></p>
 </div>
+*/}
 
 ### You set your parameters and confirm
 

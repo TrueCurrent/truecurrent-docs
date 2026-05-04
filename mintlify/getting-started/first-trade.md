@@ -22,10 +22,12 @@ Make sure you've:
 
 From the trading interface, select the market you want to trade. Each market shows the current price, 24h volume, and funding rate.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/market-select.png" alt="Market selection" />
   <p><em>Selecting a market on TrueCurrent</em></p>
 </div>
+*/}
 
 ---
 
@@ -45,10 +47,12 @@ For example, 100 USDC margin at 2x leverage means a 200 USDC position. A 10% pri
 
 **Start with low leverage (1x–3x) while learning.** Higher leverage amplifies both gains and losses.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-size.png" alt="Setting trade size and leverage" />
   <p><em>Setting margin and leverage</em></p>
 </div>
+*/}
 
 ---
 
@@ -66,10 +70,12 @@ If no liquidity provider can beat your floor, the trade simply won't go through.
 
 Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes your trade – all in under a second.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-confirm.png" alt="Confirming a trade" />
   <p><em>Confirming your trade</em></p>
 </div>
+*/}
 
 ---
 
