@@ -1,7 +1,7 @@
 ---
 title: "Your first trade"
 description: "Step-by-step tutorial for executing your first perpetual futures trade on TrueCurrent, covering market selection, leverage setup, price tolerance, position monitoring, and funding rate considerations."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-04"
 ---
 
 A step-by-step guide to opening your first position on TrueCurrent.
@@ -22,10 +22,12 @@ Make sure you've:
 
 From the trading interface, select the market you want to trade. Each market shows the current price, 24h volume, and funding rate.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/market-select.png" alt="Market selection" />
   <p><em>Selecting a market on TrueCurrent</em></p>
 </div>
+*/}
 
 ---
 
@@ -45,18 +47,22 @@ For example, 100 USDC margin at 2x leverage means a 200 USDC position. A 10% pri
 
 **Start with low leverage (1x–3x) while learning.** Higher leverage amplifies both gains and losses.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-size.png" alt="Setting trade size and leverage" />
   <p><em>Setting margin and leverage</em></p>
 </div>
+*/}
 
 ---
 
 ## Step 4: Set your price tolerance
 
-Before confirming, you'll see an **estimated price** and a **worst price** you're willing to accept. You can adjust how tight or loose this tolerance is.
+Before confirming, you'll see an **estimated price** and a **worst price** you're willing to accept.
+You can adjust how tight or loose this tolerance is.
 
-TrueCurrent will never execute your trade at a price worse than your limit. If no liquidity provider can beat your floor, the trade simply won't go through.
+TrueCurrent will never execute your trade at a price worse than your limit.
+If no liquidity provider can beat your floor, the trade simply won't go through.
 
 ---
 
@@ -64,10 +70,12 @@ TrueCurrent will never execute your trade at a price worse than your limit. If n
 
 Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes your trade – all in under a second.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-confirm.png" alt="Confirming a trade" />
   <p><em>Confirming your trade</em></p>
 </div>
+*/}
 
 ---
 
@@ -77,7 +85,8 @@ Your open position appears in the **Positions** panel below the chart. You'll se
 
 - Entry price and current mark price
 - Unrealized P&L
-- Your **liquidation price** – if the mark price reaches this level, your position is automatically closed and you lose your margin. Keep an eye on it.
+- Your **liquidation price** – if the mark price reaches this level, your position is automatically closed and you lose your margin.
+Keep an eye on it.
 
 <div class="image-placeholder">
   <img src="/img/positions-panel.png" alt="Open positions panel" />
@@ -96,4 +105,5 @@ Click **Close** on any open position. Choose full or partial close and confirm.
 
 **Watch your liquidation price.** If you're getting close, you can add margin or partially close to reduce risk.
 
-**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up. See [Funding rates](/trading/funding-rates).
+**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up.
+See [Funding rates](/trading/funding-rates).
