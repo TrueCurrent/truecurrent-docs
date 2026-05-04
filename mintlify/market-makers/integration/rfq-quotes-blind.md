@@ -1,36 +1,19 @@
 ---
-title: "Blind quotes (for TP/SL support)"
-description: "How market makers can participate in TrueCurrent's signed taker intent system for take-profit and stop-loss orders, using either pre-posted blind quotes or live RFQ responses."
-updatedAt: "2026-04-18"
+title: "TP/SL liquidity"
+description: "How market makers participate in TrueCurrent take-profit and stop-loss execution using the same EIP-712 v2 quote flow as live RFQ requests."
+updatedAt: "2026-05-01"
 ---
 
-Since contract `0.1.0-alpha.6`, the RFQ system supports **signed taker intents** — conditional trades (TP/SL) submitted by a relayer when a mark-price trigger fires. Two ways your quotes can participate:
+Take-profit and stop-loss orders are submitted as signed taker intents. When a mark-price trigger fires, the relayer sources maker liquidity and settles the close through the same RFQ quote path used for regular trades.
 
-### A. Pre-posted blind quotes
+For public testnet and mainnet integrations, support the live RFQ response path first:
 
-You publish standing quotes keyed by a **`nonce`** rather than a specific `rfq_id`. The indexer stores them in a blind-quote book. When a taker's TP/SL triggers, the relayer picks a matching blind quote and submits it.
+1. Stay connected to MakerStream.
+2. Receive the relayer's exit RFQ request.
+3. Price the close like any other request.
+4. Sign with `sign_quote_v2`.
+5. Send the quote with `sign_mode: "v2"`.
 
-The quote shape is identical to a live quote except:
+From your quoting system's perspective, a trigger-driven exit request uses the same quote schema as a user-initiated request. The taker direction is still the direction being traded by the taker, and your maker-side exposure is the opposite side.
 
-- **Include `nonce`** on the wire (a `u64` you choose; tracks which blind quotes you've had consumed).
-- **Omit the taker fields** from the signed payload when quoting blind — the `SignQuote` struct has `t`, `tm`, `tq` as optional (`skip_serializing_if = Option::is_none`), so a blind quote drops those three keys and the contract reconstructs the payload the same way.
-- **Longer `expiry`** is acceptable (up to the contract's maker-nonce TTL).
-
-> **TODO (verify):** nothing in `rfq-testing`'s current `sign_quote` exposes a blind-quote signing path yet (the helper always includes `t/tm/tq`). Before pre-posting blind quotes on testnet, confirm the exact signed-JSON shape against a contract-side test case (`rfq-contract/contracts/rfq/src/test/test_blind_quotes.rs`) or ask the team for the canonical helper.
-
-Replay protection is **maker-side**: the contract tracks consumed `(maker, nonce)` pairs. Query your consumed nonces:
-
-```json
-{ "maker_nonces": { "maker": "inj1yourmaker..." } }
-```
-
-### B. Respond live to the relayer
-
-When a trigger fires, the relayer may fire a live RFQ instead of using pre-posted liquidity. You quote it the normal way — the only difference is the relayer passes `quote_rfq_id` on `AcceptSignedIntent`, and the contract inserts a taker-side nonce for replay protection.
-
-From your quoting infrastructure's perspective: **no code change**. Respond to the RFQ as you would any other.
-
-### Which should you support?
-
-- **Both, ideally.** Pre-posted blind quotes let your liquidity be used without you being online at the moment of trigger. Live-response is useful when blind coverage is thin or when you want to price on current conditions.
-- **Protective-only scope:** v1 signed intents are zero-margin exits. So your blind/taker-specific quotes for TP/SL settle against a taker who is closing an existing position, not opening a new one.
+Pre-posted blind quote books are not part of the public onboarding path yet. Do not ship a blind-quote integration unless the TrueCurrent team has provided the current production schema and test coverage for that path.

@@ -76,7 +76,7 @@ from pyinjective.composer_v2 import Composer
 from pyinjective.core.broadcaster import MsgBroadcasterWithPk
 
 composer = Composer(network=network.string())
-CONTRACT_ADDRESS = "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q"
+CONTRACT_ADDRESS = "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"
 
 MSG_TYPES = [
     "/cosmos.bank.v1beta1.MsgSend",
@@ -106,7 +106,7 @@ import {
 } from "@injectivelabs/sdk-ts";
 import { Network } from "@injectivelabs/networks";
 
-const CONTRACT_ADDRESS = "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q";
+const CONTRACT_ADDRESS = "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk";
 
 const MSG_TYPES = [
   "/cosmos.bank.v1beta1.MsgSend",
@@ -172,7 +172,7 @@ for g in grants:
 ```
 GET https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants
     ?granter=inj1taker...
-    &grantee=inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q
+    &grantee=inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
 ```
 
 **CLI:**
@@ -180,7 +180,7 @@ GET https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants
 ```bash
 injectived query authz grants \
   inj1taker... \
-  inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q \
+  inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk \
   --node https://testnet.sentry.tm.injective.network:443
 ```
 

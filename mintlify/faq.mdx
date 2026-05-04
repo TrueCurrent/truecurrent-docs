@@ -92,7 +92,7 @@ updatedAt: "2026-04-28"
   <Accordion title="Can I set take profit and stop loss (TP/SL) orders?">
     Yes - TrueCurrent supports take profit (TP) and stop loss (SL) orders that can be set at entry or added to any existing position at any time.
 
-    TP/SL orders are evaluated against the *quoted price* (not the mark price), which prevents being stopped out by mark-price wicks that have no real liquidity behind them. See [Trigger orders](/trading/trigger-orders) for details.
+    TP/SL triggers are evaluated against mark price. When the trigger fires, the close still executes through the RFQ quote path and enforces your `worst_price`. See [Trigger orders](/trading/trigger-orders) for details.
   </Accordion>
 </AccordionGroup>
 
@@ -164,7 +164,7 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="Where can I find TrueCurrent's smart contract address?">
-    The testnet smart contract address is `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q`; the mainnet smart contract address will be published here upon launch.
+    The testnet smart contract address is `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk`; the mainnet smart contract address will be published here upon launch.
 
     TrueCurrent uses a CosmWasm smart contract on Injective. Its source code and security audit report will both be published prior to mainnet launch. See [Smart contract](/technical/smart-contract) for the full message reference.
   </Accordion>

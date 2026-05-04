@@ -1,6 +1,6 @@
 ---
 title: "Quickstart"
-updatedAt: "2026-04-08"
+updatedAt: "2026-05-01"
 ---
 
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
@@ -33,7 +33,8 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 git clone https://github.com/InjectiveLabs/rfq-testing.git
 cd rfq-testing
 python -m venv .venv && source .venv/bin/activate
-pip install -e .
+pip install -U pip
+pip install -e ".[dev]"
 ```
 
 **TypeScript** – install the Injective SDK and the example deps:
@@ -51,9 +52,7 @@ Create a `.env` file at the repo root:
 
 ```bash
 RFQ_ENV=testnet
-PRIVATE_KEY=0x...       # your taker wallet private key
-CONTRACT_ADDRESS=inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q
-CHAIN_ID=injective-1   # injective-888 for testnet
+TESTNET_RETAIL_PRIVATE_KEY=0x...   # your taker wallet private key
 ```
 
 The testnet config (`configs/testnet.yaml`) already points at:
@@ -64,8 +63,10 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | Indexer HTTP | `https://testnet.rfq.injective.network` |
 | Chain gRPC | `testnet-grpc.injective.dev:443` |
 | Chain LCD | `https://testnet.sentry.lcd.injective.network` |
-| RFQ contract | `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q` |
-| INJ/USDC PERP | `0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6` |
+| RFQ contract | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
+| Cosmos chain ID | `injective-888` |
+| EIP-712 chain ID | `1439` |
+| INJ/USDC PERP | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
 {/* TODO: to add mainnet indexer info */}
 
 > **API key – currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key – the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/takers/best-practices#rate-limiting) for the breakdown.
@@ -81,10 +82,13 @@ Before you can accept any quotes, you must grant the TrueCurrent contract four m
 **Python:**
 
 ```python
+import os
 from rfq_test.clients.chain import ChainClient
 from rfq_test.config import get_environment_config
 from rfq_test.utils.setup import RETAIL_AUTHZ_GRANTS, setup_authz_grants
 from rfq_test.crypto.wallet import Wallet
+
+TAKER_PRIVATE_KEY = os.environ["TESTNET_RETAIL_PRIVATE_KEY"]
 
 config = get_environment_config()
 chain = ChainClient(config.chain)
@@ -120,6 +124,7 @@ Open a TakerStream WebSocket and send an RFQ request.
 
 ```python
 import time
+import uuid
 from rfq_test.clients.websocket import TakerStreamClient
 
 taker_ws = TakerStreamClient(
@@ -129,23 +134,28 @@ taker_ws = TakerStreamClient(
 )
 await taker_ws.connect()
 
-rfq_id = int(time.time() * 1000)
+expiry_ms = int(time.time() * 1000) + 5 * 60 * 1000
 
 request_data = {
     "request_address": taker.inj_address,
-    "rfq_id": rfq_id,
+    "client_id": str(uuid.uuid4()),
     "market_id": config.default_market.id,
     "direction": "long",                  # lowercase string
     "margin": "200",
     "quantity": "100",
-    "worst_price": "5.00",                # hard price limit
-    "expiry": rfq_id + 5 * 60 * 1000,     # 5 minutes from now
+    "worst_price": "5",                   # hard price limit
+    "expiry": expiry_ms,                  # 5 minutes from now
 }
 
-await taker_ws.send_request(request_data)
+ack = await taker_ws.send_request(
+    request_data,
+    wait_for_response=True,
+    response_timeout=5.0,
+)
+rfq_id = int(ack["rfq_id"])               # indexer-assigned id
 ```
 
-This is the exact pattern used by the reference scripts – see [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py).
+Always use the ACK's `rfq_id` for quote collection and settlement. The request uses a client UUID for correlation; the indexer assigns the RFQ id that makers quote against.
 
 **TypeScript:**
 
@@ -155,22 +165,28 @@ import WebSocket from "ws";
 const ws = new WebSocket(
   "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream",
 );
-const rfqId = Date.now();
+const clientId = crypto.randomUUID();
+const expiry = Date.now() + 5 * 60 * 1000;
 
 const request = {
   type: "rfq_request",
-  rfq_id: rfqId,
+  client_id: clientId,
   market_id: INJUSDC_MARKET_ID,
   direction: "long",                    // lowercase string – NOT an integer
   margin: "200",
   quantity: "100",
-  worst_price: "5.00",
+  worst_price: "5",
   request_address: takerInjAddress,
-  expiry: rfqId + 5 * 60 * 1000,
+  expiry,
 };
 
 ws.send(JSON.stringify(request));
+
+const ack = await waitForRequestAck(ws, clientId);
+const rfqId = Number(ack.rfq_id);
 ```
+
+For TypeScript, parse the request ACK and use the returned `rfq_id` for quote filtering and settlement. Do not use `Date.now()` as the settlement `rfq_id`.
 
 See [TakerStream](/takers/taker-stream) for the full request schema, the gRPC-web framing details, and the [rfq_id correlation patterns](/takers/taker-stream#how-rfq-id-correlation-works).
 
@@ -226,6 +242,7 @@ Now submit `AcceptQuote` to the TrueCurrent contract. This is where the three en
 **Python** (the `ContractClient.accept_quote` helper handles encoding for you):
 
 ```python
+from decimal import Decimal
 from rfq_test.clients.contract import ContractClient
 from rfq_test.models.types import Direction
 
@@ -248,7 +265,7 @@ tx_hash = await contract.accept_quote(
     direction=Direction.LONG,
     margin=Decimal("200"),
     quantity=Decimal("100"),
-    worst_price=Decimal("5.00"),
+    worst_price=Decimal("5"),
     unfilled_action={"market": {}},        # fall back to orderbook if short-filled
 )
 
@@ -276,7 +293,7 @@ const msg = MsgExecuteContractCompat.fromJSON({
       direction: "long",                   // lowercase STRING for contract
       margin: "200",
       quantity: "100",
-      worst_price: "5.00",
+      worst_price: "5",
       quotes: [
         {
           maker: best.maker,

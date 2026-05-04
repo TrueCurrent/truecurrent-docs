@@ -1,7 +1,7 @@
 ---
 title: "Protocol reference"
 description: "Full protocol reference for TrueCurrent's RFQ system: sequence diagrams for the standard AcceptQuote flow and the TP/SL AcceptSignedIntent path, plus supported testnet markets."
-updatedAt: "2026-04-18"
+updatedAt: "2026-05-01"
 ---
 
 ### Full lifecycle (sync `AcceptQuote` path)
@@ -26,12 +26,13 @@ sequenceDiagram
     end
 
     Note over Taker,MM: TRADE FLOW
-    Taker->>IDX: RFQ Request (TakerStream)
+    Taker->>IDX: RFQ Request with client_id (TakerStream)
+    IDX-->>Taker: Request ACK with rfq_id
     IDX->>MM: Broadcast Request
     MM->>MM: Calculate Price
-    MM->>MM: Build SignQuote JSON
-    MM->>MM: keccak256 → secp256k1 sign
-    MM->>IDX: Send Signed Quote
+    MM->>MM: SignQuote EIP-712 v2 digest
+    MM->>MM: secp256k1 sign
+    MM->>IDX: Send Signed Quote with sign_mode="v2"
     IDX-->>MM: Quote ACK ✅
     IDX->>Taker: Deliver Quote(s)
     Taker->>Chain: AcceptQuote(quote, signature)
@@ -56,15 +57,10 @@ sequenceDiagram
     Taker->>IDX: Submit SignedTakerIntent (TP/SL, pre-signed)
     IDX->>IDX: Persist, monitor mark price
 
-    alt Trigger fires (Blind mode)
-        Note right of IDX: Pick pre-posted blind quote
-        MM-->>IDX: (quote already in blind book)
-    else Trigger fires (Taker-specific mode)
-        IDX->>MM: Live RFQ for exit size
-        MM->>IDX: Signed quote
-    end
+    IDX->>MM: Live RFQ for exit size
+    MM->>IDX: Signed quote with sign_mode="v2"
 
-    IDX->>Chain: AcceptSignedIntent(intent, sig, quotes, quote_rfq_id?)
+    IDX->>Chain: Triggered settlement
     Chain->>Chain: Verify taker sig + trigger + maker sig
     Chain->>Chain: Settle synthetic trade
 ```
@@ -73,5 +69,7 @@ sequenceDiagram
 
 | Market | Symbol | Market ID |
 |---|---|---|
-| INJ/USDT Perp | `INJ/USDT PERP` | `0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6` |
-| ATOM/USDT Perp | `ATOM/USDT PERP` | `0xd97d0da6f6c11710ef06315971250e4e9aed4b7d4cd02059c9477ec8cf243782` |
+| INJ/USDC Perp | `INJ/USDC PERP` | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
+| BTC/USDC Perp | `BTC/USDC PERP` | `0xfd704649cf3a516c0c145ab0111717c44640d8dbe52a462ae35cadf2f6df1515` |
+| LINK/USDC Perp | `LINK/USDC PERP` | `0xdbb9bb072015238096f6e821ee9aab7affd741f8662a71acc14ac30ee6b687a5` |
+| ETH/USDC Perp | `ETH/USDC PERP` | `0x135de28700392fb1c17d40d5170a74f30055a4ad522feddafec42fbbbb780897` |

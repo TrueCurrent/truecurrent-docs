@@ -1,7 +1,7 @@
 ---
 title: "How to trade"
 description: "Complete trading guide for TrueCurrent perpetuals covering position opening, long and short strategies, leverage selection, margin management, P&L calculation, and liquidation avoidance techniques."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-04"
 ---
 
 A complete guide to opening, managing, and closing positions on TrueCurrent.
@@ -14,10 +14,12 @@ A complete guide to opening, managing, and closing positions on TrueCurrent.
 
 Choose the perpetual market you want to trade from the markets list. You'll see the current price, 24h volume, open interest, and funding rate for each market.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/markets-list.png" alt="Markets list" />
   <p><em>Available markets on TrueCurrent</em></p>
 </div>
+*/}
 
 ### 2. Choose long or short
 
@@ -50,10 +52,12 @@ For most market conditions, 0.5–1% works well. In volatile markets, set it sli
 
 Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes – all in under a second. You'll see an estimated price and can review your worst-case price before confirming; the trade will never execute at a less favorable price than your limit.
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-confirm.png" alt="Confirming a trade" />
   <p><em>Confirming your trade</em></p>
 </div>
+*/}
 
 Your position opens in under one second.
 
@@ -69,10 +73,12 @@ Your positions appear in the **Positions** panel. For each position you can see:
 - **Margin** and **available margin**
 - **Liquidation price** – the price at which your position is automatically closed
 
+{/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/position-details.png" alt="Position management panel" />
   <p><em>The positions panel with key metrics</em></p>
 </div>
+*/}
 
 ### Adding margin
 
@@ -108,7 +114,10 @@ P&L = (Entry price − Mark price) × Position size
 
 When you close, P&L is realized and added to (or subtracted from) your subaccount balance.
 
-Note: funding payments are also applied to your margin over time. See [Funding rates](/trading/funding-rates).
+<Info>
+Note: funding payments are also applied to your margin over time.
+See [Funding rates](/trading/funding-rates).
+</Info>
 
 ---
 
@@ -120,6 +129,7 @@ If the mark price reaches your **liquidation price**, your position is automatic
 - If there's a shortfall, the insurance fund covers it
 - Any margin above the liquidation cost is returned to your account
 
-To avoid liquidation: use lower leverage, add margin, or close the position before it becomes critical.
+To avoid liquidation:
+Use lower leverage, add margin, or close the position before it becomes critical.
 
 See [Perpetual markets](/trading/perpetual-markets) for details on how margin and liquidation work.

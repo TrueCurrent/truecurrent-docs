@@ -25,15 +25,15 @@
     }
   },
   "colors": {
-    "primary": "#999999",
-    "light": "#EEEEEE",
+    "primary": "#fd9a00",
+    "light": "#ecaa83",
     "dark": "#000000"
   },
   "logo": {
-    "light": "/img/truecurrent-logo-192x192.png",
-    "dark": "/img/truecurrent-logo-192x192.png"
+    "light": "/img/logo-light.png",
+    "dark": "/img/logo-dark.png"
   },
-  "favicon": "/img/truecurrent-logo-192x192.png",
+  "favicon": "/img/logo-dark.png",
   "navigation": {
     "languages": [
       {
@@ -68,7 +68,12 @@
                 "icon": "",
                 "expanded": false,
                 "pages": [
+                  "trading/markets",
+                  "trading/contract-specifications",
                   "trading/how-to-trade",
+                  "trading/placing-a-trade",
+                  "trading/understanding-quotes",
+                  "trading/order-types",
                   "trading/perpetual-markets",
                   "trading/prices",
                   "trading/trigger-orders",
@@ -77,6 +82,7 @@
                   "trading/fees",
                   "trading/margin-trading",
                   "trading/liquidation",
+                  "trading/adl",
                   "trading/slippage-and-worst-price"
                 ]
               },
@@ -86,6 +92,7 @@
                 "expanded": false,
                 "pages": [
                   "takers/overview",
+                  "takers/sdk",
                   "takers/quickstart",
                   "takers/authz-setup",
                   "takers/taker-stream",

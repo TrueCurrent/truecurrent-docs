@@ -14,7 +14,7 @@ updatedAt: "2026-04-08"
 {
   "accept_quote": {
     "rfq_id": 1708000700000,
-    "market_id": "0x17ef48032cb24375ba7c2e39f384e56433bcab20cbee9a7357e4cba2eb00abe6",
+    "market_id": "0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e",
     "direction": "long",
     "margin": "200",
     "quantity": "100",

@@ -1,7 +1,7 @@
 ---
 title: "One-time setup"
 description: "One-time onboarding steps for market makers: generate an Injective wallet, get whitelisted, grant authz permissions to the RFQ contract, and fund your exchange subaccount."
-updatedAt: "2026-04-18"
+updatedAt: "2026-05-01"
 ---
 
 ### 1. Generate a wallet
@@ -55,7 +55,7 @@ from pyinjective.core.network import Network
 network  = Network.testnet()
 composer = Composer(network=network.string())
 
-CONTRACT_ADDRESS = "inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q"  # testnet 0.1.0-alpha.6
+CONTRACT_ADDRESS = "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"  # testnet 0.1.0-alpha.6
 
 granted_msgs = [
     "/injective.exchange.v2.MsgPrivilegedExecuteContract",
@@ -82,4 +82,4 @@ print(f"Authz granted! TxHash: {result['txResponse']['txhash']}")
 
 ### 4. Fund your subaccount
 
-Deposit USDT into your Injective exchange subaccount — this is the margin backing your quotes.
+Deposit the market's quote asset into your Injective exchange subaccount. On the current testnet RFQ market, this is USDC.

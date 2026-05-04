@@ -1,7 +1,7 @@
 ---
 title: "Smart contract"
 description: "Reference documentation for TrueCurrent's CosmWasm smart contract including AcceptQuote entrypoint, settlement validation, authz integration, and query methods for market maker registry."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-01"
 ---
 
 TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on Injective. This page documents the contract's main entrypoints, the settlement flow, and how to interact with it directly.
@@ -12,7 +12,7 @@ TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on
 
 | Network | Address |
 |---------|---------|
-| Injective Testnet | `inj1t8hyyle68vd0kzsdehxg0sywttrwmt58jzk29q` |
+| Injective Testnet | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
 | Injective Mainnet | *(TBD – available after mainnet deployment)* |
 
 ---
@@ -24,7 +24,7 @@ The contract has two settlement entrypoints:
 | Entrypoint | Who calls it | When |
 |---|---|---|
 | `AcceptQuote` | Taker directly | Synchronous: taker is online and accepting right now. Full quote flow (blind or per-request). |
-| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs, relayer fires when a mark-price trigger is satisfied. **V1: protective flow only** (zero-margin, no orderbook fallback; accepts both blind and taker-specific quotes since contract `0.1.0-alpha.6` / [#27](https://github.com/InjectiveLabs/rfq/pull/27)). See [Signed taker intents](/takers/signed-intents). |
+| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs a reduce-only exit, relayer fires when a mark-price trigger is satisfied. See [Signed taker intents](/takers/signed-intents). |
 
 The two entrypoints share the same settlement path once validated — `AcceptSignedIntent` converts the signed intent into `AcceptQuoteArgs` internally and runs `AcceptQuote`'s fill loop.
 
@@ -62,7 +62,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 
 | Field | Description |
 |-------|-------------|
-| `quotes` | Array of one or more maker quotes. Currently one quote per settlement. |
+| `quotes` | Array of one or more maker quotes. |
 | `quotes[].maker` | Market maker's Injective address |
 | `quotes[].margin` | Maker's margin commitment |
 | `quotes[].quantity` | Quantity the maker is filling |
@@ -72,7 +72,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 | `rfq_id` | String representation of the RFQ identifier |
 | `market_id` | Injective perpetual market ID |
 | `direction` | Taker's direction (`long` or `short`) |
-| `margin` | Taker's margin (USDT) |
+| `margin` | Taker's margin (USDC on the current testnet market) |
 | `quantity` | Taker's requested quantity |
 | `worst_price` | Taker's price limit |
 | `unfilled_action` | What to do with any unfilled quantity |
