@@ -4,7 +4,7 @@ description: "Guide to depositing USDC into TrueCurrent using CCTP cross-chain t
 updatedAt: "2026-04-06"
 ---
 
-To trade on TrueCurrent, you need USDC in your trading account. There are two ways to get it there.
+To trade on TrueCurrent, you need USDC in your trading account. There are two ways to get it there. Both methods reflect the deposit flow as of Q2 2026.
 
 ---
 
@@ -21,6 +21,7 @@ Your USDC arrives in your TrueCurrent account within seconds. Gas fees are cover
 
 <div class="image-placeholder">
   <img src="/img/deposit-widget.png" alt="Deposit widget" />
+
   <p><em>The TrueCurrent deposit widget</em></p>
 </div>
 
@@ -37,6 +38,7 @@ Every TrueCurrent account has a unique deposit address – a wallet address that
 
 <div class="image-placeholder">
   <img src="/img/deposit-address.png" alt="Deposit address / QR code" />
+
   <p><em>Your unique deposit address</em></p>
 </div>
 
