@@ -6,6 +6,8 @@ updatedAt: "2026-05-04"
 
 TrueCurrent is non-custodial – you trade directly from your own wallet. No account creation, no email, no KYC.
 
+TrueCurrent is non-custodial — you trade directly from your own wallet. No account creation, no email, no KYC. Wallet support and supported chains reflect the TrueCurrent integration set as of Q2 2026.
+
 ---
 
 ## Supported wallets
@@ -31,6 +33,7 @@ Your address will appear in the top right when connected.
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/connect-wallet.png" alt="Connect wallet screen" />
+
   <p><em>Connecting a wallet on TrueCurrent</em></p>
 </div>
 */}

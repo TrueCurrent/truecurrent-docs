@@ -4,7 +4,7 @@ description: "Step-by-step tutorial for executing your first perpetual futures t
 updatedAt: "2026-05-04"
 ---
 
-A step-by-step guide to opening your first position on TrueCurrent.
+A step-by-step guide to opening your first position on TrueCurrent. All workflows below reflect the platform as of 2026 — typical fill times under one second, zero taker fees, and hourly funding intervals.
 
 ---
 
@@ -12,9 +12,9 @@ A step-by-step guide to opening your first position on TrueCurrent.
 
 Make sure you've:
 
-- [x] Connected your wallet ([guide](/getting-started/connect-wallet))
-- [x] Completed the one-time authorization (prompted automatically on first visit)
-- [x] Deposited USDC ([guide](/getting-started/deposit-funds))
+- Connected your wallet ([guide](/getting-started/connect-wallet))
+- Completed the one-time authorization (prompted automatically on first visit)
+- Deposited USDC ([guide](/getting-started/deposit-funds))
 
 ---
 
@@ -25,6 +25,7 @@ From the trading interface, select the market you want to trade. Each market sho
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/market-select.png" alt="Market selection" />
+
   <p><em>Selecting a market on TrueCurrent</em></p>
 </div>
 */}
@@ -50,6 +51,7 @@ For example, 100 USDC margin at 2x leverage means a 200 USDC position. A 10% pri
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-size.png" alt="Setting trade size and leverage" />
+
   <p><em>Setting margin and leverage</em></p>
 </div>
 */}
@@ -73,6 +75,7 @@ Click **Trade**. TrueCurrent automatically collects prices from institutional li
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
   <img src="/img/trade-confirm.png" alt="Confirming a trade" />
+
   <p><em>Confirming your trade</em></p>
 </div>
 */}
@@ -90,6 +93,7 @@ Keep an eye on it.
 
 <div class="image-placeholder">
   <img src="/img/positions-panel.png" alt="Open positions panel" />
+
   <p><em>Managing open positions</em></p>
 </div>
 
