@@ -148,9 +148,7 @@
                 "group": "TrueCurrent News",
                 "icon": "newspaper",
                 "expanded": false,
-                "pages": [
-                  "news/season-1"
-                ]
+                "pages": []
               }
             ]
           }
