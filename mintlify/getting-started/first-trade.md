@@ -1,7 +1,7 @@
 ---
 title: "Your first trade"
 description: "Step-by-step tutorial for executing your first perpetual futures trade on TrueCurrent, covering market selection, leverage setup, price tolerance, position monitoring, and funding rate considerations."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-04"
 ---
 
 A step-by-step guide to opening your first position on TrueCurrent.
@@ -54,9 +54,11 @@ For example, 100 USDC margin at 2x leverage means a 200 USDC position. A 10% pri
 
 ## Step 4: Set your price tolerance
 
-Before confirming, you'll see an **estimated price** and a **worst price** you're willing to accept. You can adjust how tight or loose this tolerance is.
+Before confirming, you'll see an **estimated price** and a **worst price** you're willing to accept.
+You can adjust how tight or loose this tolerance is.
 
-TrueCurrent will never execute your trade at a price worse than your limit. If no liquidity provider can beat your floor, the trade simply won't go through.
+TrueCurrent will never execute your trade at a price worse than your limit.
+If no liquidity provider can beat your floor, the trade simply won't go through.
 
 ---
 
@@ -77,7 +79,8 @@ Your open position appears in the **Positions** panel below the chart. You'll se
 
 - Entry price and current mark price
 - Unrealized P&L
-- Your **liquidation price** – if the mark price reaches this level, your position is automatically closed and you lose your margin. Keep an eye on it.
+- Your **liquidation price** – if the mark price reaches this level, your position is automatically closed and you lose your margin.
+Keep an eye on it.
 
 <div class="image-placeholder">
   <img src="/img/positions-panel.png" alt="Open positions panel" />
@@ -96,4 +99,5 @@ Click **Close** on any open position. Choose full or partial close and confirm.
 
 **Watch your liquidation price.** If you're getting close, you can add margin or partially close to reduce risk.
 
-**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up. See [Funding rates](/trading/funding-rates).
+**Check funding rates.** If you're holding a position overnight or longer, funding payments can add up.
+See [Funding rates](/trading/funding-rates).

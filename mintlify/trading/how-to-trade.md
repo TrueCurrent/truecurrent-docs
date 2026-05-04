@@ -1,7 +1,7 @@
 ---
 title: "How to trade"
 description: "Complete trading guide for TrueCurrent perpetuals covering position opening, long and short strategies, leverage selection, margin management, P&L calculation, and liquidation avoidance techniques."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-04"
 ---
 
 A complete guide to opening, managing, and closing positions on TrueCurrent.
@@ -108,7 +108,10 @@ P&L = (Entry price − Mark price) × Position size
 
 When you close, P&L is realized and added to (or subtracted from) your subaccount balance.
 
-Note: funding payments are also applied to your margin over time. See [Funding rates](/trading/funding-rates).
+<Info>
+Note: funding payments are also applied to your margin over time.
+See [Funding rates](/trading/funding-rates).
+</Info>
 
 ---
 
@@ -120,6 +123,7 @@ If the mark price reaches your **liquidation price**, your position is automatic
 - If there's a shortfall, the insurance fund covers it
 - Any margin above the liquidation cost is returned to your account
 
-To avoid liquidation: use lower leverage, add margin, or close the position before it becomes critical.
+To avoid liquidation:
+Use lower leverage, add margin, or close the position before it becomes critical.
 
 See [Perpetual markets](/trading/perpetual-markets) for details on how margin and liquidation work.

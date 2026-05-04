@@ -12,7 +12,7 @@ To trade on TrueCurrent, you need USDC in your trading account. There are two wa
 
 TrueCurrent's built-in deposit widget supports CCTP (Circle's Cross-Chain Transfer Protocol), letting you move USDC directly from any supported EVM chain with no manual bridging steps.
 
-1. Go to [tc.xyz](https://tc.xyz) and connect your wallet
+1. Go to [`tc.xyz`](https://tc.xyz) and connect your wallet
 2. Click **Deposit** in the portfolio panel
 3. Select the chain your USDC is on (Ethereum, Arbitrum, Base, etc.)
 4. Enter the amount and confirm in your wallet
@@ -28,7 +28,9 @@ Your USDC arrives in your TrueCurrent account within seconds. Gas fees are cover
 
 ## Option B: Send to your deposit address
 
-Every TrueCurrent account has a unique deposit address – a wallet address that belongs only to you. You can send funds to this address from any EVM or IBC-compatible chain, and TrueCurrent handles the bridging automatically. Gas fees are covered on your behalf.
+Every TrueCurrent account has a unique deposit address – a wallet address that belongs only to you.
+You can send funds to this address from any EVM or IBC-compatible chain, and TrueCurrent handles the bridging automatically.
+Gas fees are covered on your behalf.
 
 1. Go to **Portfolio** → **Deposit** → **Wallet Address**
 2. You'll see a QR code and address unique to your account
