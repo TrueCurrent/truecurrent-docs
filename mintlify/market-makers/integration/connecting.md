@@ -122,6 +122,14 @@ The stream stays open but silent until you reply correctly.
 | 2 | `evm_chain_id` | uint64 | Chain ID for the EIP-712 domain (`1439` testnet, `1776` mainnet). |
 | 3 | `expires_at` | sint64 | Unix milliseconds. Sign and reply within ~30s. |
 
+<Warning>
+The `MakerChallenge` message format uses a signed integer (`sint64`),
+while the EIP-712 signature uses an unsigned integer (`uint64`).
+
+Do *not* use `uint64` when constructing this `MakerChallenge` messages,
+only use `sint64` for the `expires_at` field.
+<Warning>
+
 **`StreamAuthChallenge` typed-data layout:**
 
 Type string: `"StreamAuthChallenge(uint64 evmChainId,address maker,bytes32 nonce,uint64 expiresAt)"`
