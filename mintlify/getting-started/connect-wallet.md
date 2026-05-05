@@ -1,7 +1,7 @@
 ---
 title: "Connect your wallet"
-description: "Connect supported wallets including Rabby, MetaMask, Keplr, Rainbow, Leap, and Phantom to TrueCurrent's non-custodial perpetuals exchange with one-time authorization setup."
-updatedAt: "2026-05-04"
+description: "Connect supported wallets including Rabby, MetaMask, Keplr, and Rainbow to TrueCurrent's non-custodial perpetuals exchange with one-time authorization setup."
+updatedAt: "2026-05-05"
 ---
 
 TrueCurrent is non-custodial.
@@ -17,8 +17,6 @@ Wallet support and supported chains reflect the TrueCurrent integration set as o
 - **Rainbow** – Great mobile-first option
 - **MetaMask** – Works with any EVM-compatible wallet
 - **Keplr** – Cosmos-native wallet
-- **Leap** – Cosmos wallet with broad chain support
-- **Phantom** – Supported for Solana and EVM users
 
 ---
 
