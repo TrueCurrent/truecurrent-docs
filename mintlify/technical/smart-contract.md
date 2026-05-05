@@ -53,7 +53,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
     "margin": "200",
     "quantity": "100",
     "worst_price": "4.7000",
-    "unfilled_action": { "market": {} }
+    "unfilled_action": null
   }
 }
 ```
@@ -75,12 +75,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 | `margin` | Taker's margin (USDC on the current testnet market) |
 | `quantity` | Taker's requested quantity |
 | `worst_price` | Taker's price limit |
-| `unfilled_action` | What to do with any unfilled quantity |
-
-**`unfilled_action` options:**
-
-- `{"market": {}}` – Route unfilled quantity to the Injective order book as a market order
-- `{"cancel": {}}` – Cancel any unfilled quantity *(confirm if supported)*
+| `unfilled_action` | Reserved field. Pass `null` — non-null values are not exposed in the current product. |
 
 ---
 
@@ -104,7 +99,6 @@ On successful validation, the contract uses `MsgPrivilegedExecuteContract` (auth
 
 1. Opens the taker's position (long or short, per request)
 2. Opens the maker's opposing position (short or long)
-3. Routes any unfilled quantity to the order book (if `unfilled_action: {"market": {}}`)
 
 Both positions are settled atomically in the same block. There is no partial state where one side has a position and the other doesn't.
 

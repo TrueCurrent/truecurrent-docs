@@ -10,7 +10,7 @@ This page is the collected wisdom for running a programmatic taker in production
 
 ## Slippage and `worst_price`
 
-`worst_price` is your hard price limit. The contract rejects any individual quote worse than it, and `unfilled_action: {"market": {}}` won't cross it either. You must set it correctly.
+`worst_price` is your hard price limit. The contract rejects any individual quote worse than it. You must set it correctly.
 
 **For longs** (you're buying): `worst_price` is the **maximum** price you'll accept. Set it *above* your expected fill.
 
@@ -108,7 +108,7 @@ When you submit a multi-quote `AcceptQuote`, the contract processes quotes in or
 
 This means you can get:
 
-- **Partial fills** – some quotes consumed, others skipped, `fallback_quantity` remains
+- **Partial fills** – some quotes consumed, others skipped, residual quantity simply not traded
 - **Zero fills** – every quote rejected, whole transaction fails
 
 **Parse the settlement event** on success to know what actually happened:

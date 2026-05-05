@@ -54,9 +54,9 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="What happens if no market maker responds to my request?">
-    Your order automatically routes to Injective's onchain central limit order book if no market maker responds within the 2-second window.
+    The request is cancelled and your margin is released. Nothing settles onchain, so you pay nothing. You can submit a new request immediately — prices update continuously.
 
-    You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+    This is rare on liquid markets, where multiple makers compete on every request.
   </Accordion>
 
   <Accordion title="What is the worst price setting?">

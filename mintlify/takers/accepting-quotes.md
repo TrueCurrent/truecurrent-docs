@@ -1,7 +1,7 @@
 ---
 title: "Accepting quotes"
-description: "Complete reference for the AcceptQuote contract message used by RFQ takers on TrueCurrent, including single-quote and multi-quote aggregation, unfilled action fallback, required encoding conversions, matching order, partial fills, and every onchain validation check."
-updatedAt: "2026-04-08"
+description: "Complete reference for the AcceptQuote contract message used by RFQ takers on TrueCurrent, including single-quote and multi-quote aggregation, required encoding conversions, matching order, partial fills, and every onchain validation check."
+updatedAt: "2026-05-05"
 ---
 
 `AcceptQuote` is the onchain entrypoint that settles an RFQ trade. As a taker, it's the only contract message you call. This page documents every field, every encoding rule, and every validation the contract performs – including the features that aren't obvious from the other docs.
@@ -29,7 +29,7 @@ updatedAt: "2026-04-08"
         "signature": "Kg8z...base64..."
       }
     ],
-    "unfilled_action": { "market": {} }
+    "unfilled_action": null
   }
 }
 ```
@@ -105,8 +105,8 @@ The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of
 | `margin` | string | yes | Taker margin in USDC, decimal string |
 | `quantity` | string | yes | Requested quantity |
 | `worst_price` | string | yes | Hard price limit. Individual quotes worse than this are rejected. |
-| `quotes` | array | yes | One or more maker quotes to consume. Can be empty only if you're going pure orderbook. |
-| `unfilled_action` | object \| null | no | What to do with any residual quantity. See below. |
+| `quotes` | array | yes | One or more maker quotes to consume. |
+| `unfilled_action` | null | no | Reserved field; pass `null`. See [Unfilled action](#unfilled-action) below. |
 | `subaccount_nonce` | number \| null | no | Subaccount index for the taker. Defaults to 0. |
 | `cid` | string \| null | no | Client identifier echoed in the settlement event, for your own tracking. |
 
@@ -320,43 +320,15 @@ You end up with a single taker position for 100 INJ at a blended entry. Each mak
 
 ---
 
-## Unfilled action fallback
-
-If your submitted quotes don't cover the full `quantity`, the contract has three options for the remainder, determined by `unfilled_action`:
-
-### `None` – strict RFQ only
+## Unfilled action
 
 ```json
 "unfilled_action": null
 ```
 
-If the quotes don't fill your full quantity, the transaction still settles **the portion that was filled**. The remainder is simply not traded. If zero quotes fill (e.g. all were rejected by signature or expiry), the transaction fails.
+The current TrueCurrent product is RFQ-only. If your submitted quotes don't cover the full `quantity`, the transaction still settles the portion that was filled — the remainder is simply not traded. If zero quotes fill (e.g. all were rejected by signature or expiry), the transaction fails.
 
-Use this when you have a hard price target and would rather under-fill than touch the orderbook.
-
-### `{"limit": {"price": "..."}}` – post a limit order
-
-```json
-"unfilled_action": { "limit": { "price": "4.93" } }
-```
-
-After consuming your quotes, the contract posts the remaining `quantity` as a limit order on the Injective derivative orderbook at the specified price. Requires the `MsgBatchUpdateOrders` authz grant.
-
-The limit order is owned by your subaccount and behaves like any other order on the book – it can rest, be cancelled, or be filled by incoming flow.
-
-### `{"market": {}}` – market-hit the orderbook
-
-```json
-"unfilled_action": { "market": {} }
-```
-
-The remainder is submitted as an immediate-or-cancel market order. It fills at whatever the best available orderbook price is, subject to your `worst_price` limit. Requires the `MsgCreateDerivativeMarketOrder` authz grant.
-
-This is the closest thing to "just get me filled", with the safety net that you'll never cross your `worst_price`.
-
-### Edge case: remainder below minimum tick
-
-If the remainder is smaller than the market's minimum quantity tick, it is silently dropped – not posted or market-ordered. Emitted in the settlement event as `fallback_dropped_quantity`.
+Pass `null` for `unfilled_action` on every call. The contract field exists for future use; non-null values are not exposed in the public product today.
 
 ---
 
@@ -377,7 +349,7 @@ For each quote in the submitted array, the contract performs the following check
 
 After the loop, the contract checks:
 
-- **At least some fills happened** – if `filled_quantity == 0` and `unfilled_action` wouldn't route anything, the whole transaction fails with `all quotes rejected`. If at least one quote filled, the transaction settles the fills and uses `unfilled_action` for the rest.
+- **At least some fills happened** – if `filled_quantity == 0`, the whole transaction fails with `all quotes rejected`. If at least one quote filled, the transaction settles the filled quantity and the remainder is simply not traded.
 - **Taker has enough balance** for the aggregate margin used across all filled quotes.
 - **`quotes.len() <= config.max_quotes`** – checked at the top of the handler before any iteration.
 
@@ -390,7 +362,7 @@ The full list of per-quote failures is available in the emitted settlement event
 After a successful transaction:
 
 - **You have a new position** in your Injective exchange subaccount. Query it via the standard exchange module APIs – there is no RFQ-specific position state onchain.
-- **The settlement event** contains the filled quantity, the per-quote `quote_results`, the taker's aggregate entry price, any orderbook routing that happened via `unfilled_action`, and the `cid` you passed (useful for matching events to your trade log).
+- **The settlement event** contains the filled quantity, the per-quote `quote_results`, the taker's aggregate entry price, and the `cid` you passed (useful for matching events to your trade log).
 - **Fees have been deducted** according to the current `taker_fee_rate` and `maker_fee_rate` in the contract's config. Query `config` for the current values.
 
 ---

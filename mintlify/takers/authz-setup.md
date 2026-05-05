@@ -18,7 +18,7 @@ When you call `AcceptQuote`, the TrueCurrent contract needs to:
 
 1. Open your derivative position via `MsgPrivilegedExecuteContract`
 2. Move margin between your wallet and subaccount if required (`MsgSend`)
-3. Optionally route any unfilled quantity to the Injective order book (`MsgBatchUpdateOrders`, `MsgCreateDerivativeMarketOrder`)
+3. Hold a reserved orderbook permission (`MsgBatchUpdateOrders`) for future contract paths
 
 Rather than making you sign each of these messages individually at settlement time, you pre-authorize the contract once. Each authorization is narrow – scoped to a specific message type and a specific grantee address (the contract).
 

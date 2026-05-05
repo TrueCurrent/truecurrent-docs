@@ -114,7 +114,7 @@ async def main():
             margin=Decimal("200"),
             quantity=Decimal("100"),
             worst_price=Decimal("5"),
-            unfilled_action={"market": {}},
+            unfilled_action=None,
         )
         print(f"Settled: {tx_hash}")
     finally:

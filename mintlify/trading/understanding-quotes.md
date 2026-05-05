@@ -47,13 +47,9 @@ This expiry mechanism protects market makers from being locked into stale prices
 
 ## What happens if no quotes are received?
 
-If no market maker responds within the 2-second window, TrueCurrent automatically routes your order to Injective's onchain order book. In this case:
+If no market maker responds within the collection window, the request is cancelled and your margin is released — nothing settles onchain, and you pay nothing. Prices update continuously, so you can submit a new request immediately.
 
-- Your order executes as a market order against the current order book
-- The price guarantee of the RFQ quote does not apply – you may experience some slippage
-- Your worst price setting still protects you from extreme slippage
-
-If the order book also cannot fill your order (insufficient liquidity at or better than your worst price), the order is cancelled and your margin is returned.
+This is uncommon on liquid markets, where multiple makers compete on every request. It mostly happens during extreme volatility, in deep illiquid markets, or when your `worst_price` is tight enough that no maker is willing to fill at it.
 
 ---
 

@@ -34,8 +34,6 @@ Traditional onchain order books (like the one Injective natively provides, and w
 - **No queue.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
 - **Better for large sizes.** A large market order on an order book walks up the book, paying progressively worse prices. RFQ market makers can absorb larger sizes at a single price.
 
-TrueCurrent's hybrid model captures the best of both: RFQ for primary price discovery, with the Injective order book as a fallback to maximize fill rates.
-
 ---
 
 ## How market makers price quotes

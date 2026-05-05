@@ -35,7 +35,7 @@ flowchart LR
     class Contract,Exchange onchain
 ```
 
-**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's position and, optionally, routes any remainder to the orderbook.
+**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's positions.
 
 ---
 
@@ -63,7 +63,6 @@ Deployed on Injective as a CosmWasm contract, the TrueCurrent contract is the tr
 - Checks quote expiry
 - Confirms both parties have sufficient margin
 - Executes the settlement through Injective's exchange module using pre-granted `authz` permissions
-- Routes any unfilled quantity to the Injective order book
 
 The contract's logic is deterministic and publicly verifiable. All settlement decisions are made onchain.
 

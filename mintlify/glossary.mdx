@@ -151,11 +151,7 @@ The minimum aggregate quantity that must be filled across all quotes in an `Acce
 
 **MsgBatchUpdateOrders**:
 
-An Injective exchange message type. TrueCurrent uses this (via `authz`) to post limit orders to the onchain order book when a trader's `unfilled_action` is set to a limit order fallback.
-
-**MsgCreateDerivativeMarketOrder**:
-
-An Injective exchange message type. TrueCurrent uses this (via `authz`) to submit immediate-or-cancel market orders to the order book when a trader's `unfilled_action` is set to `{"market": {}}`.
+An Injective exchange message type. Listed in the canonical taker authz grant set; reserved for future contract paths that may interact with the Injective order book.
 
 **MsgPrivilegedExecuteContract**:
 
@@ -174,12 +170,6 @@ A sequential number used for replay protection. Blind quotes use maker-controlle
 **notional value**:
 
 The total USD value of an open position at the current mark price: `quantity × mark_price`. Notional value determines the margin required to maintain a position and is used to calculate the margin ratio.
-
-## O
-
-**order book fallback**:
-
-Automatic routing to Injective's native central limit order book when no RFQ quote is available or quotes do not cover the full requested quantity. The `worst_price` protection still applies to any fills from the order book.
 
 ## P
 
@@ -212,7 +202,7 @@ A pre-authorized, cryptographically signed conditional order created by a taker 
 
 **slippage**:
 
-The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. If the order falls back to the order book, `worst_price` caps the maximum slippage.
+The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. `worst_price` is the hard onchain limit — no fill can settle past it.
 
 **spread**:
 
@@ -248,7 +238,7 @@ A conditional order — take profit or stop loss — that is stored off-chain an
 
 **unfilled_action**:
 
-A field on `AcceptQuote` that specifies what to do with any quantity not covered by RFQ quotes: route to the order book as a market order (`{"market": {}}`), post a limit order (`{"limit": {"price": "..."}}`), or cancel the remainder (`null`).
+A reserved field on `AcceptQuote` and `AcceptSignedIntent`. The current TrueCurrent product is RFQ-only and requires `null`. The contract field exists for future use; non-null values are not exposed today.
 
 **unrealized P&L (uPnL)**:
 
