@@ -62,8 +62,6 @@
                 "icon": "",
                 "expanded": false,
                 "pages": [
-                  "trading/markets",
-                  "trading/contract-specifications",
                   "trading/how-to-trade",
                   "trading/understanding-quotes",
                   "trading/order-types",
