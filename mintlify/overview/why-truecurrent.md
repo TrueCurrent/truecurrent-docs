@@ -45,8 +45,9 @@ This is what real self-custody looks like.
 
 ## Bring funds from anywhere
 
-You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain.
-See [Deposit funds](/getting-started/deposit-funds) for the full walkthrough.
+You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain — and from places where connecting a wallet is awkward (CEX withdraw forms, cold storage) using the QR-code deposit flow that bridges via account abstraction.
+
+See [Deposit funds](/getting-started/deposit-funds) for all three paths.
 
 ---
 
