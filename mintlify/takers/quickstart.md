@@ -77,7 +77,7 @@ The testnet config (`configs/testnet.yaml`) already points at:
 
 ## 3. Grant authz permissions (once)
 
-Before you can accept any quotes, you must grant the TrueCurrent contract four message types via Injective's `authz` module. See [Authorization setup](/takers/authz-setup) for the full explanation.
+Before you can accept any quotes, you must grant the TrueCurrent contract three message types via Injective's `authz` module. See [Authorization setup](/takers/authz-setup) for the full explanation.
 
 **Python:**
 
@@ -105,14 +105,13 @@ await setup_authz_grants(
 await chain.close()
 ```
 
-`RETAIL_AUTHZ_GRANTS` expands to four message types:
+`RETAIL_AUTHZ_GRANTS` expands to three message types:
 
-1. `/cosmos.bank.v1beta1.MsgSend`
-2. `/injective.exchange.v2.MsgPrivilegedExecuteContract`
-3. `/injective.exchange.v2.MsgBatchUpdateOrders`
-4. `/injective.exchange.v2.MsgCreateDerivativeMarketOrder`
+1. `/injective.exchange.v2.MsgPrivilegedExecuteContract`
+2. `/injective.exchange.v2.MsgBatchUpdateOrders`
+3. `/cosmos.bank.v1beta1.MsgSend`
 
-Each grant is a separate transaction. Wait for all four to confirm before continuing.
+Each grant is a separate transaction. Wait for all three to confirm before continuing.
 
 ---
 
