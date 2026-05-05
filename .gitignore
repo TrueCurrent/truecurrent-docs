@@ -1,0 +1,6 @@
+.DS_Store
+CLAUDE.md
+DEPLOYMENT.md
+node_modules/
+.env
+.env.local
