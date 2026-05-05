@@ -12,11 +12,10 @@ For a full lifecycle walkthrough — including authz setup, quote collection, an
 
 ## Repository
 
-{/* TODO: replace `rfq-testing` with the canonical prod repo name before mainnet launch. The word "testing" in the repo name is a testnet-era artifact; we need a permanent home for the taker SDK / examples under a name that reads right in production docs. Once the new repo exists, update the links below and everywhere in the taker section. */}
 
 | SDK | Repository | Status |
 |---|---|---|
-| **Python (taker + MM reference)** | [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) | Testnet-era name; prod repo TBD |
+| **Python (taker + MM reference)** | [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) | Reference client tested against the live testnet indexer |
 | **TypeScript (Injective SDK)** | [`InjectiveLabs/injective-ts`](https://github.com/InjectiveLabs/injective-ts) | Production-ready; no TrueCurrent-specific taker helpers yet |
 
 The Python `rfq_test` package is the canonical reference for takers. It is the only client tested against the live testnet indexer. The TypeScript side relies on `@injectivelabs/sdk-ts` directly, with no TrueCurrent-specific wrapper yet.
@@ -114,7 +113,7 @@ async def main():
             margin=Decimal("200"),
             quantity=Decimal("100"),
             worst_price=Decimal("5"),
-            unfilled_action={"market": {}},
+            unfilled_action=None,
         )
         print(f"Settled: {tx_hash}")
     finally:
@@ -135,8 +134,8 @@ Before this runs, you must complete [authz setup](/takers/authz-setup) once per 
 | `TakerStreamClient` | `rfq_test.clients.websocket` | WebSocket client for the TakerStream gRPC endpoint; handles gRPC-web framing, reconnection, and ACK-based `rfq_id` correlation |
 | `ContractClient` | `rfq_test.clients.contract` | High-level client for submitting `AcceptQuote` and `AcceptSignedIntent` to the TrueCurrent contract; handles signature encoding (hex → base64) and expiry wrapping |
 | `ChainClient` | `rfq_test.clients.chain` | Low-level Injective chain client for broadcasting transactions and querying state |
-| `setup_authz_grants` | `rfq_test.utils.setup` | One-shot authz grant setup; submits all four required `MsgGrant` transactions for a taker wallet |
-| `RETAIL_AUTHZ_GRANTS` | `rfq_test.utils.setup` | The four message types required for taker authz (bank send, privileged execute, batch update orders, create derivative market order) |
+| `setup_authz_grants` | `rfq_test.utils.setup` | One-shot authz grant setup; submits the three required `MsgGrant` transactions for a taker wallet |
+| `RETAIL_AUTHZ_GRANTS` | `rfq_test.utils.setup` | The three message types required for taker authz (privileged execute, batch update orders, bank send) |
 | `get_environment_config` | `rfq_test.config` | Reads `RFQ_ENV` from `.env` and returns the full config object (endpoints, contract address, market IDs) |
 | `Direction` | `rfq_test.models.types` | Enum: `Direction.LONG`, `Direction.SHORT` — use when calling `ContractClient.accept_quote` |
 

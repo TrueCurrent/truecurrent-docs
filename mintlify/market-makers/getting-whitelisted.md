@@ -53,10 +53,10 @@ Once your testnet integration is verified end-to-end, you're ready to apply.
 
 To apply for market maker whitelist access:
 
-1. Contact the TrueCurrent team at *(contact info TBD)* or via Discord/Telegram *(links TBD)*
-2. Provide your Injective maker wallet address
-3. Share your testnet test results or a brief description of your quoting infrastructure
-4. The team will review and add your address to the whitelist
+1. Reach out via the channels listed on the [Support](/support) page (Discord, Telegram, or `support@tc.xyz`).
+2. Provide your Injective maker wallet address.
+3. Share your testnet test results or a brief description of your quoting infrastructure.
+4. The team will review and add your address to the whitelist.
 
 Once whitelisted, your wallet address can submit quotes to the production MakerStream and those quotes will be routed to traders.
 

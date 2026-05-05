@@ -29,6 +29,16 @@ updatedAt: "2026-04-28"
     No - Injective covers all transaction costs so you pay zero gas for any action on TrueCurrent.
   </Accordion>
 
+  <Accordion title="How do I bring USDC into TrueCurrent?">
+    Three ways, depending on where your USDC currently lives:
+
+    1. **Already on Injective?** Send it to your `inj1…` address — that *is* your TrueCurrent address.
+    2. **On Ethereum, Arbitrum, Base, or another CCTP-supported chain?** Use the connect-wallet bridge in the Deposit panel. CCTP handles the rest.
+    3. **On a CEX, cold storage, or anywhere wallet-connection is awkward?** Use the QR-code deposit flow. TrueCurrent generates a per-source-network deposit address; you send USDC to it; account abstraction bridges it into your Injective wallet for you.
+
+    See [Deposit funds](/getting-started/deposit-funds) for the full walkthrough of each path.
+  </Accordion>
+
   <Accordion title="What fees does TrueCurrent charge?">
     TrueCurrent charges zero protocol fees to traders — no taker fee, no gas fee, and no deposit or withdrawal fee.
 
@@ -36,7 +46,7 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="Which wallets are supported?">
-    TrueCurrent supports Rabby (recommended), Rainbow, MetaMask, Keplr, Leap, and Phantom.
+    TrueCurrent supports Rabby (recommended), Rainbow, MetaMask, and Keplr.
 
     No KYC or account creation is required. After connecting, you complete a one-time `authz` authorization (~30 seconds) that scopes the contract's access to your wallet. See [Connect a wallet](/getting-started/connect-wallet) for setup instructions.
   </Accordion>
@@ -54,9 +64,9 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="What happens if no market maker responds to my request?">
-    Your order automatically routes to Injective's onchain central limit order book if no market maker responds within the 2-second window.
+    The request is cancelled and your margin is released. Nothing settles onchain, so you pay nothing. You can submit a new request immediately — prices update continuously.
 
-    You may experience some slippage in this scenario, but your `worst_price` setting still protects you from extreme adverse fills.
+    This is rare on liquid markets, where multiple makers compete on every request.
   </Accordion>
 
   <Accordion title="What is the worst price setting?">
@@ -66,9 +76,9 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="Why did my quote expire before I could accept?">
-    Quotes expire after a short window (typically 30 seconds) because market makers need to manage price risk in fast-moving markets.
+    Live market maker quotes are valid for about 2 seconds. That window is short by design — it protects makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
 
-    If a quote expires, simply request a new one - the process is fast.
+    If a quote expires before settlement confirms, simply request a new one. The process is fast.
   </Accordion>
 
   <Accordion title="Can I get liquidated?">

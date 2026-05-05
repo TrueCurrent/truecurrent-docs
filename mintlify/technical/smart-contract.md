@@ -13,7 +13,7 @@ TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on
 | Network | Address |
 |---------|---------|
 | Injective Testnet | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
-| Injective Mainnet | *(TBD – available after mainnet deployment)* |
+| Injective Mainnet | Published here on launch |
 
 ---
 
@@ -53,7 +53,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
     "margin": "200",
     "quantity": "100",
     "worst_price": "4.7000",
-    "unfilled_action": { "market": {} }
+    "unfilled_action": null
   }
 }
 ```
@@ -75,12 +75,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 | `margin` | Taker's margin (USDC on the current testnet market) |
 | `quantity` | Taker's requested quantity |
 | `worst_price` | Taker's price limit |
-| `unfilled_action` | What to do with any unfilled quantity |
-
-**`unfilled_action` options:**
-
-- `{"market": {}}` – Route unfilled quantity to the Injective order book as a market order
-- `{"cancel": {}}` – Cancel any unfilled quantity *(confirm if supported)*
+| `unfilled_action` | Reserved field. Pass `null` — non-null values are not exposed in the current product. |
 
 ---
 
@@ -104,7 +99,6 @@ On successful validation, the contract uses `MsgPrivilegedExecuteContract` (auth
 
 1. Opens the taker's position (long or short, per request)
 2. Opens the maker's opposing position (short or long)
-3. Routes any unfilled quantity to the order book (if `unfilled_action: {"market": {}}`)
 
 Both positions are settled atomically in the same block. There is no partial state where one side has a position and the other doesn't.
 
@@ -124,12 +118,12 @@ The contract exposes several query methods for reading state:
 { "is_maker": { "address": "inj1..." } }
 ```
 
-*(Additional queries TBD as contract interface is finalized)*
+For the full contract message and query interface, see the source repository.
 
 ---
 
 ## Contract source code
 
-The TrueCurrent contract source code will be published at *(GitHub link TBD)* before mainnet launch. The contract is built with CosmWasm and the Injective CosmWasm SDK.
+The TrueCurrent contract source code is published in the [InjectiveLabs RFQ repository](https://github.com/InjectiveLabs/rfq). The contract is built with CosmWasm and the Injective CosmWasm SDK.
 
-A security audit is planned before mainnet deployment. Audit report will be linked here upon completion.
+A security audit is planned before mainnet deployment; the audit report will be linked here on completion.

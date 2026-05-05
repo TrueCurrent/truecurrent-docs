@@ -1,67 +1,114 @@
 ---
-title: "RFQ explained"
-description: "Technical deep dive into TrueCurrent's RFQ protocol architecture covering market maker competition, quote expiry mechanics, hybrid order book fallback, and atomic settlement on Injective blockchain."
+title: "How RFQ works"
+description: "Technical reference for TrueCurrent's RFQ protocol: the request-quote-accept lifecycle, the on-chain settlement path via the Injective exchange module, signature verification, and the validation checks the contract enforces on every fill."
 updatedAt: "2026-05-05"
 ---
 
-Request for Quote (RFQ) is a trading model where a buyer or seller solicits price quotes from one or more liquidity providers before committing to a trade. Unlike automated pricing models, RFQ involves human or algorithmic market makers actively pricing each individual trade.
-
-RFQ has been the backbone of institutional trading in traditional finance for decades – used in bond markets, FX, and derivatives. TrueCurrent brings this model onchain, combining the pricing quality of institutional markets with the transparency and self-custody of DeFi.
+This page is the protocol-level companion to [RFQ explained](/overview/rfq-explained). Read that first if you want the conceptual case for RFQ. This page focuses on the wire flow, timing, and what the smart contract actually checks at settlement.
 
 ---
 
-## RFQ vs. AMM
+## End-to-end flow
 
-Automated Market Makers (AMMs) like Uniswap price trades using a mathematical formula – typically constant product (`x * y = k`). This works well for small trades, but has serious drawbacks for larger ones:
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Taker
+    participant Indexer as RFQ Indexer
+    participant MMs as Market Makers
+    participant Contract as TrueCurrent Contract
+    participant Exchange as Exchange Module
 
-- **Price impact.** Every trade moves the pool's price. The larger the trade, the worse the execution price.
-- **MEV exposure.** Because trades are predictable and public before confirmation, bots can front-run or sandwich your transaction.
-- **Fixed pricing.** AMMs can't react to off-chain information; they only know their pool balances.
+    Taker->>Indexer: RFQ request (TakerStream)
+    Indexer-->>Taker: ACK with rfq_id
+    Indexer->>MMs: Broadcast (MakerStream)
 
-In TrueCurrent's RFQ model, prices are set by professional market makers who monitor real-time market data across centralized and decentralized venues. They can price each trade based on actual current conditions, not a formula. The result:
+    par Quote competition (~2s window)
+        MMs->>MMs: Price + sign quote (EIP-712 v2)
+        MMs->>Indexer: Signed quote
+    end
 
-- **Zero slippage.** Your price is fixed at quote time. It doesn't move between when you see the quote and when it settles.
-- **MEV resistance.** Signed quotes are atomic – there's nothing for a bot to extract from the price discovery process.
-- **Better prices for larger trades.** Market makers can offer tighter spreads on larger sizes than any AMM pool.
+    Indexer->>Taker: Best quote(s)
+    Taker->>Contract: AcceptQuote{quotes, worst_price, ...}
 
----
+    Contract->>Contract: Verify signature, expiry, worst_price, nonce
+    Contract->>Exchange: MsgPrivilegedExecuteContract (via authz)
+    Exchange-->>Contract: Positions opened (taker + maker)
+    Contract-->>Taker: Settlement event
+```
 
-## RFQ vs. order books
-
-Traditional onchain order books (like the one Injective natively provides, and which Helix uses) match passive limit orders. This is more efficient than AMMs for liquid markets, but RFQ is still meaningfully different:
-
-- **Active vs. passive liquidity.** Limit orders sit idle until matched. RFQ market makers actively respond to each trade request, so you always get a fresh, competitive price.
-- **No queue.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
-- **Better for large sizes.** A large market order on an order book walks up the book, paying progressively worse prices. RFQ market makers can absorb larger sizes at a single price.
-
-TrueCurrent's hybrid model captures the best of both: RFQ for primary price discovery, with the Injective order book as a fallback to maximize fill rates.
-
----
-
-## How market makers price quotes
-
-When a market maker receives your RFQ request, they consider several factors:
-
-1. **Current mid-market price** from Injective's oracle and/or external reference venues
-2. **Their existing inventory** – a maker who is already long INJ may offer a better price to reduce that position
-3. **Market volatility** – wider spreads in volatile markets, tighter in calm ones
-4. **Order size** – pricing adjusts for the quantity being requested
-5. **Competition** – knowing they're competing against other makers incentivizes tighter quotes
-
-This real-time, size-aware pricing is fundamentally superior to static formula pricing for most trading scenarios.
+Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's positions.
 
 ---
 
-## Quote expiry and settlement timing
+## Timing budget
 
-Every quote includes an expiry timestamp.
-Live market maker quotes are typically valid for 2 seconds.
-This prevents stale prices from lingering.
-TP/SL blind quotes may use longer windows.
-The competition window during which the indexer collects quotes
-before presenting the best one to the taker is ~2s.
+| Phase | Duration |
+|---|---|
+| Indexer broadcasts request | ~10 ms |
+| Maker prices + signs + returns quote | a few hundred ms |
+| Indexer collection window | ~2 seconds (matches live quote expiry) |
+| Taker selects best quote and broadcasts `AcceptQuote` | ~100 ms |
+| Injective block time | ~600 ms |
+| **Total wall-clock** | **roughly 1 second once quotes start arriving** |
 
-When you accept a quote, the onchain settlement must happen before the quote expires.
-The TrueCurrent contract verifies the expiry as part of settlement validation.
-If a quote expires before settlement confirms,
-the transaction will be rejected and you'll need to request a new quote.
+Live quotes are signed with `expiry = now + 2_000` ms. The contract rejects any quote whose `expiry` has passed at block time.
+
+---
+
+## What gets signed
+
+Every maker quote is signed with EIP-712 v2 over a `SignQuote` typed-data struct. The signature covers — in field order — the EVM chain ID, market ID, RFQ ID, taker address, taker direction, taker margin, taker quantity, maker address, maker subaccount nonce, maker quantity, maker margin, price, expiry kind + value, min fill quantity, and a binding kind derived from whether `taker` is set.
+
+For the canonical schema and reference signing helpers (`sign_quote_v2`), see [Building & signing quotes](/market-makers/integration/rfq-quotes-sign).
+
+The taker does not sign anything for `AcceptQuote` itself — the transaction is broadcast under the taker's private key in the standard Cosmos SDK way. For TP/SL exits, the taker pre-signs a `SignedTakerIntent` (also EIP-712 v2); see [Signed taker intents](/takers/signed-intents).
+
+---
+
+## On-chain validation
+
+When `AcceptQuote` lands, the contract walks the `quotes` array in submission order and runs these checks per quote:
+
+| Check | Failure mode |
+|---|---|
+| Quote `expiry` not passed | Skip with "quote expired" |
+| Maker is currently whitelisted | Skip with "unknown maker" |
+| Maker has not already used this `rfq_id` nonce | Skip with "nonce replay" |
+| Signature verifies against canonical quote payload | Skip with "signature mismatch" |
+| Quote `price` is within taker's `worst_price` | Skip with "price exceeds worst_price" |
+| Maker has sufficient available balance for their margin | Skip with "insufficient maker balance" |
+| Filling this quote wouldn't fall below maker's `min_fill_quantity` | Skip with "below min fill" |
+
+A failed check skips that quote and continues with the next — the transaction does not abort. After the loop, the contract requires at least one quote filled; otherwise the transaction fails with `all quotes rejected`. See [Accepting quotes](/takers/accepting-quotes) for the per-quote validation detail and how to read `quote_results`.
+
+---
+
+## Settlement
+
+Once the loop has accumulated filled quotes, the contract calls Injective's exchange module via `MsgPrivilegedExecuteContract` (under pre-granted `authz`) to:
+
+1. Open the taker's position (long or short)
+2. Open each maker's opposing position (short or long), sized to that maker's filled quantity
+
+Both sides settle atomically in the same Injective block. There is no partial state where one side has a position and the other doesn't. Margin moves are bundled into the same transaction.
+
+For the contract message structure, queries, and the full settlement event payload, see [Smart contract](/technical/smart-contract).
+
+---
+
+## Why RFQ-only
+
+TrueCurrent's contract has hooks for orderbook fallback, but the public product is RFQ-only — every trade is a signed-quote settlement. This keeps the trust story simple: the only execution price is the one a maker signed, and the contract enforces it. There is no path where a different price lands than the one displayed.
+
+If RFQ collects no acceptable quotes, the request is cancelled, your margin is released, and you can submit a new request immediately. See [Understanding quotes](/trading/understanding-quotes) for the collection-window semantics.
+
+---
+
+## Related pages
+
+- [RFQ explained](/overview/rfq-explained) — the user-facing case for RFQ vs AMMs and order books
+- [Architecture](/technical/architecture) — system layers, trust model, what the indexer does
+- [Smart contract](/technical/smart-contract) — `AcceptQuote` message, queries, settlement event
+- [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — full EIP-712 v2 signing reference for makers
+- [Accepting quotes](/takers/accepting-quotes) — the taker side of `AcceptQuote`, including multi-quote aggregation and `quote_results`

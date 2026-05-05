@@ -33,7 +33,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - System clock skew on the market maker's server
 - Network delay between quote submission and onchain settlement
 
-**Resolution:** Set quote expiry to at least 30 seconds from signing time. Ensure your server uses NTP time synchronization. Monitor average confirmation times.
+**Resolution:** Set quote expiry to `now + 2_000` ms (2 seconds) for live RFQ quotes — that is the canonical window every market-maker reference uses. Ensure your server uses NTP time synchronization. If your settlement chain RTT routinely chews through that budget, co-locate closer to the chain gRPC endpoint rather than extending the expiry — wider expiries widen your exposure to stale-price losses.
 
 ---
 
@@ -73,6 +73,34 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
 
 **Resolution:** Apply for whitelist approval. See [Getting whitelisted](/market-makers/getting-whitelisted).
+
+---
+
+## Signed-intent errors
+
+These apply specifically to TP/SL settlement via `AcceptSignedIntent`.
+
+### `invalid_intent_signature` / `stale epoch` / `stale lane`
+
+**Cause:** Either the v2 EIP-712 signature failed recovery, or the `epoch` / `lane_version` counter has been incremented since the intent was signed (i.e. the intent has been cancelled or superseded).
+
+**Resolution:** Re-read the current `epoch` and `lane_version` from the contract before signing a new intent. For the cancellation paths that bump these counters, see [Signed taker intents — Epochs and lanes](/takers/signed-intents#epochs-and-lanes).
+
+---
+
+### `trigger_not_satisfied`
+
+**Cause:** The relayer submitted `AcceptSignedIntent` before the mark price actually crossed the trigger. The contract re-reads mark at execution time, so relayer-side clock skew or a mid-block price reversion both produce this. The intent itself is still valid.
+
+**Resolution:** No action needed from the taker — the relayer should wait and retry once the trigger is satisfied again. If it never re-fires, the intent expires at its `deadline_ms` and you can re-sign.
+
+---
+
+### `quote_rfq_id mismatch`
+
+**Cause:** A maker quote's `rfq_id` does not match the `rfq_id` in the taker's signed intent. Most often hit when a relayer reuses a quote from a different RFQ to settle a triggered intent.
+
+**Resolution:** The relayer must pair each signed intent with quotes that target that intent's `rfq_id` only. As a maker, ensure your TP/SL participation logic signs against the exit RFQ's `rfq_id`, not a stale or unrelated one. As a taker, no action — this is a relayer-side bug surface.
 
 ---
 

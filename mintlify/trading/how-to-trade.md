@@ -15,12 +15,7 @@ A complete guide to opening, managing, and closing positions on TrueCurrent.
 Choose the perpetual market you want to trade from the markets list.
 You'll see the current price, 24h volume, open interest, and funding rate for each market.
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/markets-list.png" alt="Markets list" />
-  <p><em>Available markets on TrueCurrent</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: markets-list — full markets list page with price, 24h volume, OI, and funding rate columns visible. */}
 
 ### 2. Choose long or short
 
@@ -60,12 +55,7 @@ TrueCurrent automatically collects prices from institutional liquidity providers
 You'll see an estimated price and can review your worst-case price before confirming;
 the trade will never execute at a less favorable price than your limit.
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/trade-confirm.png" alt="Confirming a trade" />
-  <p><em>Confirming your trade</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: trade-confirm — same confirm modal as in first-trade.md (can reuse the same image asset). */}
 
 Your position opens in under one second.
 
@@ -81,12 +71,7 @@ Your positions appear in the **Positions** panel. For each position you can see:
 - **Margin** and **available margin**
 - **Liquidation price** – the price at which your position is automatically closed
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/position-details.png" alt="Position management panel" />
-  <p><em>The positions panel with key metrics</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: position-details — Positions panel zoomed-in row showing entry, mark, uPNL, margin, available margin, and liquidation price. */}
 
 ### Adding margin
 

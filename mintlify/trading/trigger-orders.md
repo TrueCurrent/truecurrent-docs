@@ -65,12 +65,7 @@ This means:
 When placing a new trade, you can set both a TP and SL directly in the order panel before confirming.
 These are attached to the position from the moment it opens.
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/tpsl-entry.png" alt="Setting TP/SL at entry" />
-  <p><em>Setting take profit and stop loss when opening a position</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: tpsl-entry — trade panel with the TP/SL section expanded, both TP and SL price fields filled in. */}
 
 ### On an existing position
 
@@ -81,12 +76,7 @@ You can add or modify TP/SL on any open position at any time:
 3. Enter or update your target prices
 4. Confirm
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/tpsl-modify.png" alt="Modifying TP/SL on existing position" />
-  <p><em>Adding or modifying TP/SL on an open position</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: tpsl-modify — TP/SL editor modal opened from a row in the Positions panel. */}
 
 ---
 

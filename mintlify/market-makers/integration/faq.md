@@ -24,7 +24,7 @@ updatedAt: "2026-05-05"
     Yes.
     Partial fills are supported by setting `maker_quantity` / `maker_margin` to your intended amounts.
 
-    The unfilled remainder depends on the taker's `unfilled_action`.
+    Any quantity not covered by the chosen quotes is simply not traded — the taker receives a partial fill or a no-fill, and their margin for the unfilled portion is released.
   </Accordion>
 
   <Accordion title="What if I don't respond to a quote request?">
@@ -101,4 +101,4 @@ updatedAt: "2026-05-05"
   </Accordion>
 </AccordionGroup>
 
-{/* TODO: add related docs - e2e testnet run book, TPSL flow, RFQ/orderbook/arb flow, admin ops of RFQ contract */}
+

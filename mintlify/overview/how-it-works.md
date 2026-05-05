@@ -18,12 +18,7 @@ Choose which perpetual market you want to trade,
 whether you want to go long (profit when price rises) or short (profit when price falls),
 and how much you want to trade.
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/trade-panel.png" alt="TrueCurrent trade panel" />
-  <p><em>The TrueCurrent trade panel</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: trade-panel — full TrueCurrent trade panel after market selection (sidebar shown), light mode preferred. */}
 
 ### You set your parameters and confirm
 
@@ -36,10 +31,7 @@ The trade will never execute at a less favorable price than your limit.
 
 ### Your position is live
 
-<div class="image-placeholder">
-  <img src="/img/position-open.png" alt="Open position view" />
-  <p><em>Your position after opening</em></p>
-</div>
+{/* SCREENSHOT SLOT: position-open — Positions panel showing one freshly opened long, with entry/mark/uPNL/liq columns visible. */}
 
 ---
 

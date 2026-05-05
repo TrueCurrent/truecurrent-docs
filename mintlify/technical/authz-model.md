@@ -60,7 +60,7 @@ This is secure because:
 | Message type | Why it's needed |
 |---|---|
 | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Allows the contract to open and manage your exchange positions |
-| `/injective.exchange.v2.MsgBatchUpdateOrders` | Allows the contract to interact with the order book on your behalf (for fallback OB routing) |
+| `/injective.exchange.v2.MsgBatchUpdateOrders` | Reserved permission for future contract paths that may interact with the Injective order book |
 | `/cosmos.bank.v1beta1.MsgSend` | Allows the contract to move margin between your wallet and subaccount as needed for settlement |
 
 ---

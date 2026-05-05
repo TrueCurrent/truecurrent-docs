@@ -84,13 +84,13 @@ minus \$5.00 fee = **\$7.50 net spread income**, before hedging costs.
 ## Response rate
 
 **Always try to quote within 2 seconds.**
-A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none fall back to the order book, a worse experience for them.
+A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none get their order cancelled — a worse experience for them and lost flow for the maker pool.
 
 **Fail gracefully.**
 If you genuinely can't price a request
 (e.g., your pricing feed is down, your margin is depleted),
 it's better to not submit a quote than to submit a random price.
-The system handles no-quote gracefully by falling back to the order book.
+The system handles no-quote correctly: the request expires and the taker is told to retry.
 
 **Monitor latency.**
 The 2-second window includes network round-trip time.

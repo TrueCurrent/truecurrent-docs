@@ -8,9 +8,7 @@
     "metatags": {
       "og:type": "website",
       "og:site_name": "TrueCurrent Docs",
-      "canonical": "https://docs.tc.xyz",
-      "indexnow-verification": "TODO",
-      "msvalidate.01": "TODO"
+      "canonical": "https://docs.tc.xyz"
     }
   },
   "search": {
@@ -18,11 +16,6 @@
   },
   "metadata": {
     "timestamp": true
-  },
-  "integrations": {
-    "gtm": {
-      "tagId": "GTM-TODO"
-    }
   },
   "colors": {
     "primary": "#fd9a00",
@@ -49,7 +42,8 @@
                 "expanded": false,
                 "pages": [
                   "overview/how-it-works",
-                  "overview/why-truecurrent"
+                  "overview/why-truecurrent",
+                  "overview/rfq-explained"
                 ]
               },
               {
@@ -71,7 +65,6 @@
                   "trading/markets",
                   "trading/contract-specifications",
                   "trading/how-to-trade",
-                  "trading/placing-a-trade",
                   "trading/understanding-quotes",
                   "trading/order-types",
                   "trading/perpetual-markets",
@@ -141,7 +134,6 @@
                 "pages": [
                   "technical/architecture",
                   "technical/how-rfq-works",
-                  "technical/understanding-quotes",
                   "technical/smart-contract",
                   "technical/websocket-streams",
                   "technical/authz-model",
@@ -167,5 +159,13 @@
     "eyebrows": "breadcrumbs"
   },
   "redirects": [
+    {
+      "source": "/trading/placing-a-trade",
+      "destination": "/trading/how-to-trade"
+    },
+    {
+      "source": "/technical/understanding-quotes",
+      "destination": "/trading/understanding-quotes"
+    }
   ]
 }

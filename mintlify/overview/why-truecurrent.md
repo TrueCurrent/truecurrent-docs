@@ -10,12 +10,7 @@ Most exchanges charge taker fees of 0.02–0.07% per trade.
 On TrueCurrent, takers pay nothing.
 Zero protocol fees, zero gas fees.
 
-{/* TODO DR-148 add screen shot
-<div class="image-placeholder">
-  <img src="/img/fee-comparison.png" alt="Fee comparison chart" />
-  <p><em>TrueCurrent vs. leading perpetuals exchanges on fees</em></p>
-</div>
-*/}
+{/* SCREENSHOT SLOT: fee-comparison — bar chart comparing taker fees TrueCurrent (0%) vs typical CEX vs typical DEX. */}
 
 ---
 
@@ -45,8 +40,9 @@ This is what real self-custody looks like.
 
 ## Bring funds from anywhere
 
-You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain.
-See [Deposit funds](/getting-started/deposit-funds) for the full walkthrough.
+You can fund your TrueCurrent account from any EVM-compatible chain or IBC-compatible chain — and from places where connecting a wallet is awkward (CEX withdraw forms, cold storage) using the QR-code deposit flow that bridges via account abstraction.
+
+See [Deposit funds](/getting-started/deposit-funds) for all three paths.
 
 ---
 

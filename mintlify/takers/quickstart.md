@@ -5,7 +5,6 @@ updatedAt: "2026-05-01"
 
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
 
-{/* TODO: replace `rfq-testing` with the canonical prod repo name before mainnet launch. The word "testing" in the repo name is a testnet-era artifact; we need a permanent home for the taker SDK / examples under a name that reads right in production docs. Once the new repo exists, update every link and reference on this page and across the taker section. */}
 
 Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing):
 
@@ -20,7 +19,7 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 - A small amount of **INJ** for gas on `injective-888` (testnet) – [testnet faucet](https://testnet-faucet.injective.dev)
 - **USDC** in the wallet's exchange subaccount to cover your margin
 - Network connectivity to `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream`
-{/* TODO : to add mainnet WS info */}
+
 - Python 3.11+ or Node.js 18+
 
 ---
@@ -67,17 +66,17 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | Cosmos chain ID | `injective-888` |
 | EIP-712 chain ID | `1439` |
 | INJ/USDC PERP | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
-{/* TODO: to add mainnet indexer info */}
+
 
 > **API key – currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key – the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/takers/best-practices#rate-limiting) for the breakdown.
 >
-> {/* TODO: once the gateway is live, add `RFQ_API_KEY` to this `.env` block, document the API key request process, and update all the example code to pass the key via `?api_key=` (WebSocket) and `X-API-Key` header (HTTP/REST). */}
+> 
 
 ---
 
 ## 3. Grant authz permissions (once)
 
-Before you can accept any quotes, you must grant the TrueCurrent contract four message types via Injective's `authz` module. See [Authorization setup](/takers/authz-setup) for the full explanation.
+Before you can accept any quotes, you must grant the TrueCurrent contract three message types via Injective's `authz` module. See [Authorization setup](/takers/authz-setup) for the full explanation.
 
 **Python:**
 
@@ -105,14 +104,13 @@ await setup_authz_grants(
 await chain.close()
 ```
 
-`RETAIL_AUTHZ_GRANTS` expands to four message types:
+`RETAIL_AUTHZ_GRANTS` expands to three message types:
 
-1. `/cosmos.bank.v1beta1.MsgSend`
-2. `/injective.exchange.v2.MsgPrivilegedExecuteContract`
-3. `/injective.exchange.v2.MsgBatchUpdateOrders`
-4. `/injective.exchange.v2.MsgCreateDerivativeMarketOrder`
+1. `/injective.exchange.v2.MsgPrivilegedExecuteContract`
+2. `/injective.exchange.v2.MsgBatchUpdateOrders`
+3. `/cosmos.bank.v1beta1.MsgSend`
 
-Each grant is a separate transaction. Wait for all four to confirm before continuing.
+Each grant is a separate transaction. Wait for all three to confirm before continuing.
 
 ---
 
@@ -268,7 +266,7 @@ tx_hash = await contract.accept_quote(
     margin=Decimal("200"),
     quantity=Decimal("100"),
     worst_price=Decimal("5"),
-    unfilled_action={"market": {}},        # fall back to orderbook if short-filled
+    unfilled_action=None,                  # RFQ-only; current product does not expose orderbook fallback
 )
 
 print(f"Settled: {tx_hash}")
@@ -306,7 +304,7 @@ const msg = MsgExecuteContractCompat.fromJSON({
           signature: signatureB64,               // base64
         },
       ],
-      unfilled_action: { market: {} },
+      unfilled_action: null,
     },
   },
 });

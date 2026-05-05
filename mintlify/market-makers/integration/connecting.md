@@ -27,7 +27,7 @@ Canonical public path per `rfq-testing/configs/testnet.yaml` (ground truth — w
 | Environment | MakerStream URL |
 |---|---|
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
-| Mainnet | *(TBD)* |
+| Mainnet | Published here on launch |
 
 Additional endpoints exposed by the indexer:
 

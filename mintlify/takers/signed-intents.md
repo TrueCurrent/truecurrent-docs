@@ -56,7 +56,7 @@ The trigger is not latched. If the mark price moves back before the transaction 
 
 ## Conditional order body
 
-These fields are sent to the indexer and contract. The v2 signature covers the `SignedTakerIntent` typed-data fields; `chain_id`, `contract_address`, and `unfilled_action` are wire/runtime fields.
+These fields are sent to the indexer and contract. The v2 signature covers the `SignedTakerIntent` typed-data fields; `chain_id`, `contract_address`, `evm_chain_id`, and `unfilled_action` are wire/runtime fields.
 
 | Field | Type | Description |
 |---|---|---|
@@ -69,17 +69,18 @@ These fields are sent to the indexer and contract. The v2 signature covers the `
 | `market_id` | `string` | Injective derivative market ID. |
 | `subaccount_nonce` | `uint32` | Subaccount index, usually `0`. |
 | `lane_version` | `uint64` | Current `(taker, market, subaccount)` lane version. Incremented by lane cancellation and successful settlement. |
-| `deadline_ms` | `uint64` | Unix millisecond deadline. |
-| `direction` | `"long" \| "short"` | Exit trade direction. |
+| `deadline_ms` | `uint64` | Unix millisecond deadline. Max 30 days from signing. |
+| `direction` | `"long" \| "short"` | Exit trade direction (a closing trade is the *opposite* direction of the position you're exiting). |
 | `quantity` | `string` | Quantity to close, as a canonical decimal string. |
 | `margin` | `string` | Use `"0"` for reduce-only trigger orders. |
 | `worst_price` | `string` | Worst acceptable quoted fill price. |
 | `min_total_fill_quantity` | `string` | Minimum aggregate fill quantity required for settlement. |
 | `trigger_type` | `string` | `"mark_price_gte"`, `"mark_price_lte"`, or `"immediate"`. |
 | `trigger_price` | `string \| null` | Trigger threshold. Use `"0"` or `null` for `immediate`, depending on the helper path. |
-| `unfilled_action` | `object \| null` | Wire-only and not part of the v2 digest. For current signed taker intents, there is no order book fallback, so this field must be `null`. |
+| `unfilled_action` | `null` | Reserved field; pass `null`. Non-null values are not exposed in the current product. |
 | `cid` | `string \| null` | Optional client identifier. Bound by the v2 signature. |
 | `allowed_relayer` | `string \| null` | Optional relayer address. Bound by the v2 signature when set. |
+| `evm_chain_id` | `uint64` | Wire field included in the order body; matches the EIP-712 domain `chainId` (`1439` testnet, `1776` mainnet). |
 
 ---
 
@@ -99,86 +100,61 @@ The domain `chainId` is the EVM chain ID, not the Cosmos chain ID.
 
 ---
 
-## Sign a conditional order
+## Sign and submit a conditional order
 
-Use `sign_conditional_order_v2` from `rfq-testing`. The helper signs the custom `SignedTakerIntent` typed-data digest and returns a `0x`-prefixed 65-byte signature.
-
-```python
-from rfq_test.crypto.eip712 import sign_conditional_order_v2
-
-signature = sign_conditional_order_v2(
-    private_key=TAKER_PRIVATE_KEY,
-    evm_chain_id=1439,
-    verifying_contract_bech32="inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
-    version=1,
-    taker=taker_address,
-    epoch=epoch,
-    rfq_id=rfq_id,
-    market_id=market_id,
-    subaccount_nonce=0,
-    lane_version=lane_version,
-    deadline_ms=deadline_ms,
-    direction="short",
-    quantity="1",
-    margin="0",
-    worst_price="132",
-    min_total_fill_quantity="1",
-    trigger_type="mark_price_gte",
-    trigger_price="120",
-    cid=None,
-    allowed_relayer=None,
-)
-```
-
-Use the same values in the order body:
+Use `sign_conditional_order_v2` from `rfq-testing` to produce the EIP-712 v2 digest signature, then submit via `TakerStreamClient.send_conditional_order`. The helper returns a `0x`-prefixed 65-byte signature; pass it through unchanged.
 
 ```python
-order_body = {
-    "version": 1,
-    "chain_id": "injective-888",
-    "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
-    "taker": taker_address,
-    "epoch": epoch,
-    "rfq_id": rfq_id,
-    "market_id": market_id,
-    "subaccount_nonce": 0,
-    "lane_version": lane_version,
-    "deadline_ms": deadline_ms,
-    "direction": "short",
-    "quantity": "1",
-    "margin": "0",
-    "worst_price": "132",
-    "min_total_fill_quantity": "1",
-    "trigger_type": "mark_price_gte",
-    "trigger_price": "120",
-    "unfilled_action": None,
-    "cid": None,
-    "allowed_relayer": None,
-}
-```
-
----
-
-## Submit via TakerStream
-
-`TakerStreamClient.send_conditional_order` sends `conditional_order_sign_mode="v2"` by default.
-
-```python
+import time
+from rfq_test.crypto.eip712     import sign_conditional_order_v2
 from rfq_test.clients.websocket import TakerStreamClient
 
+rfq_id      = int(time.time() * 1000)
+deadline_ms = rfq_id + 86_400_000          # 24h, max 30d
+
+intent_sig = sign_conditional_order_v2(
+    private_key=retail.private_key,
+    evm_chain_id=evm_chain_id,             # 1439 testnet, 1776 mainnet
+    verifying_contract_bech32=contract_address,
+    version=1, taker=retail.inj_address,
+    epoch=1, lane_version=1, subaccount_nonce=0,
+    rfq_id=rfq_id, market_id=MARKET.id, deadline_ms=deadline_ms,
+    direction="short",                     # closing a long
+    quantity="1", margin="0",              # margin="0" = reduce-only
+    worst_price="19.5",                    # worst acceptable fill
+    min_total_fill_quantity="1",
+    trigger_type="mark_price_gte",         # take-profit on a long
+    trigger_price="20.0",
+)
+
+# TakerStream wraps the order body in conditional_order_sign_mode="v2" +
+# conditional_order_evm_chain_id when you pass sign_mode + evm_chain_id below.
 async with TakerStreamClient(
-    base_url=env_config.indexer.ws_endpoint,
-    request_address=taker_address,
+    env.indexer.ws_endpoint,
+    request_address=retail.inj_address,
 ) as client:
     ack = await client.send_conditional_order(
-        order_body=order_body,
-        signature=signature,
+        order_body={
+            "version": 1, "chain_id": chain_id, "contract_address": contract_address,
+            "taker": retail.inj_address, "epoch": 1, "rfq_id": rfq_id,
+            "market_id": MARKET.id, "subaccount_nonce": 0, "lane_version": 1,
+            "deadline_ms": deadline_ms, "direction": "short",
+            "quantity": "1", "margin": "0", "worst_price": "19.5",
+            "min_total_fill_quantity": "1",
+            "trigger_type": "mark_price_gte", "trigger_price": "20.0",
+            "unfilled_action": None, "cid": None, "allowed_relayer": None,
+            "evm_chain_id": evm_chain_id,
+        },
+        signature=intent_sig,
+        sign_mode="v2",
+        evm_chain_id=evm_chain_id,
         wait_for_ack=True,
-        response_timeout=10.0,
     )
 
-print(ack)
+print(f"SI ACK: rfq_id={ack['rfq_id']} status={ack['status']}")
 ```
+
+The signed values you pass to `sign_conditional_order_v2` and the values in the `order_body` you submit must match exactly. Any drift (different price string, different `lane_version`) will fail signature recovery at the indexer or contract.
 
 For REST submissions, include the same signing mode explicitly:
 
@@ -187,7 +163,7 @@ await http.post(
     f"{indexer_http_endpoint}/v1/conditionalOrder",
     json={
         "order": order_body,
-        "signature": signature,
+        "signature": intent_sig,
         "sign_mode": "v2",
     },
 )
@@ -203,9 +179,16 @@ await http.post(
 { "trigger_type": "mark_price_lte", "trigger_price": "4.80" }
 ```
 
-- Use `mark_price_gte` for long take-profit and short stop-loss.
-- Use `mark_price_lte` for long stop-loss and short take-profit.
-- The contract re-evaluates the mark-price trigger during settlement.
+Mapping trigger to intent (the `direction` field is the *closing* direction, opposite to the open position):
+
+| Closing | Goal | `trigger_type` | When mark price |
+|---|---|---|---|
+| Long position | Take profit | `mark_price_gte` | rises to or above target |
+| Long position | Stop loss | `mark_price_lte` | falls to or below stop |
+| Short position | Take profit | `mark_price_lte` | falls to or below target |
+| Short position | Stop loss | `mark_price_gte` | rises to or above stop |
+
+The contract re-evaluates the mark-price trigger during settlement. If mark moves back before the relayer's transaction lands, the contract rejects with `trigger_not_satisfied` — the relayer should wait and retry when the trigger is satisfied again.
 
 ---
 
@@ -216,6 +199,20 @@ Before signing, read the current `epoch` and `lane_version` for the taker. A sig
 - `CancelAllIntents` increments the taker's epoch and invalidates every outstanding intent for that taker.
 - `CancelIntentLane` increments the lane version for one `(taker, market_id, subaccount_nonce)` lane.
 - Successful settlement also advances the lane version, making trigger intents one-shot by construction.
+
+```python
+from rfq_test.clients.contract import ContractClient
+contract = ContractClient(env.contract, env.chain)
+
+# Cancel everything in this market lane
+tx = await contract.cancel_intent_lane(
+    private_key=RETAIL_PK,
+    market_id=MARKET.id, subaccount_nonce=0,
+)
+
+# Cancel everything across all markets for this taker
+tx = await contract.cancel_all_intents(private_key=RETAIL_PK)
+```
 
 ---
 

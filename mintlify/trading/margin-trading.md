@@ -8,7 +8,6 @@ Margin trading lets you control a position larger than your deposited collateral
 
 ---
 
-{/* TODO DR-143 add cross margin section when that has been implemented, part 1 */}
 
 ## Key terms
 
@@ -100,23 +99,6 @@ Each market has a fixed MMR. Positions are liquidated when the margin ratio fall
 
 For example, if $IMR = 5\%$ (20× leverage) and $MMR = 2.5\%$, you have a 2.5% buffer between your entry and your liquidation threshold.
 
-### Margin tier table
-
-Margin rates may increase for very large notional positions as a risk management measure. The table below shows indicative tiers; exact values are set per market and may be updated via governance.
-
-| Notional position size | Max leverage | IMR | MMR |
-|------------------------|-------------|-----|-----|
-| Up to \$50,000 | 20× | 5.0% | 2.5% |
-| \$50,001 – \$250,000 | 10× | 10.0% | 5.0% |
-| \$250,001 – \$1,000,000 | 5× | 20.0% | 10.0% |
-| Above \$1,000,000 | 2× | 50.0% | 25.0% |
-
-<Note>
-These are illustrative tiers. Confirm actual parameters for each market via the market specifications or the Injective exchange module before sizing large positions.
-</Note>
-
-If your position grows into a higher notional tier (e.g. due to mark price appreciation), you may be required to post additional initial margin to open further positions in that market.
-
 ---
 
 ## Worked example: position lifecycle with cross-margin
@@ -158,7 +140,6 @@ position size Q = 10 units.
 - Remaining equity: \$80 − \$25 = **\$55**
 - Margin ratio: \$55 / \$475 ≈ **11.6%** (strong; leverage effectively reduced to ~4.3×)
 
-{/* TODO DR-143 add cross margin section when that has been implemented, part 2 */}
 
 ---
 

@@ -42,7 +42,8 @@ A market maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind q
 
 ## C
 
-**cid** (client identifier)
+**cid** (client identifier):
+
 An optional string field set by the taker on a trade request that is echoed back in settlement events. Used for correlating requests with outcomes in programmatic or multi-wallet setups.
 
 **CosmWasm**:
@@ -151,11 +152,7 @@ The minimum aggregate quantity that must be filled across all quotes in an `Acce
 
 **MsgBatchUpdateOrders**:
 
-An Injective exchange message type. TrueCurrent uses this (via `authz`) to post limit orders to the onchain order book when a trader's `unfilled_action` is set to a limit order fallback.
-
-**MsgCreateDerivativeMarketOrder**:
-
-An Injective exchange message type. TrueCurrent uses this (via `authz`) to submit immediate-or-cancel market orders to the order book when a trader's `unfilled_action` is set to `{"market": {}}`.
+An Injective exchange message type. Listed in the canonical taker authz grant set; reserved for future contract paths that may interact with the Injective order book.
 
 **MsgPrivilegedExecuteContract**:
 
@@ -175,15 +172,10 @@ A sequential number used for replay protection. Blind quotes use maker-controlle
 
 The total USD value of an open position at the current mark price: `quantity × mark_price`. Notional value determines the margin required to maintain a position and is used to calculate the margin ratio.
 
-## O
-
-**order book fallback**:
-
-Automatic routing to Injective's native central limit order book when no RFQ quote is available or quotes do not cover the full requested quantity. The `worst_price` protection still applies to any fills from the order book.
-
 ## P
 
-**perpetual** (perpetual futures)
+**perpetual** (perpetual futures):
+
 A leveraged derivative that tracks an asset's price with no expiration date. Unlike traditional futures, perpetuals use a periodic funding rate mechanism to keep their price anchored to the underlying spot price.
 
 **price tolerance**:
@@ -198,7 +190,8 @@ The actual execution price at which a trade fills, taken from a market maker's s
 
 ## R
 
-**RFQ** (Request for Quote)
+**RFQ** (Request for Quote):
+
 TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted market makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
 
 **rfq_id**:
@@ -207,12 +200,13 @@ A unique per-request identifier (u64) assigned by the indexer when it accepts an
 
 ## S
 
-**signed intent** (SignedTakerIntent)
+**signed intent** (SignedTakerIntent):
+
 A pre-authorized, cryptographically signed conditional order created by a taker and stored off-chain. A relayer submits it to the TrueCurrent contract when the specified mark-price trigger condition is satisfied. Used for take-profit and stop-loss orders.
 
 **slippage**:
 
-The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. If the order falls back to the order book, `worst_price` caps the maximum slippage.
+The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. `worst_price` is the hard onchain limit — no fill can settle past it.
 
 **spread**:
 
@@ -248,7 +242,7 @@ A conditional order — take profit or stop loss — that is stored off-chain an
 
 **unfilled_action**:
 
-A field on `AcceptQuote` that specifies what to do with any quantity not covered by RFQ quotes: route to the order book as a market order (`{"market": {}}`), post a limit order (`{"limit": {"price": "..."}}`), or cancel the remainder (`null`).
+A reserved field on `AcceptQuote` and `AcceptSignedIntent`. The current TrueCurrent product is RFQ-only and requires `null`. The contract field exists for future use; non-null values are not exposed today.
 
 **unrealized P&L (uPnL)**:
 
@@ -268,4 +262,4 @@ A hard price limit enforced by the TrueCurrent smart contract on every trade. Fo
 
 **zero-margin settlement**:
 
-Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is restricted to signed intents (take-profit and stop-loss exits).
+Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is exposed via signed intents (TP/SL exits) by signing with `margin: "0"`. See [Signed taker intents](/takers/signed-intents).

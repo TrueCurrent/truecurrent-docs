@@ -10,7 +10,7 @@ This page is the collected wisdom for running a programmatic taker in production
 
 ## Slippage and `worst_price`
 
-`worst_price` is your hard price limit. The contract rejects any individual quote worse than it, and `unfilled_action: {"market": {}}` won't cross it either. You must set it correctly.
+`worst_price` is your hard price limit. The contract rejects any individual quote worse than it. You must set it correctly.
 
 **For longs** (you're buying): `worst_price` is the **maximum** price you'll accept. Set it *above* your expected fill.
 
@@ -34,7 +34,6 @@ Where `+` is for longs and `−` is for shorts. Start with `max_slippage_bps = 5
 
 Quotes carry an `expiry` that's guaranteed valid for a short window from signing. You must submit `AcceptQuote` and have it confirm **before** that timestamp passes. The onchain check is `block_time_ms > expiry → reject`.
 
-{/* TODO: add updated expiry info after benchmarking */}
 
 **What eats the budget:**
 
@@ -54,7 +53,7 @@ The quote lifetime is short. By the time you've waited for makers to respond and
   This matches the live quote expiry window;
   waiting longer eats into the confirmation budget.
 - **Co-locate** near `testnet-grpc.injective.dev` / `sentry.tm.injective.network` to minimize RTT.
-{/* TODO: add mainnet info ; also should we say colocation in docs ? */}
+
 - **Don't retry failed broadcasts** on an expiry error – the quote is dead, get a new one.
 - **Use `cid`** to echo your own trade ID in the settlement event – handy when debugging which quote won the race.
 
@@ -108,7 +107,7 @@ When you submit a multi-quote `AcceptQuote`, the contract processes quotes in or
 
 This means you can get:
 
-- **Partial fills** – some quotes consumed, others skipped, `fallback_quantity` remains
+- **Partial fills** – some quotes consumed, others skipped, residual quantity simply not traded
 - **Zero fills** – every quote rejected, whole transaction fails
 
 **Parse the settlement event** on success to know what actually happened:
