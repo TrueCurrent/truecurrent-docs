@@ -33,7 +33,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - System clock skew on the market maker's server
 - Network delay between quote submission and onchain settlement
 
-**Resolution:** Set quote expiry to at least 30 seconds from signing time. Ensure your server uses NTP time synchronization. Monitor average confirmation times.
+**Resolution:** Set quote expiry to `now + 2_000` ms (2 seconds) for live RFQ quotes — that is the canonical window every market-maker reference uses. Ensure your server uses NTP time synchronization. If your settlement chain RTT routinely chews through that budget, co-locate closer to the chain gRPC endpoint rather than extending the expiry — wider expiries widen your exposure to stale-price losses.
 
 ---
 
