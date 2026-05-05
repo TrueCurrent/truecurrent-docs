@@ -1,6 +1,6 @@
 ---
 title: "Reference implementations"
-description: "Overview and production-readiness assessment of the Python and TypeScript reference implementations for TrueCurrent market maker integration."
+description: "Overview and production-readiness assessment of the Python and TypeScript reference implementations for TrueCurrent liquidity provider integration."
 updatedAt: "2026-05-05"
 ---
 
@@ -50,4 +50,4 @@ cd rfq-testing
 pip install -e ".[dev]"
 ```
 
-For TypeScript, see the TypeScript signing code in the [Signing quotes](/market-makers/integration/rfq-quotes-sign) section for the standalone `signQuoteV2` and `signMakerChallengeV2` implementations.
+For TypeScript, see the TypeScript signing code in the [Signing quotes](/liquidity-providers/integration/rfq-quotes-sign) section for the standalone `signQuoteV2` and `signMakerChallengeV2` implementations.

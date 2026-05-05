@@ -16,12 +16,12 @@ For a full lifecycle walkthrough — including authz setup, quote collection, an
 
 | SDK | Repository | Status |
 |---|---|---|
-| **Python (taker + MM reference)** | [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) | Testnet-era name; prod repo TBD |
+| **Python (taker + liquidity provider reference)** | [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) | Testnet-era name; prod repo TBD |
 | **TypeScript (Injective SDK)** | [`InjectiveLabs/injective-ts`](https://github.com/InjectiveLabs/injective-ts) | Production-ready; no TrueCurrent-specific taker helpers yet |
 
 The Python `rfq_test` package is the canonical reference for takers. It is the only client tested against the live testnet indexer. The TypeScript side relies on `@injectivelabs/sdk-ts` directly, with no TrueCurrent-specific wrapper yet.
 
-For market maker reference implementations (both Python and TypeScript), see [Reference implementations](/market-makers/integration/reference-implementations).
+For liquidity provider reference implementations (both Python and TypeScript), see [Reference implementations](/liquidity-providers/integration/reference-implementations).
 
 ---
 
@@ -182,4 +182,4 @@ Do not override the contract address or chain IDs unless you are intentionally p
 - [TakerStream](/takers/taker-stream) — request schema, quote collection, and rfq_id correlation
 - [Accepting quotes](/takers/accepting-quotes) — `AcceptQuote` message structure, multi-quote aggregation, encoding requirements
 - [Signed taker intents](/takers/signed-intents) — programmatic TP/SL and conditional orders
-- [Reference implementations (MM)](/market-makers/integration/reference-implementations) — market maker side SDK and Python/TypeScript reference clients
+- [Reference implementations](/liquidity-providers/integration/reference-implementations) — liquidity provider side SDK and Python/TypeScript reference clients

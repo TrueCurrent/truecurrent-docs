@@ -1,6 +1,6 @@
 ---
 title: "Receiving RFQ requests"
-description: "Structure and field reference for RFQ request messages received by market makers over MakerStream, including field types, meanings, and how to interpret taker intent."
+description: "Structure and field reference for RFQ request messages received by liquidity providers over MakerStream, including field types, meanings, and how to interpret taker intent."
 updatedAt: "2026-05-05"
 ---
 

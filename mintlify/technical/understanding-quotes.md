@@ -1,31 +1,31 @@
 ---
 title: "Understanding quotes"
-description: "Technical analysis of RFQ quote structure, best-quote selection algorithm, quote expiry handling, and automatic fallback routing to Injective order book when market makers don't respond."
+description: "Technical analysis of RFQ quote structure, best-quote selection algorithm, quote expiry handling, and automatic fallback routing to Injective order book when liquidity providers don't respond."
 updatedAt: "2026-05-05"
 ---
 
-When you request a trade on TrueCurrent, market makers respond with quotes.
+When you request a trade on TrueCurrent, liquidity providers respond with quotes.
 Understanding what a quote contains, and what it commits to, helps you trade more effectively.
 
 ---
 
 ## What a quote contains
 
-Every quote from a market maker includes:
+Every quote from a liquidity provider includes:
 
-**Price.** The exact price at which the market maker will trade with you. This is the fill price you'll see in your trade history. It does not change between when the quote is returned to you and when you accept it (within the expiry window).
+**Price.** The exact price at which the liquidity provider will trade with you. This is the fill price you'll see in your trade history. It does not change between when the quote is returned to you and when you accept it (within the expiry window).
 
-**Quantity.** The size the market maker is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity.
+**Quantity.** The size the liquidity provider is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity.
 
 **Expiry.**
 A timestamp indicating how long the quote is valid.
-Live market maker quotes typically expire 2 seconds after signing.
+Live liquidity provider quotes typically expire 2 seconds after signing.
 This prevents stale prices from being used in fast-moving markets.
 If you don't accept before expiry, the quote becomes invalid and a new one must be requested.
 
-**Maker address.** The Injective wallet address of the market maker offering this quote. This is visible onchain after settlement.
+**Maker address.** The Injective wallet address of the liquidity provider offering this quote. This is visible onchain after settlement.
 
-**Signature.** A cryptographic signature from the market maker's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot repudiate or alter their quoted terms.
+**Signature.** A cryptographic signature from the liquidity provider's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot repudiate or alter their quoted terms.
 
 ---
 
@@ -47,15 +47,15 @@ If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e.
 
 Once you see a quote on screen, a countdown timer shows how long you have to accept it. When the timer reaches zero, the quote is expired and can no longer be settled onchain.
 
-This expiry mechanism protects market makers from being locked into stale prices in fast-moving markets. If a quote expires before you accept, simply request a new one.
+This expiry mechanism protects liquidity providers from being locked into stale prices in fast-moving markets. If a quote expires before you accept, simply request a new one.
 
-**Why quotes expire quickly:** Perpetuals markets can move significantly in seconds. A market maker quoting a price for INJ/USDC needs to know that if the price moves sharply before settlement, they won't be stuck trading at a price that's now well off-market. Short expiry windows protect market makers and, in turn, keep the overall RFQ system functioning – without them, makers would widen spreads to account for the risk of stale quotes.
+**Why quotes expire quickly:** Perpetuals markets can move significantly in seconds. A liquidity provider quoting a price for INJ/USDC needs to know that if the price moves sharply before settlement, they won't be stuck trading at a price that's now well off-market. Short expiry windows protect liquidity providers and, in turn, keep the overall RFQ system functioning – without them, makers would widen spreads to account for the risk of stale quotes.
 
 ---
 
 ## What happens if no quotes are received?
 
-If no market maker responds within the collection window,
+If no liquidity provider responds within the collection window,
 TrueCurrent automatically routes your order to Injective's onchain order book.
 In this case:
 
@@ -75,6 +75,6 @@ When a quote appears on the trading interface, you'll see:
 - **Price vs. mark** – how the quote price compares to the current mark price (positive = better than mark)
 - **Estimated fee** – if any protocol fee is included in the spread
 - **Quote expiry** – countdown in seconds
-- **Market maker** – shown as a shortened address (full address visible onchain)
+- **Liquidity provider** – shown as a shortened address (full address visible onchain)
 
 Review these before accepting. In most cases, the quoted price will be at or very close to the current mark price.

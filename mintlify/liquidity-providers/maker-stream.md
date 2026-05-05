@@ -4,7 +4,7 @@ description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocke
 updatedAt: "2026-05-05"
 ---
 
-The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to market makers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
+The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to liquidity providers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
 
 ---
 
@@ -24,7 +24,7 @@ The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq
 **Authentication** uses an EIP-712 v2 challenge-response handshake.
 After connecting, the indexer sends a one-shot `MakerChallenge` that you must sign
 and reply to with `MakerAuth` before any `request` events are forwarded.
-See [Auth handshake](/market-makers/integration/connecting#auth-handshake) for the full protocol.
+See [Auth handshake](/liquidity-providers/integration/connecting#auth-handshake) for the full protocol.
 
 **Python example:**
 
@@ -58,7 +58,7 @@ Once connected, you'll receive RFQ request events in real time. Each request con
 | `request_address` | string | Taker's Injective `inj1...` address |
 | `expiry` | integer | Unix millisecond timestamp – request expires |
 
-**Note on direction:** The `direction` field is the *taker's* direction. If the taker is `long`, you as the market maker are taking the *short* side. Price accordingly.
+**Note on direction:** The `direction` field is the *taker's* direction. If the taker is `long`, you as the liquidity provider are taking the *short* side. Price accordingly.
 
 **Example request (Python):**
 
@@ -92,7 +92,7 @@ Your quote must include:
 | `expiry` | integer | Quote expiry (Unix ms). Use `now + 2s` for live MM quotes; blind/TP-SL quotes may use longer windows |
 | `maker` | string | Your Injective address |
 | `taker` | string | Taker's Injective address (from request) |
-| `signature` | string | `0x`-prefixed EIP-712 v2 signature (see [Signing quotes](/market-makers/signing-quotes)) |
+| `signature` | string | `0x`-prefixed EIP-712 v2 signature (see [Signing quotes](/liquidity-providers/signing-quotes)) |
 | `sign_mode` | string | Must be `"v2"` |
 | `evm_chain_id` | uint64 | Required when `sign_mode="v2"`. EVM chain ID matching the EIP-712 domain (`1439` testnet, `1776` mainnet). |
 | `maker_subaccount_nonce` | integer | Usually `0`; must match what you signed |
@@ -165,4 +165,4 @@ Keep your MakerStream connection alive with periodic heartbeats.
 If your connection drops, requests during the disconnected period are missed.
 Implement reconnection logic with exponential backoff to handle transient network issues.
 
-Persistent disconnections impact your response rate metrics, which can affect your market maker standing.
+Persistent disconnections impact your response rate metrics, which can affect your liquidity provider standing.

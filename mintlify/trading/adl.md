@@ -6,7 +6,7 @@ updatedAt: "2026-04-30"
 
 Auto-deleveraging (ADL) is the final backstop in TrueCurrent's risk management waterfall. It is not a routine event — it activates only when an insolvent position cannot be fully covered by the insurance fund. When it fires, the most profitable positions on the opposite side are partially or fully closed to absorb the shortfall.
 
-Understanding ADL matters for any leveraged trader or market maker: a profitable position at high leverage can be reduced without your manual action, and the exit price is determined by the insolvent counterparty's bankruptcy price, not by the current market price.
+Understanding ADL matters for any leveraged trader or liquidity provider: a profitable position at high leverage can be reduced without your manual action, and the exit price is determined by the insolvent counterparty's bankruptcy price, not by the current market price.
 
 ---
 

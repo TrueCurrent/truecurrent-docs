@@ -12,7 +12,7 @@ If you're a human trader clicking buttons, you want [How to trade](/trading/how-
 
 ## What a programmatic taker does
 
-A taker is the party *requesting* a trade. You submit a Request for Quote, receive signed quotes from whitelisted market makers, pick the best ones, and settle onchain. The RFQ flow is **pull-based**: you don't post orders to a book and wait – you broadcast a request, and makers respond within a brief window.
+A taker is the party *requesting* a trade. You submit a Request for Quote, receive signed quotes from whitelisted liquidity providers, pick the best ones, and settle onchain. The RFQ flow is **pull-based**: you don't post orders to a book and wait – you broadcast a request, and makers respond within a brief window.
 
 This is different from an orderbook exchange in three important ways:
 

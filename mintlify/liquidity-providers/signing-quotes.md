@@ -4,7 +4,7 @@ description: "Technical documentation for signing TrueCurrent RFQ quotes with th
 updatedAt: "2026-05-05"
 ---
 
-Every quote you submit must be signed with your market maker wallet. The signature is verified by the TrueCurrent contract when a taker accepts the quote, so the signed fields must match the quote payload exactly.
+Every quote you submit must be signed with your liquidity provider wallet. The signature is verified by the TrueCurrent contract when a taker accepts the quote, so the signed fields must match the quote payload exactly.
 
 <Warning>
 Public integrations use EIP-712 v2 quote signing only. Send `sign_mode: "v2"` with every quote and do not sign manually serialized JSON strings.

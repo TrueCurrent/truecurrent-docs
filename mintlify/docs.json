@@ -102,34 +102,34 @@
                 ]
               },
               {
-                "group": "Market Makers",
+                "group": "Liquidity Providers",
                 "icon": "",
                 "expanded": false,
                 "pages": [
-                  "market-makers/overview",
-                  "market-makers/getting-whitelisted",
-                  "market-makers/maker-stream",
-                  "market-makers/signing-quotes",
-                  "market-makers/authz-setup",
-                  "market-makers/quoting-guidelines",
+                  "liquidity-providers/overview",
+                  "liquidity-providers/getting-whitelisted",
+                  "liquidity-providers/maker-stream",
+                  "liquidity-providers/signing-quotes",
+                  "liquidity-providers/authz-setup",
+                  "liquidity-providers/quoting-guidelines",
                   {
                     "group": "Integration Guide",
                     "icon": "",
                     "expanded": true,
                     "pages": [
-                      "market-makers/integration/index",
-                      "market-makers/integration/architecture",
-                      "market-makers/integration/quick-start",
-                      "market-makers/integration/setup",
-                      "market-makers/integration/connecting",
-                      "market-makers/integration/rfq-requests",
-                      "market-makers/integration/rfq-quotes-sign",
-                      "market-makers/integration/rfq-quotes-send",
-                      "market-makers/integration/rfq-quotes-blind",
-                      "market-makers/integration/protocol-reference",
-                      "market-makers/integration/reference-implementations",
-                      "market-makers/integration/testnet-configuration",
-                      "market-makers/integration/faq"
+                      "liquidity-providers/integration/index",
+                      "liquidity-providers/integration/architecture",
+                      "liquidity-providers/integration/quick-start",
+                      "liquidity-providers/integration/setup",
+                      "liquidity-providers/integration/connecting",
+                      "liquidity-providers/integration/rfq-requests",
+                      "liquidity-providers/integration/rfq-quotes-sign",
+                      "liquidity-providers/integration/rfq-quotes-send",
+                      "liquidity-providers/integration/rfq-quotes-blind",
+                      "liquidity-providers/integration/protocol-reference",
+                      "liquidity-providers/integration/reference-implementations",
+                      "liquidity-providers/integration/testnet-configuration",
+                      "liquidity-providers/integration/faq"
                     ]
                   }
                 ]

@@ -1,6 +1,6 @@
 ---
 title: "Quick start checklist"
-description: "Step-by-step onboarding checklist for market makers integrating with TrueCurrent's RFQ system, from wallet generation to sending your first signed quote."
+description: "Step-by-step onboarding checklist for liquidity providers integrating with TrueCurrent's RFQ system, from wallet generation to sending your first signed quote."
 updatedAt: "2026-05-01"
 ---
 

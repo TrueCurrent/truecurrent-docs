@@ -4,7 +4,7 @@ description: "Integration guide for TrueCurrent's TakerStream and MakerStream We
 updatedAt: "2026-05-01"
 ---
 
-TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for market makers.
+TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for liquidity providers.
 
 ---
 
@@ -88,7 +88,7 @@ best = min(quotes, key=lambda q: float(q.get("price", "999")))
 
 ## MakerStream
 
-The MakerStream is used exclusively by whitelisted market makers to receive trade requests and submit quotes.
+The MakerStream is used exclusively by whitelisted liquidity providers to receive trade requests and submit quotes.
 
 ### Connection
 
@@ -161,7 +161,7 @@ await mm_ws.send_quote(quote_data)
 
 Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
 
-See [Takers: TakerStream](/takers/taker-stream) and [Market makers: MakerStream](/market-makers/maker-stream) for the full request and quote schemas on each stream.
+See [Takers: TakerStream](/takers/taker-stream) and [Liquidity providers: MakerStream](/liquidity-providers/maker-stream) for the full request and quote schemas on each stream.
 
 ---
 
@@ -185,4 +185,4 @@ for attempt in range(MAX_RETRIES):
         await asyncio.sleep(delay)
 ```
 
-Note that during a disconnection, any requests broadcast to other market makers will still be serviced by them – you only miss the requests during your specific downtime window.
+Note that during a disconnection, any requests broadcast to other liquidity providers will still be serviced by them – you only miss the requests during your specific downtime window.

@@ -1,6 +1,6 @@
 ---
 title: "FAQ & troubleshooting"
-description: "Frequently asked questions and troubleshooting guide for TrueCurrent market maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
+description: "Frequently asked questions and troubleshooting guide for TrueCurrent liquidity provider integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
 updatedAt: "2026-05-05"
 ---
 
@@ -50,7 +50,7 @@ updatedAt: "2026-05-05"
        Stream connects, pings return pongs,
        but no `request` events.
        This means your `MakerChallenge` handler is missing or produced a wrong signature.
-       See [Auth handshake](/market-makers/integration/connecting#auth-handshake).
+       See [Auth handshake](/liquidity-providers/integration/connecting#auth-handshake).
     3. **Authz granted?** See §1.3.
     4. **Signature verifies?**
        Check `evmChainId` field #1 in `SignQuote`, field order,
@@ -81,7 +81,7 @@ updatedAt: "2026-05-05"
     the protocol settles without you.
     Not responding carries no reputational cost for TP/SL events.
     To participate in pre-posted blind quotes,
-    see [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind).
+    see [TP/SL liquidity](/liquidity-providers/integration/rfq-quotes-blind).
   </Accordion>
 
   <Accordion title="What causes the worst_price exceeds limit error?">

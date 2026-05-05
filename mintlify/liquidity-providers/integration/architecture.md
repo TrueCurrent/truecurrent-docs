@@ -1,6 +1,6 @@
 ---
 title: "Architecture overview"
-description: "High-level overview of how TrueCurrent's RFQ system connects retail takers, the RFQ indexer, market makers, and the Injective chain for atomic on-chain settlement."
+description: "High-level overview of how TrueCurrent's RFQ system connects retail takers, the RFQ indexer, liquidity providers, and the Injective chain for atomic on-chain settlement."
 updatedAt: "2026-04-18"
 ---
 
@@ -25,8 +25,8 @@ flowchart LR
 ### How it works
 
 1. **Retail user** sends an RFQ request via the **TakerStream** WebSocket.
-2. **RFQ Indexer** broadcasts the request to all connected **Market Makers** via **MakerStream**.
-3. **Market Makers** price, sign, and return a quote over MakerStream.
+2. **RFQ Indexer** broadcasts the request to all connected **Liquidity Providers** via **MakerStream**.
+3. **Liquidity Providers** price, sign, and return a quote over MakerStream.
 4. **Indexer** relays quotes back to the taker after a collection window.
 5. **Retail user** picks a quote and calls `AcceptQuote` on the RFQ contract.
 6. **Contract** verifies the MM signature and settles the trade as a synthetic position.
@@ -44,4 +44,4 @@ You do **not** submit an on-chain transaction for each trade — settlement is t
 > - **Blind quotes** (pre-posted, nonce-based) — the relayer picks from your pre-posted book when a trigger fires.
 > - **Taker-specific quotes** (live RFQ response) — the relayer fires off a live RFQ at trigger time and you quote it the usual way.
 >
-> The wire-level signing and quote shape are identical in both paths. See [Blind quotes](/market-makers/integration/rfq-quotes-blind) below.
+> The wire-level signing and quote shape are identical in both paths. See [Blind quotes](/liquidity-providers/integration/rfq-quotes-blind) below.

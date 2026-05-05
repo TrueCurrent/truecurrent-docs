@@ -1,10 +1,10 @@
 ---
 title: "Authorization setup (authz)"
-description: "Step-by-step guide to setting up authz grants on Injective for TrueCurrent market makers, including required message types, Python implementation, grant verification, and security best practices for automated settlement."
+description: "Step-by-step guide to setting up authz grants on Injective for TrueCurrent liquidity providers, including required message types, Python implementation, grant verification, and security best practices for automated settlement."
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent uses Injective's native `authz` module to allow the smart contract to execute trades on behalf of both traders and market makers. As a market maker, you need to grant the contract specific permissions before your quotes can settle.
+TrueCurrent uses Injective's native `authz` module to allow the smart contract to execute trades on behalf of both traders and liquidity providers. As a liquidity provider, you need to grant the contract specific permissions before your quotes can settle.
 
 ---
 
@@ -18,7 +18,7 @@ This is how settlement works without requiring you to manually sign every trade:
 
 ## Required grants
 
-As a market maker, you need to grant the following message types to the TrueCurrent contract:
+As a liquidity provider, you need to grant the following message types to the TrueCurrent contract:
 
 | Message type | Purpose |
 |---|---|

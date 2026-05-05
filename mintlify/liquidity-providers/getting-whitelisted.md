@@ -1,16 +1,16 @@
 ---
 title: "Getting whitelisted"
-description: "Requirements and application process for joining TrueCurrent's market maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
+description: "Requirements and application process for joining TrueCurrent's liquidity provider whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent uses an approved market maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
+TrueCurrent uses an approved liquidity provider whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
 
 ---
 
 ## Why a whitelist?
 
-The whitelist ensures that every market maker on TrueCurrent is:
+The whitelist ensures that every liquidity provider on TrueCurrent is:
 
 - Technically integrated and able to respond reliably within the 2-second window
 - Capitalized sufficiently to back their quotes
@@ -26,8 +26,8 @@ Before applying, you should have:
 
 - An Injective wallet with adequate USDC margin for the current testnet market
 - A functional automated quoting system connected to TrueCurrent's MakerStream
-- Implemented the quote signing protocol (see [Signing quotes](/market-makers/signing-quotes))
-- Completed the `authz` setup (see [Authorization setup](/market-makers/authz-setup))
+- Implemented the quote signing protocol (see [Signing quotes](/liquidity-providers/signing-quotes))
+- Completed the `authz` setup (see [Authorization setup](/liquidity-providers/authz-setup))
 - Successfully run the E2E flow on testnet
 
 ---
@@ -51,7 +51,7 @@ Once your testnet integration is verified end-to-end, you're ready to apply.
 
 ## Application process
 
-To apply for market maker whitelist access:
+To apply for liquidity provider whitelist access:
 
 1. Contact the TrueCurrent team at *(contact info TBD)* or via Discord/Telegram *(links TBD)*
 2. Provide your Injective maker wallet address
@@ -72,7 +72,7 @@ or use `ContractClient.is_maker_registered()` which handles pagination automatic
 
 ## Staying in good standing
 
-Your market maker status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
+Your liquidity provider status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
 
 - Response rate falls below an acceptable threshold (consistently failing to quote within 2 seconds)
 - Quotes are systematically off-market (quoting prices that never win and appear designed to game metrics)

@@ -15,7 +15,7 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
 | Mainnet | *(not yet deployed)* |
 
-The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (market makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (liquidity providers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 
 ---
 
@@ -56,7 +56,7 @@ The gateway defines three tiers, of which only one is relevant to programmatic t
 | Tier | Description | Status |
 |---|---|---|
 | `frontend` | Origin-locked, unlimited rate. For the TrueCurrent web app only. | Live in gateway codebase |
-| `maker` | For whitelisted market makers. Configurable rate limit. | Live in gateway codebase |
+| `maker` | For whitelisted liquidity providers. Configurable rate limit. | Live in gateway codebase |
 | `api` | **For programmatic / HFT takers.** Configurable rate limit, no origin lock. | **Future – not yet provisioned** |
 
 You will need to request an `api`-tier key from the TrueCurrent team once the gateway is live. The default rate limit for a freshly-issued key (10 req/s, burst 20) is far below HFT needs – make sure to ask for a higher per-key rate when you request it.
@@ -67,7 +67,7 @@ You will need to request an `api`-tier key from the TrueCurrent team once the ga
 
 ## Submitting a request
 
-An RFQ request declares what you want to trade. The indexer broadcasts it to every active market maker, who each have a few hundred milliseconds to respond. {/* TODO: to add precise MM response deadline once benchmarked */}
+An RFQ request declares what you want to trade. The indexer broadcasts it to every active liquidity provider, who each have a few hundred milliseconds to respond. {/* TODO: to add precise MM response deadline once benchmarked */}
 
 **Request fields:**
 
@@ -159,7 +159,7 @@ After submitting, quotes stream in over the same connection as they're produced 
 |---|---|---|
 | `rfq_id` | string | Matches your request (note: stringified on the Python side) |
 | `market_id` | string | Matches your request |
-| `maker` | string | Market maker's `inj1...` address |
+| `maker` | string | Liquidity provider's `inj1...` address |
 | `taker` | string | Your address (echoed) |
 | `taker_direction` | string | Echoes your direction as `"long"` / `"short"` |
 | `margin` | string | Margin the maker is committing to cover their side |

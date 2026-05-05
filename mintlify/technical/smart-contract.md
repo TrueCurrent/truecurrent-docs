@@ -1,6 +1,6 @@
 ---
 title: "Smart contract"
-description: "Reference documentation for TrueCurrent's CosmWasm smart contract including AcceptQuote entrypoint, settlement validation, authz integration, and query methods for market maker registry."
+description: "Reference documentation for TrueCurrent's CosmWasm smart contract including AcceptQuote entrypoint, settlement validation, authz integration, and query methods for liquidity provider registry."
 updatedAt: "2026-05-01"
 ---
 
@@ -30,7 +30,7 @@ The two entrypoints share the same settlement path once validated — `AcceptSig
 
 ## Primary entrypoint: AcceptQuote
 
-The `AcceptQuote` execute message is the main settlement entrypoint. It's called by the taker when accepting a market maker's quote.
+The `AcceptQuote` execute message is the main settlement entrypoint. It's called by the taker when accepting a liquidity provider's quote.
 
 **Message structure:**
 
@@ -63,7 +63,7 @@ The `AcceptQuote` execute message is the main settlement entrypoint. It's called
 | Field | Description |
 |-------|-------------|
 | `quotes` | Array of one or more maker quotes. |
-| `quotes[].maker` | Market maker's Injective address |
+| `quotes[].maker` | Liquidity provider's Injective address |
 | `quotes[].margin` | Maker's margin commitment |
 | `quotes[].quantity` | Quantity the maker is filling |
 | `quotes[].price` | Maker's quoted price |
@@ -114,7 +114,7 @@ Both positions are settled atomically in the same block. There is no partial sta
 
 The contract exposes several query methods for reading state:
 
-**List approved market makers:**
+**List approved liquidity providers:**
 ```json
 { "list_makers": {} }
 ```

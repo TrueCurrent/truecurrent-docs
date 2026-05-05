@@ -32,14 +32,14 @@ The Injective native token perpetual is TrueCurrent's flagship market. INJ is th
 
 ## How new markets are listed
 
-New markets on TrueCurrent require at least one registered market maker willing to provide liquidity for that market. The listing process is:
+New markets on TrueCurrent require at least one registered liquidity provider willing to provide liquidity for that market. The listing process is:
 
 1. Community or team identifies demand for a new market
-2. At least one market maker commits to providing RFQ liquidity
+2. At least one liquidity provider commits to providing RFQ liquidity
 3. A new market is deployed to the TrueCurrent contract
 4. The market is made available in the UI
 
-If you're a market maker interested in supporting a new market, see [Getting whitelisted](/market-makers/getting-whitelisted).
+If you're a liquidity provider interested in supporting a new market, see [Getting whitelisted](/liquidity-providers/getting-whitelisted).
 
 ---
 

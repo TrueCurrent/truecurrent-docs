@@ -50,4 +50,4 @@ Settlement completes onchain in approximately one second.
 
 ## For technical details
 
-If you're a developer or market maker and want to understand the full settlement mechanics, see the [Technical reference](/technical/architecture) and [How RFQ works](/technical/how-rfq-works).
+If you're a developer or liquidity provider and want to understand the full settlement mechanics, see the [Technical reference](/technical/architecture) and [How RFQ works](/technical/how-rfq-works).

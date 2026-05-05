@@ -1,12 +1,12 @@
 ---
 title: "Quoting guidelines"
-description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
+description: "Best practices for TrueCurrent liquidity providers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
 updatedAt: "2026-05-05"
 ---
 
-This page covers best practices for market makers on TrueCurrent.
+This page covers best practices for liquidity providers on TrueCurrent.
 Following these guidelines will improve your fill rate, protect you from adverse selection,
-and keep your market maker standing in good shape.
+and keep your liquidity provider standing in good shape.
 
 ---
 
@@ -101,7 +101,7 @@ A quote that arrives after the window is ignored.
 
 ## Inventory and hedging
 
-**Hedge promptly.** When you fill a taker long, you take on a short perpetuals position. Your goal as a market maker is typically to be market-neutral – capture the spread while hedging away directional risk.
+**Hedge promptly.** When you fill a taker long, you take on a short perpetuals position. Your goal as a liquidity provider is typically to be market-neutral – capture the spread while hedging away directional risk.
 
 Common hedging approaches:
 - Open an offsetting spot position on a CEX immediately after settlement confirms
@@ -114,7 +114,7 @@ Common hedging approaches:
 
 ## Replicating the index price
 
-To minimise adverse selection, market makers should construct the same reference price that TrueCurrent uses — rather than relying on a single CEX or a different composite.
+To minimise adverse selection, liquidity providers should construct the same reference price that TrueCurrent uses — rather than relying on a single CEX or a different composite.
 
 TrueCurrent's index price is derived from the **Injective oracle module**, which aggregates from sources including major centralised exchanges and onchain oracle providers. For most markets, the primary source CEXes are large-volume venues trading the same asset.
 
@@ -138,7 +138,7 @@ Funding rate carry affects your cost basis on open positions and should be facto
 - **Positive funding** (perpetual trading at premium): longs pay shorts. If you fill a taker long, you take on a short position and **receive** funding.
 - **Negative funding** (perpetual trading at discount): shorts pay longs. If you fill a taker long, you take on a short and **pay** funding.
 
-For market makers who hold positions for hours before hedging fully (or who maintain a residual book), funding carry is a real P&L component.
+For liquidity providers who hold positions for hours before hedging fully (or who maintain a residual book), funding carry is a real P&L component.
 
 **Incorporating carry into your fair value:**
 
@@ -158,14 +158,14 @@ Conversely, in a negative funding regime, shorts pay longs. If you are net short
 
 ## Common pitfalls
 
-**Quoting stale prices.** If your reference price feed has a lag, you're quoting old prices into a market that may have moved. This is the primary source of adverse selection for market makers. Use low-latency price feeds and monitor feed freshness.
+**Quoting stale prices.** If your reference price feed has a lag, you're quoting old prices into a market that may have moved. This is the primary source of adverse selection for liquidity providers. Use low-latency price feeds and monitor feed freshness.
 
 **Insufficient margin at settlement.** If your subaccount doesn't have enough margin when a taker accepts your quote, the settlement transaction fails. Monitor your available margin and stop quoting when you're running low.
 
 **Clock skew.** The quote expiry is verified onchain using block time. If your system clock is off by more than a few seconds, you may produce quotes that appear expired to the chain even though they look valid to you. Use NTP synchronization.
 
 **Signature field order errors.**
-The most common cause of settlement failures for new market makers.
+The most common cause of settlement failures for new liquidity providers.
 Test thoroughly on testnet and verify the exact serialization format.
 Ensure `evmChainId` is field #1 in the `SignQuote` struct,
 and that `min_fill_quantity=None` is encoded as `"0"`, never as an empty string.

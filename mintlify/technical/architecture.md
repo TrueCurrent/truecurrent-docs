@@ -35,7 +35,7 @@ flowchart LR
     class Contract,Exchange onchain
 ```
 
-**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's position and, optionally, routes any remainder to the orderbook.
+**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the liquidity provider's position and, optionally, routes any remainder to the orderbook.
 
 ---
 
@@ -45,20 +45,20 @@ flowchart LR
 
 The indexer is TrueCurrent's off-chain coordination layer. It:
 
-- Maintains the registry of whitelisted market maker addresses
+- Maintains the registry of whitelisted liquidity provider addresses
 - Operates the **TakerStream** WebSocket (for traders submitting requests)
-- Operates the **MakerStream** WebSocket (for market makers receiving requests and submitting quotes)
-- Routes requests to all active market makers
+- Operates the **MakerStream** WebSocket (for liquidity providers receiving requests and submitting quotes)
+- Routes requests to all active liquidity providers
 - Collects and forwards quotes back to traders
 - Selects the best quote for presentation
 
-The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and market makers. Even if the indexer were to behave maliciously, it could not forge a market maker's signature or alter the terms of a quote.
+The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and liquidity providers. Even if the indexer were to behave maliciously, it could not forge a liquidity provider's signature or alter the terms of a quote.
 
 ### TrueCurrent smart contract (onchain)
 
 Deployed on Injective as a CosmWasm contract, the TrueCurrent contract is the trust anchor of the system. It:
 
-- Verifies market maker signatures on each `AcceptQuote` call
+- Verifies liquidity provider signatures on each `AcceptQuote` call
 - Enforces the trader's `worst_price` constraint
 - Checks quote expiry
 - Confirms both parties have sufficient margin
@@ -133,6 +133,6 @@ For the conditional / TP-SL variant, substitute steps 1–5 with the [signed tak
 
 **What you do not need to trust:**
 
-- Individual market makers to honor prices – the signature enforces it onchain
+- Individual liquidity providers to honor prices – the signature enforces it onchain
 - TrueCurrent to hold or secure your funds – assets stay in your subaccount at all times
 - Centralized infrastructure for settlement – all final settlement is onchain

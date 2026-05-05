@@ -4,7 +4,7 @@ description: "Complete reference for all order types on TrueCurrent: RFQ fill, o
 updatedAt: "2026-05-01"
 ---
 
-TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the system solicits competitive signed quotes from professional market makers and fills at the best available price — with zero taker fees. An order book fallback is available for residual unfilled quantity, and conditional trigger orders automate exits. This page documents every order type, what guarantee it carries, and when to reach for it.
+TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the system solicits competitive signed quotes from professional liquidity providers and fills at the best available price — with zero taker fees. An order book fallback is available for residual unfilled quantity, and conditional trigger orders automate exits. This page documents every order type, what guarantee it carries, and when to reach for it.
 
 ---
 
@@ -12,16 +12,16 @@ TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the 
 
 | Execution path | Who fills | Price guarantee | Taker fee |
 |---|---|---|---|
-| RFQ | Competing market makers | `worst_price` enforced onchain | Zero |
+| RFQ | Competing liquidity providers | `worst_price` enforced onchain | Zero |
 | Order book market fallback | Injective CLOB | `worst_price` still enforced | Standard |
 | Order book limit fallback | Injective CLOB | At or better than limit price | Standard |
-| Trigger (TP/SL) | Market makers via relayer | `worst_price` in signed intent | Zero |
+| Trigger (TP/SL) | Liquidity providers via relayer | `worst_price` in signed intent | Zero |
 
 ---
 
 ## RFQ fill (primary)
 
-Every trade on TrueCurrent starts as an RFQ. When you submit a trade, TrueCurrent broadcasts a request to all registered market makers simultaneously. Each maker responds with a signed quote. TrueCurrent selects the best quote and settles the position onchain in a single transaction.
+Every trade on TrueCurrent starts as an RFQ. When you submit a trade, TrueCurrent broadcasts a request to all registered liquidity providers simultaneously. Each maker responds with a signed quote. TrueCurrent selects the best quote and settles the position onchain in a single transaction.
 
 **When it executes**:
 Immediately on trade submission;
@@ -31,7 +31,7 @@ fills within the quote collection window (~2 seconds).
 
 **When to use:** always — this is the default path for every trade opened or closed through the UI or API
 
-**Zero taker fees** apply to all RFQ fills. The market maker pays a 4 bps fee on filled volume; you pay nothing.
+**Zero taker fees** apply to all RFQ fills. The liquidity provider pays a 4 bps fee on filled volume; you pay nothing.
 
 See [Price tolerance](/trading/slippage-and-worst-price) for how to set `worst_price` and recommended tolerance ranges.
 See [How RFQ works](/technical/how-rfq-works) for the full protocol detail.
@@ -155,7 +155,7 @@ This list is for traders arriving from platforms with a full CLOB order type sui
 |---|---|---|
 | TWAP (time-weighted average price) | **Not available** | TC has no native TWAP execution; replicate externally by splitting trades over time via the API |
 | Scale / ladder orders | **Not available** | No built-in order scaling; implement by submitting multiple individual trades |
-| Iceberg orders | **Not available** | Full quantity is broadcast to all market makers on each RFQ |
+| Iceberg orders | **Not available** | Full quantity is broadcast to all liquidity providers on each RFQ |
 | Isolated-margin order forms | **Not available** | TC is cross-margin only — there is no isolated-margin trade flow. See [Margin trading](/trading/margin-trading) |
 | Post-only / maker-only limit orders | **Not available** | TC's primary execution is RFQ; makers are institutional liquidity providers, not retail users posting to the book |
 | Fill-or-kill (FOK) | **Not available** | Partial fills are handled via `unfilled_action`; there is no FOK mode that reverts the entire trade if not fully filled in one shot |
@@ -170,7 +170,7 @@ These two paths have materially different properties:
 
 | Property | RFQ fill | Order book fill |
 |---|---|---|
-| Who provides liquidity | Institutional market makers | Any order book participant |
+| Who provides liquidity | Institutional liquidity providers | Any order book participant |
 | Price competition | Makers compete on every request | Best resting order wins |
 | Taker fee | Zero | Standard (see [Fees](/trading/fees)) |
 | Fill guarantee | `worst_price` enforced | `worst_price` for market fallback; limit price for limit fallback |

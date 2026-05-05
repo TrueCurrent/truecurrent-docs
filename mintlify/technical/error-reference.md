@@ -12,7 +12,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 ### `signature verification failed`
 
-**Cause:** The market maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
+**Cause:** The liquidity provider's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
 
 **Common causes:**
 - Using the old JSON-signing path instead of `rfq_test.crypto.eip712.sign_quote_v2`
@@ -20,7 +20,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - Wrong EVM chain ID in the EIP-712 domain (`1439` on testnet, `1776` on mainnet)
 - Wrong RFQ contract address in the EIP-712 domain
 
-**Resolution:** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+**Resolution:** Review the [Signing quotes](/liquidity-providers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
 
 ---
 
@@ -30,7 +30,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Common causes:**
 - Quote `expiry` was set too short (less than the time needed for the taker to accept + block confirmation)
-- System clock skew on the market maker's server
+- System clock skew on the liquidity provider's server
 - Network delay between quote submission and onchain settlement
 
 **Resolution:** Set quote expiry to at least 30 seconds from signing time. Ensure your server uses NTP time synchronization. Monitor average confirmation times.
@@ -46,7 +46,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
 
-**Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
+**Resolution (liquidity providers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
 
 ---
 
@@ -54,7 +54,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
 
-**Resolution:** Re-run the authz grant setup. See [Authorization setup](/market-makers/authz-setup) (for market makers) or [Connect your wallet](../getting-started/connect-wallet) (for traders).
+**Resolution:** Re-run the authz grant setup. See [Authorization setup](/liquidity-providers/authz-setup) (for liquidity providers) or [Connect your wallet](../getting-started/connect-wallet) (for traders).
 
 ---
 
@@ -64,15 +64,15 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
 
-**Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
+**Resolution (liquidity providers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
 
 ---
 
 ### `maker not whitelisted`
 
-**Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
+**Cause:** The maker address in the quote is not on the TrueCurrent approved liquidity provider whitelist.
 
-**Resolution:** Apply for whitelist approval. See [Getting whitelisted](/market-makers/getting-whitelisted).
+**Resolution:** Apply for whitelist approval. See [Getting whitelisted](/liquidity-providers/getting-whitelisted).
 
 ---
 
@@ -83,10 +83,10 @@ This page lists common errors you may encounter when integrating with TrueCurren
 **Symptom:** The taker's `collect_quotes()` returns an empty list after the collection window.
 
 **Common causes:**
-- No market makers are currently active for the requested market
+- No liquidity providers are currently active for the requested market
 - The requesting taker address is not recognized by the indexer (connection issue)
 - The market ID in the request is incorrect
-- Market makers are whitelisted but their MakerStream is disconnected
+- Liquidity providers are whitelisted but their MakerStream is disconnected
 
 **Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the MM wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
 
