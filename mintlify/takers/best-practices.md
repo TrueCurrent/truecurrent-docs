@@ -50,7 +50,9 @@ The quote lifetime is short. By the time you've waited for makers to respond and
 **Mitigations:**
 
 - **Submit immediately after the collection window closes.** Don't batch or wait.
-- **Use short collection windows.** A few hundred milliseconds is typically enough once your maker set is warm – waiting longer just eats into the confirmation budget.
+- **Use a ~2 second collection window.**
+  This matches the live quote expiry window;
+  waiting longer eats into the confirmation budget.
 - **Co-locate** near `testnet-grpc.injective.dev` / `sentry.tm.injective.network` to minimize RTT.
 {/* TODO: add mainnet info ; also should we say colocation in docs ? */}
 - **Don't retry failed broadcasts** on an expiry error – the quote is dead, get a new one.

@@ -201,7 +201,7 @@ Quotes stream in over the same WebSocket. Open a collection window, gather every
 ```python
 quotes = await taker_ws.collect_quotes(
     rfq_id=rfq_id,
-    timeout=0.5,           # sub-second; tune against benchmarks
+    timeout=2.0,           # 2s collection window
     min_quotes=1,
 )
 
@@ -224,14 +224,16 @@ ws.on("message", (raw: Buffer) => {
   }
 });
 
-await new Promise((r) => setTimeout(r, 5000));
+await new Promise((r) => setTimeout(r, 2000)); // 2 seconds
 
 const best = quotes.sort(
   (a, b) => Number(a.price) - Number(b.price),
 )[0];
 ```
 
-A sub-second collection window is typical – quotes are only valid for a short window, so waiting longer just eats into your settlement budget. See [Best practices](/takers/best-practices) for tuning. {/* TODO: to add precise collection window guidance once benchmarked */}
+The collection window is ~2 seconds:
+The same duration as live quote expiry.
+See [Best practices](/takers/best-practices) for tuning.
 
 ---
 

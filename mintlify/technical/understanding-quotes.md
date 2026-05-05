@@ -32,7 +32,7 @@ If you don't accept before expiry, the quote becomes invalid and a new one must 
 ## How the best quote is selected
 
 TrueCurrent evaluates all quotes received during the collection window and presents the best one.
-The collection window is ~30–45 seconds on testnet and ~2–10 seconds on mainnet:
+The collection window is ~2 seconds:
 
 - For **long** positions:
   The quote with the **lowest price** (you're buying, so lower is better)

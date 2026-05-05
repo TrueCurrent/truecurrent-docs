@@ -59,13 +59,9 @@ updatedAt: "2026-05-05"
   </Accordion>
 
   <Accordion title="What is the competition window?">
-    After a request is sent,
-    the indexer waits for quotes before delivering to the taker.
+    After a request is sent, the indexer collects quotes for ~2 seconds before delivering the best one to the taker.
 
-    Approximately 30–45 seconds on testnet and 2–10 seconds on mainnet;
-    best price wins.
-    Best price wins:
-    lowest quoted price for long positions, highest for short positions.
+    Best price wins: lowest quoted price for long positions, highest for short positions.
   </Accordion>
 
   <Accordion title="What do I do when my connection drops?">

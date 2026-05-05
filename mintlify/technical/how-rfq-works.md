@@ -59,7 +59,7 @@ Live market maker quotes are typically valid for 2 seconds.
 This prevents stale prices from lingering.
 TP/SL blind quotes may use longer windows.
 The competition window during which the indexer collects quotes
-before presenting the best one to the taker is ~30–45s on testnet and ~2–10s on mainnet.
+before presenting the best one to the taker is ~2s.
 
 When you accept a quote, the onchain settlement must happen before the quote expires.
 The TrueCurrent contract verifies the expiry as part of settlement validation.
