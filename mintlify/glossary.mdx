@@ -42,7 +42,8 @@ A market maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind q
 
 ## C
 
-**cid** (client identifier)
+**cid** (client identifier):
+
 An optional string field set by the taker on a trade request that is echoed back in settlement events. Used for correlating requests with outcomes in programmatic or multi-wallet setups.
 
 **CosmWasm**:
@@ -173,7 +174,8 @@ The total USD value of an open position at the current mark price: `quantity × 
 
 ## P
 
-**perpetual** (perpetual futures)
+**perpetual** (perpetual futures):
+
 A leveraged derivative that tracks an asset's price with no expiration date. Unlike traditional futures, perpetuals use a periodic funding rate mechanism to keep their price anchored to the underlying spot price.
 
 **price tolerance**:
@@ -188,7 +190,8 @@ The actual execution price at which a trade fills, taken from a market maker's s
 
 ## R
 
-**RFQ** (Request for Quote)
+**RFQ** (Request for Quote):
+
 TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted market makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
 
 **rfq_id**:
@@ -197,7 +200,8 @@ A unique per-request identifier (u64) assigned by the indexer when it accepts an
 
 ## S
 
-**signed intent** (SignedTakerIntent)
+**signed intent** (SignedTakerIntent):
+
 A pre-authorized, cryptographically signed conditional order created by a taker and stored off-chain. A relayer submits it to the TrueCurrent contract when the specified mark-price trigger condition is satisfied. Used for take-profit and stop-loss orders.
 
 **slippage**:
@@ -258,4 +262,4 @@ A hard price limit enforced by the TrueCurrent smart contract on every trade. Fo
 
 **zero-margin settlement**:
 
-Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is restricted to signed intents (take-profit and stop-loss exits).
+Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is exposed via signed intents (TP/SL exits) by signing with `margin: "0"`. See [Signed taker intents](/takers/signed-intents).
