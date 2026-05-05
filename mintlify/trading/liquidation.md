@@ -138,7 +138,7 @@ TrueCurrent maintains an insurance fund to protect the system against insolvent 
 
 **Depletion:** If the insurance fund is exhausted — meaning a catastrophic liquidation event exceeds its reserves — the system activates Auto-Deleveraging (ADL) as a last resort. See the [ADL section](#auto-deleveraging-adl) below.
 
-The onchain insurance fund address can be queried on the Injective explorer for real-time balance transparency. Refer to the [Injective exchange documentation](https://docs.injective.network) for the contract address specific to each market.
+The onchain insurance fund address can be queried on the Injective explorer for real-time balance transparency. Refer to the [Injective liquidation documentation](https://docs.injective.network/defi/trading/margin-liquidation) for the per-market insurance fund details.
 
 ---
 

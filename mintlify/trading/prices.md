@@ -31,7 +31,7 @@ TrueCurrent's index price is sourced from the **Injective oracle module**, which
 **TrueCurrent does not apply a CEX-weighted median.** Unlike some other perpetual venues (which weight CEX sources by volume), TrueCurrent's index price uses the Injective oracle aggregation, which is governed by the Injective protocol and treats sources according to the oracle module's configuration — not a proprietary weighting scheme controlled by TrueCurrent. This means the index price methodology is transparent and verifiable onchain.
 </Note>
 
-For the full list of oracle providers integrated with a specific market, refer to the [Injective oracle documentation](https://docs.injective.network/develop/modules/injective/oracle/) and the market's onchain parameters.
+For the canonical mark and index price model that TrueCurrent inherits from Injective, refer to the [Injective perpetuals documentation](https://docs.injective.network/defi/trading/derivatives-perpetuals) and the market's onchain parameters.
 
 ---
 
