@@ -90,9 +90,9 @@ What you are **not** trusting:
 - You will need an Injective wallet with a small amount of **INJ for gas** and **USDC in an exchange subaccount** for margin.
 - You will need a machine that can hold a WebSocket connection open – serverless-in-a-box patterns work, but cold-start latency eats into your quote window.
 - All programmatic taker traffic today is against **testnet** (`injective-888`). Mainnet endpoints go live at a later phase.
-{/* TODO: add mainnet indexer info */}
+
 - The reference implementation for everything in this section lives at [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) – Python library, TypeScript examples, and testnet config.
 
 > **API key requirements (current vs future):** today, takers connect to the testnet indexer with no authentication and no rate limit – the reference scripts work out of the box. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, every taker request will require an API key, and the default per-key rate limit (10 req/s, burst 20) is too low for HFT. Programmatic high-frequency takers will need an `api`-tier key provisioned with a custom rate limit. See [Authentication](/takers/taker-stream#authentication) and [Rate limiting](/takers/best-practices#rate-limiting) for what changes when that happens.
 >
-> {/* TODO: remove the "today/future" framing once the gateway is live in front of the public indexer. Document the actual key issuance process (who to contact, what tier to ask for). */}
+> 

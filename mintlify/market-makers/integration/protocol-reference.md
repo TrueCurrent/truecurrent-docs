@@ -43,7 +43,6 @@ sequenceDiagram
 
 ### TP/SL path (`AcceptSignedIntent`)
 
-{/* TODO: add detailed TPSL flow doc */}
 
 Summary from your side:
 

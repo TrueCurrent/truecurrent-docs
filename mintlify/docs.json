@@ -8,9 +8,7 @@
     "metatags": {
       "og:type": "website",
       "og:site_name": "TrueCurrent Docs",
-      "canonical": "https://docs.tc.xyz",
-      "indexnow-verification": "TODO",
-      "msvalidate.01": "TODO"
+      "canonical": "https://docs.tc.xyz"
     }
   },
   "search": {
@@ -18,11 +16,6 @@
   },
   "metadata": {
     "timestamp": true
-  },
-  "integrations": {
-    "gtm": {
-      "tagId": "GTM-TODO"
-    }
   },
   "colors": {
     "primary": "#fd9a00",

@@ -8,7 +8,6 @@ Margin trading lets you control a position larger than your deposited collateral
 
 ---
 
-{/* TODO DR-143 add cross margin section when that has been implemented, part 1 */}
 
 ## Key terms
 
@@ -141,7 +140,6 @@ position size Q = 10 units.
 - Remaining equity: \$80 − \$25 = **\$55**
 - Margin ratio: \$55 / \$475 ≈ **11.6%** (strong; leverage effectively reduced to ~4.3×)
 
-{/* TODO DR-143 add cross margin section when that has been implemented, part 2 */}
 
 ---
 
