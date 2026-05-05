@@ -56,7 +56,7 @@ Quotes arrive as WebSocket messages on the TakerStream:
 }
 ```
 
-Use a collection window (e.g., 5 seconds after submitting the request) to gather all quotes before selecting the best one.
+Use a collection window (e.g., 2 seconds after submitting the request) to gather all quotes before selecting the best one.
 
 **Python example:**
 

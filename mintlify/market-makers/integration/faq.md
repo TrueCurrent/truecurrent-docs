@@ -1,40 +1,104 @@
 ---
 title: "FAQ & troubleshooting"
 description: "Frequently asked questions and troubleshooting guide for TrueCurrent market maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
-updatedAt: "2026-04-18"
+updatedAt: "2026-05-05"
 ---
 
-**Do I submit an on-chain tx for every trade?**
-No. You sign quotes off-chain. The retail user submits `AcceptQuote`. The contract verifies your signature.
+<AccordionGroup>
+  <Accordion title="Do I submit an on-chain transaction for every trade?">
+    No.
+    Quotes are signed off-chain and the retail user submits the on-chain transaction.
 
-**What if my quote expires before the taker accepts?**
-Contract rejects expired quotes. Use 20–60s expiry for live quotes. Blind quotes can live longer.
+    You sign quotes off-chain.
+    The retail user submits `AcceptQuote`.
+    The contract verifies your signature.
+  </Accordion>
 
-**Can I quote a different quantity than requested?**
-Yes — partial fills. Set `maker_quantity` / `maker_margin` to your intended amounts. Unfilled remainder depends on the taker's `unfilled_action`.
+  <Accordion title="What if my quote expires before the taker accepts?">
+    The quote will not go on chain, as both maker and taker submit their intents off chain.
 
-**What if I don't respond?**
-Nothing. No quotes → no trade. No penalty (but your response-rate metric does affect standing).
+    The quote only goes on chain when the order is matched.
+  </Accordion>
 
-**How are positions settled?**
-Synthetic positions on the Injective exchange module between your subaccount and the taker's. Real positions with real margin, PnL, and liquidation.
+  <Accordion title="Can I quote a different quantity than requested?">
+    Yes.
+    Partial fills are supported by setting `maker_quantity` / `maker_margin` to your intended amounts.
 
-**My quotes aren't reaching takers.**
-Check, in order:
-1. Whitelisted? Query `list_makers`.
-2. Authz granted? See §1.3.
-3. Signature verifies? Check field order and that `id`/`e` are JSON numbers.
-4. Quote expired? Verify `expiry` and clock sync.
+    The unfilled remainder depends on the taker's `unfilled_action`.
+  </Accordion>
 
-**What's the competition window?**
-After a request is sent, the indexer waits for quotes before delivering to the taker. Testnet ~30–45s; mainnet ~2–10s. Best price wins (lowest for long, highest for short).
+  <Accordion title="What if I don't respond to a quote request?">
+    No response means no trade and no penalty,
+    but your response-rate metric does affect standing.
+  </Accordion>
 
-**Connection drops.**
-1. Confirm ping every ~1s.
-2. Use the `grpc-ws` subprotocol.
-3. Reconnect with exponential backoff.
+  <Accordion title="How are positions settled?">
+    Synthetic positions are created on the Injective exchange module between your subaccount and the taker's, with real margin, PnL, and liquidation.
+  </Accordion>
 
-**What changes for TP/SL?**
-Nothing on your send path if you only respond to live RFQs. To participate in pre-posted blind quotes, include a `nonce` on your signed quote and leave `expiry` longer — the indexer keeps your quote in a blind book until it's consumed or expires.
+  <Accordion title="Why aren't my quotes reaching takers?">
+    Check whitelist registration, auth challenge handling, authz grants,
+    signature validity, and quote expiry in that order.
+
+    1. **Whitelisted?** Query `list_makers`.
+       **Pagination caveat:** `list_makers` returns at most 20 makers per page.
+       If your address sorts past the first 20,
+       the default query returns "not registered" even when you are.
+       Page through with `start_after`,
+       or use `ContractClient.is_maker_registered()` which paginates automatically.
+    2. **Auth challenge handled?**
+       Stream connects, pings return pongs,
+       but no `request` events.
+       This means your `MakerChallenge` handler is missing or produced a wrong signature.
+       See [Auth handshake](/market-makers/integration/connecting#auth-handshake).
+    3. **Authz granted?** See §1.3.
+    4. **Signature verifies?**
+       Check `evmChainId` field #1 in `SignQuote`, field order,
+       and that `rfq_id` is a JSON number.
+    5. **Quote expired?** Verify `expiry` (`now + 2s` for live quotes) and clock sync.
+  </Accordion>
+
+  <Accordion title="What is the competition window?">
+    After a request is sent, the indexer collects quotes for ~2 seconds before delivering the best one to the taker.
+
+    Best price wins: lowest quoted price for long positions, highest for short positions.
+  </Accordion>
+
+  <Accordion title="What do I do when my connection drops?">
+    Confirm ping every ~1 second, use the `grpc-ws` subprotocol,
+    and reconnect with exponential backoff.
+
+    1. Confirm ping every ~1s.
+    2. Use the `grpc-ws` subprotocol.
+    3. Reconnect with exponential backoff.
+  </Accordion>
+
+  <Accordion title="What changes for TP/SL orders?">
+    Nothing changes on your send path for live RFQs;
+    TP/SL participation is opt-in and carries no reputational cost for non-response.
+
+    If another maker has coverage at an acceptable price,
+    the protocol settles without you.
+    Not responding carries no reputational cost for TP/SL events.
+    To participate in pre-posted blind quotes,
+    see [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind).
+  </Accordion>
+
+  <Accordion title="What causes the worst_price exceeds limit error?">
+    Use the value directly from the v2 endpoint.
+    The v2 indexer returns mark price in human-readable scale (e.g. `14.85`),
+    not 1e18-scaled.
+
+    If you read mark price as `14850000000000000000` and use that as your reference,
+    your quoted price will be far outside the taker's `worst_price`.
+    Use the mark price value directly from the v2 endpoint.
+  </Accordion>
+
+  <Accordion title="How do I submit reduce-only quotes?">
+    Pass `margin: "0"` on the quote.
+    No separate flag is needed;
+    the protocol enforces that only fills closing or shrinking existing exposure are valid.
+  </Accordion>
+</AccordionGroup>
 
 {/* TODO: add related docs - e2e testnet run book, TPSL flow, RFQ/orderbook/arb flow, admin ops of RFQ contract */}

@@ -1,7 +1,7 @@
 ---
 title: "Authorization model"
 description: "Detailed explanation of Injective's authz authorization model enabling TrueCurrent's smart contract to execute atomic settlements with granular message-type permissions and revocable grants."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-05"
 ---
 
 TrueCurrent uses Injective's native `authz` module to allow the smart contract to act on behalf of both traders and market makers during settlement. This page explains the model in detail.
@@ -54,8 +54,6 @@ This is secure because:
 4. **Onchain verification.** The Injective chain enforces that only the authorized grantee can submit authorized messages – this is not just convention, it's chain-level enforcement.
 
 ---
-
-{/* TODO: authz grant lists on this page need reconciliation against rfq-contract source. See the TODO on /takers/authz-setup for the specific questions (MsgWithdraw for takers, MsgPrivilegedExecuteContract scope, MsgBatchUpdateOrders vs MsgCreateDerivativeMarketOrder). */}
 
 ## Required grants for traders
 

@@ -23,7 +23,9 @@ TrueCurrent's execution model is RFQ-first, not CLOB-first. On every trade, the 
 
 Every trade on TrueCurrent starts as an RFQ. When you submit a trade, TrueCurrent broadcasts a request to all registered market makers simultaneously. Each maker responds with a signed quote. TrueCurrent selects the best quote and settles the position onchain in a single transaction.
 
-**When it executes:** immediately on trade submission; fills within the quote collection window (typically under one second)
+**When it executes**:
+Immediately on trade submission;
+fills within the quote collection window (~2 seconds).
 
 **Price guarantee:** your `worst_price` parameter is enforced by the contract — the RFQ fill cannot settle at a less favorable price. If no maker can satisfy your `worst_price` and you are using strict RFQ-only execution (`unfilled_action: null`), the trade does not execute and your margin is returned. If fallback is enabled, any remaining quantity can continue to the configured order book path below.
 

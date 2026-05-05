@@ -1,10 +1,11 @@
 ---
 title: "Understanding quotes"
 description: "Technical analysis of RFQ quote structure, best-quote selection algorithm, quote expiry handling, and automatic fallback routing to Injective order book when market makers don't respond."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
-When you request a trade on TrueCurrent, market makers respond with quotes. Understanding what a quote contains – and what it commits to – helps you trade more effectively.
+When you request a trade on TrueCurrent, market makers respond with quotes.
+Understanding what a quote contains, and what it commits to, helps you trade more effectively.
 
 ---
 
@@ -16,7 +17,11 @@ Every quote from a market maker includes:
 
 **Quantity.** The size the market maker is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity.
 
-**Expiry.** A timestamp indicating how long the quote is valid. Quotes typically expire 30 seconds after they are signed. If you don't accept before expiry, the quote becomes invalid and a new one must be requested.
+**Expiry.**
+A timestamp indicating how long the quote is valid.
+Live market maker quotes typically expire 2 seconds after signing.
+This prevents stale prices from being used in fast-moving markets.
+If you don't accept before expiry, the quote becomes invalid and a new one must be requested.
 
 **Maker address.** The Injective wallet address of the market maker offering this quote. This is visible onchain after settlement.
 
@@ -26,10 +31,13 @@ Every quote from a market maker includes:
 
 ## How the best quote is selected
 
-TrueCurrent evaluates all quotes received during the 2-second window and presents the best one:
+TrueCurrent evaluates all quotes received during the collection window and presents the best one.
+The collection window is ~2 seconds:
 
-- For **long** positions: the quote with the **lowest price** (you're buying, so lower is better)
-- For **short** positions: the quote with the **highest price** (you're selling, so higher is better)
+- For **long** positions:
+  The quote with the **lowest price** (you're buying, so lower is better)
+- For **short** positions:
+  The quote with the **highest price** (you're selling, so higher is better)
 
 If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e., the quote that arrived first) is selected.
 
@@ -47,7 +55,9 @@ This expiry mechanism protects market makers from being locked into stale prices
 
 ## What happens if no quotes are received?
 
-If no market maker responds within the 2-second window, TrueCurrent automatically routes your order to Injective's onchain order book. In this case:
+If no market maker responds within the collection window,
+TrueCurrent automatically routes your order to Injective's onchain order book.
+In this case:
 
 - Your order executes as a market order against the current order book
 - The price guarantee of the RFQ quote does not apply – you may experience some slippage
