@@ -1,6 +1,6 @@
 ---
-title: "Index, mark, and quoted prices"
-description: "Differentiate between index price, mark price, quoted price, and indicative price on TrueCurrent for accurate P&L tracking, liquidation monitoring, and trigger order execution on perpetual markets."
+title: "Mark, and quoted prices"
+description: "Understand the difference between index price, mark price, quoted price, and indicative price on TrueCurrent. "
 updatedAt: "2026-04-30"
 ---
 
@@ -18,8 +18,8 @@ The index price is the foundation for the mark price and funding rate calculatio
 
 TrueCurrent's index price is sourced from the **Injective oracle module**, which aggregates prices from a set of vetted external providers. The oracle network includes:
 
-- **Major centralised exchanges** — spot price feeds from leading venues by volume
-- **Onchain oracle providers** — integrated via the Injective oracle module, which supports providers such as Pyth Network for certain markets
+- **Major centralised exchanges** – spot price feeds from leading venues by volume
+- **Onchain oracle providers** – integrated via the Injective oracle module, which supports providers such as Pyth Network for certain markets
 
 **Aggregation methodology:** The index price is computed as a **median** (or weighted average, as configured per market) of the available source prices at the time of sampling. Using a median rather than an average means a single outlier or temporarily manipulated source cannot materially move the index.
 
@@ -28,7 +28,7 @@ TrueCurrent's index price is sourced from the **Injective oracle module**, which
 **Staleness circuit breakers:** If oracle price feeds fall behind by more than a defined staleness threshold, the Injective exchange module halts funding settlements and may restrict new position openings until fresh prices are available. This prevents liquidations from being triggered by stale or manipulated prices.
 
 <Note>
-**TrueCurrent does not apply a CEX-weighted median.** Unlike some other perpetual venues (which weight CEX sources by volume), TrueCurrent's index price uses the Injective oracle aggregation, which is governed by the Injective protocol and treats sources according to the oracle module's configuration — not a proprietary weighting scheme controlled by TrueCurrent. This means the index price methodology is transparent and verifiable onchain.
+  **TrueCurrent does not apply a CEX-weighted median.** Unlike some other perpetual venues (which weight CEX sources by volume), TrueCurrent's index price uses the Injective oracle aggregation, which is governed by the Injective protocol and treats sources according to the oracle module's configuration — not a proprietary weighting scheme controlled by TrueCurrent. This means the index price methodology is transparent and verifiable onchain.
 </Note>
 
 For the canonical mark and index price model that TrueCurrent inherits from Injective, refer to the [Injective perpetuals documentation](https://docs.injective.network/defi/trading/derivatives-perpetuals) and the market's onchain parameters.
@@ -39,7 +39,7 @@ For the canonical mark and index price model that TrueCurrent inherits from Inje
 
 The **mark price** is TrueCurrent's fair-value price for a perpetual contract. It is derived from the index price with adjustments for the current funding rate basis:
 
-$$P_{mark} = P_{index} + \text{Basis}$$
+$P_{mark} = P_{index} + \text{Basis}$
 
 where the basis reflects the premium or discount at which the perpetual trades relative to spot.
 
@@ -93,8 +93,8 @@ Your [price tolerance](/trading/slippage-and-worst-price) setting determines the
 ## Summary
 
 | Price | What it is | Used for |
-|-------|-----------|---------|
-| **Index price** | Median of external oracle feeds (CEX spot + onchain oracles) | Mark price calculation, funding rates |
-| **Mark price** | Index price + EMA-smoothed impact-price basis | P&L, margin ratio, liquidation |
+| --- | --- | --- |
+| **Index price** | Median of external oracle feeds (CEX spot \+ onchain oracles) | Mark price calculation, funding rates |
+| **Mark price** | Index price \+ EMA-smoothed impact-price basis | P&L, margin ratio, liquidation |
 | **Quoted price** | Actual execution price from liquidity providers | Trade fills, realized P&L, TP/SL triggers |
 | **Indicative price** | Pre-trade estimate of quoted price | Shown in UI before you confirm |
