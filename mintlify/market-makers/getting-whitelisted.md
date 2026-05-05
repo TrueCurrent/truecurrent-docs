@@ -1,7 +1,7 @@
 ---
 title: "Getting whitelisted"
 description: "Requirements and application process for joining TrueCurrent's market maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
 TrueCurrent uses an approved market maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
@@ -37,7 +37,10 @@ Before applying, you should have:
 Before going live, test your full integration on TrueCurrent's testnet:
 
 1. Set `RFQ_ENV=testnet` in your configuration
-2. Fund your testnet wallet with testnet INJ and USDC for the current RFQ market
+2. Fund your testnet wallet with testnet INJ and USDC for the current RFQ market.
+   - Use the testnet faucet at `https://testnet-faucet.injective.dev`.
+   - It dispenses **500 USDC + 2 INJ** per address, once per 24 hours.
+   - The USDC denom on testnet is `erc20:0x0C382e685bbeeFE5d3d9C29e29E341fEE8E84C5d`.
 3. Grant `authz` permissions to the testnet contract address
 4. Connect your MakerStream to the testnet indexer endpoint
 5. Run through the complete quote and acceptance flow to confirm your signing and settlement logic is correct
@@ -56,6 +59,14 @@ To apply for market maker whitelist access:
 4. The team will review and add your address to the whitelist
 
 Once whitelisted, your wallet address can submit quotes to the production MakerStream and those quotes will be routed to traders.
+
+**Verifying whitelist status:**
+You can confirm at any point by querying `list_makers` on the contract.
+Note that `list_makers` returns at most 20 makers per page.
+If your address sorts past page 1,
+a simple single-page query will report "not registered" even when you are.
+Either paginate with `start_after`,
+or use `ContractClient.is_maker_registered()` which handles pagination automatically.
 
 ---
 

@@ -1,26 +1,52 @@
 ---
 title: "Quoting guidelines"
 description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
-This page covers best practices for market makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your market maker standing in good shape.
+This page covers best practices for market makers on TrueCurrent.
+Following these guidelines will improve your fill rate, protect you from adverse selection,
+and keep your market maker standing in good shape.
 
 ---
 
 ## Pricing fundamentals
 
-**Always reference a reliable mid-market price.** Your quote price should be derived from a real-time reference price – typically the best available mid from a liquid CEX (for example, INJ/USDC or a tightly correlated INJ/USD venue), Injective's onchain oracle, or a composite of both. Never quote blind.
+**Always reference a reliable mid-market price.**
+Your quote price should be derived from a real-time reference price:
+Typically the best available mid from a liquid CEX.
+For example, INJ/USDC or a tightly correlated INJ/USD venue, Injective's onchain oracle,
+or a composite of both.
+Never quote blind.
 
-**Quote around mid, not just on one side.** Your spread should be symmetric around mid unless you have a deliberate inventory reason to skew. Systematically quoting wide on one side makes you easier to pick off.
+**Quote around mid, not just on one side.**
+Your spread should be symmetric around mid unless you have a deliberate inventory reason to skew.
+Systematically quoting wide on one side makes you easier to pick off.
 
-**Respect the worst price.** There's no benefit to quoting worse than the taker's `worst_price` – you won't win the trade. Evaluating `worst_price` in your logic can help you decide whether to quote at all for requests with very tight limits.
+**Respect the worst price.**
+There's no benefit to quoting worse than the taker's `worst_price`.
+You won't win the trade.
+Evaluating `worst_price` in your logic can help you decide whether to quote at all
+for requests with very tight limits.
+
+<Info>
+**`worst_price` scale**:
+
+The v2 indexer endpoints return `worst_price` in human-readable scale (e.g. `"14.85"`),
+not 1e18-scaled integers.
+Reading it as a raw integer from a v1 endpoint (which would return `14850000000000000000`)
+will cause `worst price exceeds limit` rejections.
+Always use the v2 endpoint values directly.
+</Info>
 
 ---
 
 ## Spread management
 
-**Scale spread to volatility.** Your spread represents the compensation for the risk you take by being on the other side of a trade. In low-volatility periods, tight spreads win more flow. In high-volatility periods, widen accordingly – the risk of being picked off is higher.
+**Scale spread to volatility.**
+Your spread represents the compensation for the risk you take by being on the other side of a trade.
+In low-volatility periods, tight spreads win more flow.
+In high-volatility periods, widen accordingly, as the risk of being picked off is higher.
 
 A simple starting model:
 
@@ -28,13 +54,19 @@ A simple starting model:
 spread = base_spread + volatility_factor × realized_vol_30s
 ```
 
-**Scale spread to order size.** Larger orders expose you to more market impact when you hedge. A basic model:
+**Scale spread to order size.**
+Larger orders expose you to more market impact when you hedge.
+A basic model:
 
 ```
 spread = base_spread × (1 + size_factor × quantity / reference_quantity)
 ```
 
-**Account for your inventory.** If you're net long INJ from previous fills, you're already exposed to downside. When the next request is for a taker long (you'd go shorter), you may want to tighten your spread to encourage the fill. For a taker short (you'd go longer), widen slightly.
+**Account for your inventory.**
+If you're net long INJ from previous fills, you're already exposed to downside.
+When the next request is for a taker long (you'd go shorter),
+you may want to tighten your spread to encourage the fill.
+For a taker short (you'd go longer), widen slightly.
 
 ### Numerical spread construction example
 
@@ -139,4 +171,13 @@ Conversely, in a negative funding regime, shorts pay longs. If you are net short
 
 **Clock skew.** The quote expiry is verified onchain using block time. If your system clock is off by more than a few seconds, you may produce quotes that appear expired to the chain even though they look valid to you. Use NTP synchronization.
 
-**Signature field order errors.** The most common cause of settlement failures for new market makers. Test thoroughly on testnet and verify the exact serialization format against the contract's expectations before going live.
+**Signature field order errors.**
+The most common cause of settlement failures for new market makers.
+Test thoroughly on testnet and verify the exact serialization format.
+Ensure `evmChainId` is field #1 in the `SignQuote` struct,
+and that `min_fill_quantity=None` is encoded as `"0"`, never as an empty string.
+
+**Reduce-only quotes.**
+To close or reduce an existing position without opening new size, pass `margin: "0"` on the quote.
+The protocol enforces that no new position is opened against zero margin.
+No separate flag is required.

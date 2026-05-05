@@ -1,12 +1,13 @@
 ---
 title: "One-time setup"
 description: "One-time onboarding steps for market makers: generate an Injective wallet, get whitelisted, grant authz permissions to the RFQ contract, and fund your exchange subaccount."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
 ### 1. Generate a wallet
 
-Standard Ethereum-compatible secp256k1. The same private key produces both a `0x…` EVM address and an `inj1…` bech32 address.
+Standard Ethereum-compatible secp256k1.
+The same private key produces *both* a `0x…` EVM address and an `inj1…` bech32 address.
 
 ```python
 # Python
@@ -34,13 +35,22 @@ console.log(`INJ Address: ${injAddress}`);
 
 ### 2. Get whitelisted
 
-Send your `inj1...` address to the TrueCurrent team. The contract admin calls `register_maker` to whitelist you.
+Send your `inj1...` address to the TrueCurrent team.
+The contract admin calls `register_maker` to whitelist you.
 
 ### 3. Grant authz permissions
 
-The RFQ contract settles trades on your behalf. You grant it narrow, message-type-scoped permissions — it cannot move arbitrary funds.
+The RFQ contract settles trades on your behalf.
+You grant it narrow, message-type-scoped permissions.
+It cannot move arbitrary funds.
 
-> **TODO (verify):** `rfq-contract/docs/admin.md` lists **three** grants for makers: `MsgSend`, `MsgWithdraw`, `MsgPrivilegedExecuteContract`. The working setup on current testnet integrations uses only the two shown below. Before going to mainnet, pair-check against `rfq-contract/src/handler/authz.rs` + `settlement.rs` for which grants the contract actually requires when settling from a custom vs default subaccount.
+<Info>
+**Note on `MsgWithdraw`**:
+`rfq-contract/docs/admin.md` lists it as a canonical grant,
+but the working testnet setup uses only the two grants below.
+The current settlement path does not exercise `MsgWithdraw`.
+Granting it creates an unused attack surface, so it is intentionally omitted.
+</Info>
 
 | Permission | Purpose |
 |---|---|
@@ -82,4 +92,5 @@ print(f"Authz granted! TxHash: {result['txResponse']['txhash']}")
 
 ### 4. Fund your subaccount
 
-Deposit the market's quote asset into your Injective exchange subaccount. On the current testnet RFQ market, this is USDC.
+Deposit the market's quote asset into your Injective exchange subaccount.
+On the current testnet RFQ market, this is USDC.

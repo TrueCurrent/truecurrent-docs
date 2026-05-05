@@ -1,7 +1,7 @@
 ---
 title: "Connecting to MakerStream"
 description: "Complete guide to connecting to TrueCurrent's MakerStream WebSocket endpoint, receiving RFQ requests, submitting signed quotes within the 2-second window, and handling concurrent market making operations."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
 The **MakerStream** is a WebSocket endpoint that delivers real-time RFQ requests from traders to market makers. Your quoting system connects to this stream, listens for requests, and responds with signed quotes.
@@ -21,7 +21,10 @@ The MakerStream is the `MakerStream` bidirectional stream on the indexer's `inje
 
 The connection is gRPC-web framed over WebSocket, not raw JSON-RPC. Use the `rfq-testing` client library (Python or TypeScript) to handle the framing – see [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
 
-Authentication is based on your wallet address – the endpoint routes requests to your system based on your whitelisted maker address.
+**Authentication** uses an EIP-712 v2 challenge-response handshake.
+After connecting, the indexer sends a one-shot `MakerChallenge` that you must sign
+and reply to with `MakerAuth` before any `request` events are forwarded.
+See [Auth handshake](/market-makers/integration/connecting#auth-handshake) for the full protocol.
 
 **Python example:**
 
@@ -30,7 +33,10 @@ from rfq_test.clients.websocket import MakerStreamClient
 
 mm_ws = MakerStreamClient(
     endpoint=env_config.indexer.ws_endpoint,
-    timeout=15.0
+    auth_private_key=MM_PRIVATE_KEY,
+    auth_evm_chain_id=1439,            # 1439 for testnet; 1776 for mainnet
+    auth_contract_address=CONTRACT_ADDRESS,
+    timeout=15.0,
 )
 await mm_ws.connect()
 ```
@@ -83,11 +89,12 @@ Your quote must include:
 | `margin` | string | Taker margin (can match or improve) |
 | `quantity` | string | Quantity you'll fill |
 | `price` | string | Your offered price |
-| `expiry` | integer | Quote expiry (Unix ms) – recommend 30s from now |
+| `expiry` | integer | Quote expiry (Unix ms). Use `now + 2s` for live MM quotes; blind/TP-SL quotes may use longer windows |
 | `maker` | string | Your Injective address |
 | `taker` | string | Taker's Injective address (from request) |
 | `signature` | string | `0x`-prefixed EIP-712 v2 signature (see [Signing quotes](/market-makers/signing-quotes)) |
 | `sign_mode` | string | Must be `"v2"` |
+| `evm_chain_id` | uint64 | Required when `sign_mode="v2"`. EVM chain ID matching the EIP-712 domain (`1439` testnet, `1776` mainnet). |
 | `maker_subaccount_nonce` | integer | Usually `0`; must match what you signed |
 | `chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet |
 | `contract_address` | string | RFQ contract address for indexer compatibility |
@@ -130,6 +137,7 @@ quote_data = {
     "taker": taker_address,
     "signature": signature,         # already 0x-prefixed
     "sign_mode": "v2",
+    "evm_chain_id": 1439,           # 1439 for testnet; 1776 for mainnet
     "maker_subaccount_nonce": 0,
     "chain_id": chain_id,
     "contract_address": contract_address,
@@ -142,7 +150,10 @@ await mm_ws.send_quote(quote_data)
 
 ## Handling multiple simultaneous requests
 
-In active markets, you may receive multiple RFQ requests in rapid succession. Your quoting system must be able to handle concurrent requests without one slowing down another. Each `rfq_id` is independent – there's no ordering requirement between responses to different requests.
+In active markets, you may receive multiple RFQ requests in rapid succession.
+Your quoting system must be able to handle concurrent requests without one slowing down another.
+Each `rfq_id` is independent.
+There's no ordering requirement between responses to different requests.
 
 Use async/concurrent processing to ensure your 2-second window isn't eaten up by sequential processing.
 
@@ -150,6 +161,8 @@ Use async/concurrent processing to ensure your 2-second window isn't eaten up by
 
 ## Connection maintenance
 
-Keep your MakerStream connection alive with periodic heartbeats. If your connection drops, requests during the disconnected period are missed. Implement reconnection logic with exponential backoff to handle transient network issues.
+Keep your MakerStream connection alive with periodic heartbeats.
+If your connection drops, requests during the disconnected period are missed.
+Implement reconnection logic with exponential backoff to handle transient network issues.
 
 Persistent disconnections impact your response rate metrics, which can affect your market maker standing.

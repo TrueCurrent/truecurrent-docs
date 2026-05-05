@@ -1,7 +1,7 @@
 ---
 title: "Authorization setup (authz)"
 description: "Step-by-step guide to setting up authz grants on Injective for TrueCurrent market makers, including required message types, Python implementation, grant verification, and security best practices for automated settlement."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-05"
 ---
 
 TrueCurrent uses Injective's native `authz` module to allow the smart contract to execute trades on behalf of both traders and market makers. As a market maker, you need to grant the contract specific permissions before your quotes can settle.
@@ -18,14 +18,22 @@ This is how settlement works without requiring you to manually sign every trade:
 
 ## Required grants
 
-{/* TODO: confirm the canonical maker authz grant list against rfq-contract. The rfq-contract admin.md lists THREE grants for makers (MsgSend, MsgWithdraw, MsgPrivilegedExecuteContract) — this page is currently missing MsgWithdraw. Resolve which grants are actually required (including whether MsgWithdraw is needed for custom-subaccount makers) before updating this table. */}
-
 As a market maker, you need to grant the following message types to the TrueCurrent contract:
 
 | Message type | Purpose |
 |---|---|
 | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Allows the contract to execute privileged exchange actions (open positions, settle trades) |
 | `/cosmos.bank.v1beta1.MsgSend` | Allows the contract to transfer collateral as needed for margin management |
+
+<Info>
+**Note on `MsgWithdraw`**:
+
+The contract source (`admin.md`) lists `MsgWithdraw` as a canonical grant,
+but the working testnet setup omits it.
+The current settlement path does not exercise it,
+and granting it creates an unused attack surface.
+Do not grant `MsgWithdraw` unless the TrueCurrent team explicitly requests it.
+</Info>
 
 ---
 
@@ -38,6 +46,10 @@ As a market maker, you need to grant the following message types to the TrueCurr
 **Programmatic setup (Python):**
 
 ```python
+import asyncio
+import os
+# from dotenv import load_dotenv; load_dotenv()  # uncomment if not pre-sourcing .env
+
 from rfq_test.clients.chain import ChainClient
 
 chain = ChainClient(env_config.chain)
@@ -55,11 +67,14 @@ for msg_type in MM_MSG_TYPES:
         msg_type=msg_type,
     )
     print(f"Granted {msg_type}: {tx_hash}")
+    await asyncio.sleep(3)                 # wait for LCD to catch up; <3s causes sequence mismatch
 
 await chain.close()
 ```
 
-Each grant requires a separate transaction. Wait for each transaction to confirm (approximately 1–2 seconds) before submitting the next.
+Each grant requires a separate transaction. Wait **3 seconds** between grants — faster submission outpaces the LCD node and causes `account sequence mismatch` errors.
+
+> **Pre-source `.env`** before running standalone scripts: `set -a; . .env; set +a` in your shell, or uncomment `load_dotenv()` in the script above. Without it, `os.getenv(...)` returns `None` for every key and the script crashes with `AttributeError`.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Signing quotes"
 description: "Technical documentation for signing TrueCurrent RFQ quotes with the EIP-712 v2 schema used by public testnet and mainnet integrations."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-05"
 ---
 
 Every quote you submit must be signed with your market maker wallet. The signature is verified by the TrueCurrent contract when a taker accepts the quote, so the signed fields must match the quote payload exactly.
@@ -47,22 +47,26 @@ inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
 
 ## What is signed
 
-The v2 signature covers the `SignQuote` typed-data struct:
+The v2 signature covers the `SignQuote` typed-data struct. Field order matters for the digest:
 
-| Field | Notes |
-|---|---|
-| `marketId` | Injective market ID. |
-| `rfqId` | Indexer-assigned RFQ ID. Use the ID from the request or ACK. |
-| `taker` | Taker `inj1...` address for taker-bound quotes, or empty for blind quotes. |
-| `takerDirection` | Taker direction, `"long"` or `"short"`. |
-| `takerMargin` / `takerQuantity` | Exact decimal strings from the RFQ request. |
-| `maker` | Maker `inj1...` address. |
-| `makerSubaccountNonce` | Usually `0`; must match the wire payload. |
-| `makerQuantity` / `makerMargin` | Exact decimal strings you quote. |
-| `price` | Exact decimal string you quote, quantized to market tick. |
-| `expiryKind` / `expiryValue` | Timestamp milliseconds or block height. |
-| `minFillQuantity` | Optional partial-fill floor; omit unless you intentionally require it. |
-| `bindingKind` | Derived from whether `taker` is set. It is not a wire field. |
+| # | Field | Notes |
+|---|---|---|
+| 1 | `evmChainId` | EVM chain ID. Must match the domain `chainId` and the wire `evm_chain_id`. |
+| 2 | `marketId` | Injective market ID. |
+| 3 | `rfqId` | Indexer-assigned RFQ ID. Use the ID from the request or ACK. |
+| 4 | `taker` | Taker `inj1...` address for taker-bound quotes, or empty for blind quotes. |
+| 5 | `takerDirection` | Taker direction, `"long"` or `"short"`. |
+| 6 | `takerMargin` | Exact decimal string from the RFQ request. |
+| 7 | `takerQuantity` | Exact decimal string from the RFQ request. |
+| 8 | `maker` | Maker `inj1...` address. |
+| 9 | `makerSubaccountNonce` | Usually `0`; must match the wire payload. |
+| 10 | `makerQuantity` | Exact decimal string you quote. |
+| 11 | `makerMargin` | Exact decimal string you quote. |
+| 12 | `price` | Exact decimal string you quote, quantized to market tick. |
+| 13 | `expiryKind` | Expiry type. |
+| 14 | `expiryValue` | Timestamp milliseconds or block height. |
+| 15 | `minFillQuantity` | Use `"0"` when unset — **never the empty string**. Empty string changes the digest. |
+| 16 | `bindingKind` | Derived from whether `taker` is set. It is not a wire field. |
 
 `chain_id` and `contract_address` may still appear in the quote payload for indexer compatibility, but v2 binds chain and contract through the EIP-712 domain above.
 
@@ -114,13 +118,20 @@ await mm_ws.send_quote({
     "taker": taker_address,
     "signature": signature,
     "sign_mode": "v2",
+    "evm_chain_id": 1439,              # 1439 for testnet; 1776 for mainnet
     "maker_subaccount_nonce": 0,
     "chain_id": "injective-888",
     "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",
 })
 ```
 
-Do not prepend `0x` again, do not sign a manually serialized JSON string, and do not pass `binding_kind` into the helper or quote payload.
+<Info>
+`sign_quote_v2` returns a `0x`-prefixed signature.
+`MakerStreamClient.send_quote()` also adds the `0x` prefix if absent.
+So the signature works either way.
+Do not sign a manually serialized JSON string.
+Do not pass `binding_kind` into the helper or quote payload.
+</Info>
 
 ---
 

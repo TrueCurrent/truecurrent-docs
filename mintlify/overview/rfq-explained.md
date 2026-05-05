@@ -1,7 +1,7 @@
 ---
 title: "RFQ explained"
 description: "Deep dive into Request for Quote (RFQ) trading on TrueCurrent, comparing it to AMMs and order books, explaining market maker pricing, quote expiry, and zero-slippage execution for perpetual futures."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-05"
 ---
 
 Request for Quote (RFQ) is a trading model where a buyer or seller solicits price quotes from one or more liquidity providers before committing to a trade. Unlike automated pricing models, RFQ involves human or algorithmic market makers actively pricing each individual trade.
@@ -54,6 +54,10 @@ This real-time, size-aware pricing is fundamentally superior to static formula p
 
 ## Quote expiry and settlement timing
 
-Every quote includes an expiry timestamp. Quotes are valid for a short window, which prevents stale quotes from being used in fast-moving markets. {/* TODO: confirm the precise minimum quote expiry once benchmarked */}
+Every quote includes an expiry timestamp.
+For live market maker quotes, expiry is typically 2 seconds:
+Short enough to prevent stale prices from lingering,
+but long enough for settlement to confirm.
+TP/SL blind quotes may have longer expiry windows (minutes to hours).
 
 When you accept a quote, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.
