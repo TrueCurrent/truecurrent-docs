@@ -50,41 +50,41 @@ Positions with the highest score — those combining high leverage with high unr
 
 ## Numerical scenario
 
-**Setup:** INJ/USDC PERP, mark price drops sharply from $10.00 to $8.80.
+**Setup:** INJ/USDC PERP, mark price drops sharply from \$10.00 to \$8.80.
 
 ### Insolvent position (Trader A — long)
 
 | Parameter | Value |
 |---|---|
-| Entry price | $10.00 |
+| Entry price | \$10.00 |
 | Quantity | 2,000 INJ |
 | Leverage | 20× |
-| Initial margin | $1,000 |
-| Liquidation price | $9.74 |
-| Bankruptcy price | $9.50 |
-| Mark price (post-move) | $8.80 |
-| Loss beyond bankruptcy | 2,000 × ($9.50 − $8.80) = **$1,400** |
-| Insurance fund balance | **$800** |
-| Unabsorbed shortfall | **$600** |
+| Initial margin | \$1,000 |
+| Liquidation price | \$9.74 |
+| Bankruptcy price | \$9.50 |
+| Mark price (post-move) | \$8.80 |
+| Loss beyond bankruptcy | 2,000 × (\$9.50 − \$8.80) = **\$1,400** |
+| Insurance fund balance | **\$800** |
+| Unabsorbed shortfall | **\$600** |
 
 The market gaps below the bankruptcy price before the liquidation engine can close the position. The insurance fund covers $800 of the $1,400 loss. The remaining $600 shortfall triggers ADL.
 
-### ADL queue (profitable shorts, mark = $8.80)
+### ADL queue (profitable shorts, mark = \$8.80)
 
 | Trader | Entry | Qty | Leverage | Initial margin | uPnL | Profit rate | ADL score |
 |---|---|---|---|---|---|---|---|
-| B | $9.80 | 1,000 INJ | 10× | $980 | $1,000 | 102% | **10.2** |
-| C | $9.50 | 500 INJ | 5× | $950 | $350 | 37% | **1.8** |
+| B | \$9.80 | 1,000 INJ | 10× | \$980 | \$1,000 | 102% | **10.2** |
+| C | \$9.50 | 500 INJ | 5× | \$950 | \$350 | 37% | **1.8** |
 
-Trader B has the highest score and is selected first. A portion of Trader B's short position is closed at **$9.50** — Trader A's bankruptcy price — not at the current mark price of $8.80.
+Trader B has the highest score and is selected first. A portion of Trader B's short position is closed at **\$9.50** — Trader A's bankruptcy price — not at the current mark price of \$8.80.
 
 ### Trader B's outcome
 
-| | Closing at mark ($8.80) | ADL exit at bankruptcy ($9.50) |
+| | Closing at mark (\$8.80) | ADL exit at bankruptcy (\$9.50) |
 |---|---|---|
-| Entry price | $9.80 | $9.80 |
-| Exit price | $8.80 | $9.50 |
-| P&L per INJ | +$1.00 | +$0.30 |
+| Entry price | \$9.80 | \$9.80 |
+| Exit price | \$8.80 | \$9.50 |
+| P&L per INJ | \$1.00 | \$0.30 |
 
 Trader B's position is still closed at a profit. ADL does not result in a loss — it reduces the profit on the ADL'd quantity by the difference between the bankruptcy price and the mark price at the time of ADL ($0.70/INJ in this example).
 

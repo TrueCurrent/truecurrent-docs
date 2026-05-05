@@ -40,7 +40,7 @@ The initial margin required to open a position is:
 
 $$IM = Q \times P_{entry} \times IMR = \frac{Q \times P_{entry}}{L}$$
 
-For example, opening a 10 BTC position at $50,000 with 10× leverage requires:
+For example, opening a 10 BTC position at \$50,000 with 10× leverage requires:
 
 $$IM = \frac{10 \times 50{,}000}{10} = \$50{,}000$$
 
@@ -106,10 +106,10 @@ Margin rates may increase for very large notional positions as a risk management
 
 | Notional position size | Max leverage | IMR | MMR |
 |------------------------|-------------|-----|-----|
-| Up to $50,000 | 20× | 5.0% | 2.5% |
-| $50,001 – $250,000 | 10× | 10.0% | 5.0% |
-| $250,001 – $1,000,000 | 5× | 20.0% | 10.0% |
-| Above $1,000,000 | 2× | 50.0% | 25.0% |
+| Up to \$50,000 | 20× | 5.0% | 2.5% |
+| \$50,001 – \$250,000 | 10× | 10.0% | 5.0% |
+| \$250,001 – \$1,000,000 | 5× | 20.0% | 10.0% |
+| Above \$1,000,000 | 2× | 50.0% | 25.0% |
 
 <Note>
 These are illustrative tiers. Confirm actual parameters for each market via the market specifications or the Injective exchange module before sizing large positions.
@@ -121,37 +121,42 @@ If your position grows into a higher notional tier (e.g. due to mark price appre
 
 ## Worked example: position lifecycle with cross-margin
 
-This example traces equity, margin ratio, and available margin through four steps for a single-position account. Assumptions: 10× leverage, $P_{entry} = \$100$, MMR = 2.5%, position size Q = 10 units.
+This example traces equity, margin ratio, and available margin through four steps for a single-position account.
+Assumptions:
+10× leverage,
+$$ P_{entry} = \$100 $$,
+MMR = 2.5%,
+position size Q = 10 units.
 
 **Step 1 — Open position**
 
-- Initial margin deposited: $100 (= 10 × $100 / 10)
-- Notional: $1,000
-- uPnL: $0
-- Account equity: $100
-- Margin ratio: $100 / $1,000 = **10.0%**
-- Available margin: $100 − $1,000 × 2.5% = $100 − $25 = **$75**
+- Initial margin deposited: \$100 (= 10 × \$100 / 10)
+- Notional: \$1,000
+- uPnL: \$0
+- Account equity: \$100
+- Margin ratio: \$100 / \$1,000 = **10.0%**
+- Available margin: \$100 − \$1,000 × 2.5% = \$100 − \$25 = **\$75**
 
-**Step 2 — Price moves against position (mark price = $95)**
+**Step 2 — Price moves against position (mark price = \$95)**
 
-- uPnL: (95 − 100) × 10 = −$50
-- Account equity: $100 − $50 = **$50**
-- Margin ratio: $50 / (10 × $95) = $50 / $950 ≈ **5.26%** (above MMR 2.5%, safe)
-- Available margin: $50 − $950 × 2.5% = $50 − $23.75 = **$26.25**
+- uPnL: (95 − 100) × 10 = \$50
+- Account equity: \$100 − \$50 = **\$50**
+- Margin ratio: \$50 / (10 × \$95) = \$50 / \$950 ≈ **5.26%** (above MMR 2.5%, safe)
+- Available margin: \$50 − \$950 × 2.5% = \$50 − \$23.75 = **\$26.25**
 
 **Step 3 — Add $30 margin**
 
-- Account equity: $50 + $30 = **$80**
-- Margin ratio: $80 / $950 ≈ **8.42%** (comfortable buffer)
-- Available margin: $80 − $23.75 = **$56.25**
+- Account equity: \$50 + \$30 = **\$80**
+- Margin ratio: \$80 / \$950 ≈ **8.42%** (comfortable buffer)
+- Available margin: \$80 − \$23.75 = **\$56.25**
 
-**Step 4 — Close half the position (sell 5 units at $95)**
+**Step 4 — Close half the position (sell 5 units at \$95)**
 
-- Realised P&L on 5 units: (95 − 100) × 5 = −$25 realised
+- Realised P&L on 5 units: (95 − 100) × 5 = −\$25 realised
 - Remaining position: 5 units
-- Notional: 5 × $95 = $475
-- Remaining equity: $80 − $25 = **$55**
-- Margin ratio: $55 / $475 ≈ **11.6%** (strong; leverage effectively reduced to ~4.3×)
+- Notional: 5 × \$95 = \$475
+- Remaining equity: \$80 − \$25 = **\$55**
+- Margin ratio: \$55 / \$475 ≈ **11.6%** (strong; leverage effectively reduced to ~4.3×)
 
 {/* TODO DR-143 add cross margin section when that has been implemented, part 2 */}
 

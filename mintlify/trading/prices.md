@@ -19,7 +19,7 @@ The index price is the foundation for the mark price and funding rate calculatio
 TrueCurrent's index price is sourced from the **Injective oracle module**, which aggregates prices from a set of vetted external providers. The oracle network includes:
 
 - **Major centralised exchanges** — spot price feeds from leading venues by volume
-- **Onchain oracle providers** — integrated via the Injective oracle module, which supports providers such as Band Protocol and Pyth Network for certain markets
+- **Onchain oracle providers** — integrated via the Injective oracle module, which supports providers such as Pyth Network for certain markets
 
 **Aggregation methodology:** The index price is computed as a **median** (or weighted average, as configured per market) of the available source prices at the time of sampling. Using a median rather than an average means a single outlier or temporarily manipulated source cannot materially move the index.
 
