@@ -66,9 +66,9 @@ updatedAt: "2026-04-28"
   </Accordion>
 
   <Accordion title="Why did my quote expire before I could accept?">
-    Quotes expire after a short window (typically 30 seconds) because market makers need to manage price risk in fast-moving markets.
+    Live market maker quotes are valid for about 2 seconds. That window is short by design — it protects makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
 
-    If a quote expires, simply request a new one - the process is fast.
+    If a quote expires before settlement confirms, simply request a new one. The process is fast.
   </Accordion>
 
   <Accordion title="Can I get liquidated?">
