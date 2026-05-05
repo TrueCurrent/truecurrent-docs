@@ -1,66 +1,42 @@
 ---
 title: "Understanding quotes"
-description: "Guide to understanding RFQ quotes on TrueCurrent including price, quantity, expiry, maker address, cryptographic signature verification, and how the best quote is selected for trade execution."
+description: "Understand what TrueCurrent RFQ quotes contain, how signed quotes expire, and how the best executable quote is selected. "
 updatedAt: "2026-05-01"
 ---
 
-When you request a trade on TrueCurrent, market makers respond with quotes. Understanding what a quote contains – and what it commits to – helps you trade more effectively.
+When you submit a trade on TrueCurrent, market makers respond with signed RFQ quotes. TrueCurrent selects the best executable quote automatically, so understanding quote fields helps you understand what was filled and why a trade may not execute.
 
 ---
 
 ## What a quote contains
 
-Every quote from a market maker includes:
+Every quote from a liquidity provider includes:
 
-**Price.** The exact price at which the market maker will trade with you. This is the fill price you'll see in your trade history. It does not change between when the quote is returned to you and when you accept it (within the expiry window).
+**Price.** The exact price the maker is willing to trade at. This becomes your fill price if the quote is selected and settled before expiry.
 
-**Quantity.** The size the market maker is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity.
+**Quantity.** The size the maker is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity. TrueCurrent also supports partial fills from one or more makers.
 
-**Expiry.** A timestamp indicating how long the quote is valid. Live market-maker quotes are typically valid for 2 seconds — short by design, so makers aren't locked into stale prices in fast-moving markets. If a quote expires before settlement confirms, the trade is rejected and a new quote must be requested.
+**Expiry.** A timestamp indicating how long the quote is valid. Live quotes expire quickly, typically after about 2 seconds. If the selected quote expires before settlement, the trade is rejected and a fresh quote must be requested. Short expiry windows protect makers from stale prices in fast-moving markets. Without them, makers would need to quote wider spreads to compensate for the risk of being held to an old price.
 
-**Maker address.** The Injective wallet address of the market maker offering this quote. This is visible onchain after settlement.
+**Maker address.** The Injective wallet address of the maker offering the quote. This is visible onchain after settlement.
 
-**Signature.** A cryptographic signature from the market maker's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot repudiate or alter their quoted terms.
+**Signature.** A cryptographic signature from the maker's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot repudiate or alter their quoted terms.
 
 ---
 
 ## How the best quote is selected
 
-TrueCurrent evaluates all quotes received during the ~2-second collection window and selects the best one automatically:
+TrueCurrent evaluates all quotes received during the 2-second collection window and selects the best one automatically:
 
 - For **long** positions: the quote with the **lowest price** (you're buying, so lower is better)
 - For **short** positions: the quote with the **highest price** (you're selling, so higher is better)
 
-If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e., the quote that arrived first) is selected.
-
----
-
-## Quote validity and expiry
-
-Once you see a quote on screen, a countdown timer shows how long you have to accept it. When the timer reaches zero, the quote is expired and can no longer be settled onchain.
-
-This expiry mechanism protects market makers from being locked into stale prices in fast-moving markets. If a quote expires before you accept, simply request a new one.
-
-**Why quotes expire quickly:** Perpetuals markets can move significantly in seconds. A market maker quoting a price for INJ/USDC needs to know that if the price moves sharply before settlement, they won't be stuck trading at a price that's now well off-market. Short expiry windows protect market makers and, in turn, keep the overall RFQ system functioning – without them, makers would widen spreads to account for the risk of stale quotes.
+If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e. the quote that arrived first) is selected.
 
 ---
 
 ## What happens if no quotes are received?
 
-If no market maker responds within the collection window, the request is cancelled and your margin is released — nothing settles onchain, and you pay nothing. Prices update continuously, so you can submit a new request immediately.
+If no market maker responds within the collection window, the request is cancelled and no margin is debited from your wallet – nothing settles onchain, and you pay nothing. Prices update continuously, so you can submit a new request immediately.
 
 This is uncommon on liquid markets, where multiple makers compete on every request. It mostly happens during extreme volatility, in deep illiquid markets, or when your `worst_price` is tight enough that no maker is willing to fill at it.
-
----
-
-## Reading the quote in the UI
-
-When a quote appears on the trading interface, you'll see:
-
-- **Fill price** – the exact execution price
-- **Price vs. mark** – how the quote price compares to the current mark price (positive = better than mark)
-- **Estimated fee** – if any protocol fee is included in the spread
-- **Quote expiry** – countdown in seconds
-- **Market maker** – shown as a shortened address (full address visible onchain)
-
-Review these before accepting. In most cases, the quoted price will be at or very close to the current mark price.
