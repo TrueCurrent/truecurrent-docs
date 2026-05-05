@@ -71,7 +71,6 @@
                   "trading/markets",
                   "trading/contract-specifications",
                   "trading/how-to-trade",
-                  "trading/placing-a-trade",
                   "trading/understanding-quotes",
                   "trading/order-types",
                   "trading/perpetual-markets",
@@ -167,5 +166,9 @@
     "eyebrows": "breadcrumbs"
   },
   "redirects": [
+    {
+      "source": "/trading/placing-a-trade",
+      "destination": "/trading/how-to-trade"
+    }
   ]
 }
