@@ -21,7 +21,7 @@ Zero protocol fees, zero gas fees.
 
 ## Best-price execution, automatically
 
-On an AMM, the price you see changes between when you submit and when you fill.
+On an AMM, the quoted price can move between order submission and execution.
 Large trades push prices up or down, sometimes significantly.
 Bots can front-run your transaction.
 
@@ -34,7 +34,7 @@ and you never have to shop for a quote yourself.
 
 ## Truly non-custodial
 
-Most exchanges – including many that call themselves "decentralized" –
+Most exchanges, including many marketed as decentralized,
 require you to deposit funds into a wallet or smart contract they control.
 On TrueCurrent, your funds never leave your own wallet.
 There's no deposit into a shared pool, no counterparty holding your assets.
@@ -50,7 +50,7 @@ See [Deposit funds](/getting-started/deposit-funds) for the full walkthrough.
 
 ---
 
-## How it compares
+## Fee Comparison
 
 |  | AMM DEX | Order Book DEX | **TrueCurrent** |
 |--|---------|----------------|-----------------|

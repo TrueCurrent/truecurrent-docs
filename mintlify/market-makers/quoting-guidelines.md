@@ -56,11 +56,11 @@ Below is a worked example of building a competitive two-sided quote for an INJ/U
 **Step 4 — Inventory skew:** +300 INJ net long → tighten offer (selling), widen bid (buying). Apply −2 bps to offer, +2 bps to bid.
 
 **Final quote:**
-- Bid: $25.00 × (1 − 0.0014) = **$24.965**
-- Offer: $25.00 × (1 + 0.0010) = **$25.025**
+- Bid: \$25.00 × (1 − 0.0014) = **\$24.965**
+- Offer: \$25.00 × (1 + 0.0010) = **\$25.025**
 - Half-spread: 10 bps bid / 10 bps offer (asymmetric due to inventory skew)
 
-**4 bps maker fee impact:** Filling the $12,500 request costs $5.00 in maker fees. The minimum spread to break even on fees alone is `$5.00 / $12,500 = 4 bps` each side. The 10 bps half-spread above earns $12.50 gross spread minus $5.00 fee = **$7.50 net spread income**, before hedging costs.
+**4 bps maker fee impact:** Filling the \$12,500 request costs \$5.00 in maker fees. The minimum spread to break even on fees alone is `$5.00 / $12,500 = 4 bps` each side. The 10 bps half-spread above earns \$12.50 gross spread minus \$5.00 fee = **\$7.50 net spread income**, before hedging costs.
 
 ---
 

@@ -12,7 +12,8 @@ A complete guide to opening, managing, and closing positions on TrueCurrent.
 
 ### 1. Select a market
 
-Choose the perpetual market you want to trade from the markets list. You'll see the current price, 24h volume, open interest, and funding rate for each market.
+Choose the perpetual market you want to trade from the markets list.
+You'll see the current price, 24h volume, open interest, and funding rate for each market.
 
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
@@ -35,7 +36,8 @@ Choose the perpetual market you want to trade from the markets list. You'll see 
 Position size = Margin × Leverage
 ```
 
-A $100 margin at 5x leverage = $500 position. Every 1% price move = 5% change in your margin.
+A \$100 margin at 5x leverage = \$500 position.
+Every 1% price move = 5% change in your margin.
 
 **Leverage guidelines:**
 - 1x–3x – Conservative, good for learning
@@ -44,13 +46,19 @@ A $100 margin at 5x leverage = $500 position. Every 1% price move = 5% change in
 
 ### 4. Set your price tolerance
 
-Your **price tolerance** determines how far from the current price you're willing to fill. A wider tolerance means a higher chance of filling; a tighter tolerance gives you more control.
+Your **price tolerance** determines how far from the current price you're willing to fill.
+A wider tolerance means a higher chance of filling;
+a tighter tolerance gives you more control.
 
-For most market conditions, 0.5–1% works well. In volatile markets, set it slightly wider.
+For most market conditions, 0.5–1% works well.
+In volatile markets, set it slightly wider.
 
 ### 5. Confirm
 
-Click **Trade**. TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes – all in under a second. You'll see an estimated price and can review your worst-case price before confirming; the trade will never execute at a less favorable price than your limit.
+Click **Trade**.
+TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes, all in under a second.
+You'll see an estimated price and can review your worst-case price before confirming;
+the trade will never execute at a less favorable price than your limit.
 
 {/* TODO DR-148 add screen shot
 <div class="image-placeholder">
@@ -82,17 +90,23 @@ Your positions appear in the **Positions** panel. For each position you can see:
 
 ### Adding margin
 
-If your position is approaching the liquidation price, you can add margin to push it further away. Go to your position details and click **Add Margin**.
+If your position is approaching the liquidation price, you can add margin to push it further away.
+Go to your position details and click **Add Margin**.
 
 ### Partial close
 
-You can reduce your position size without closing entirely. Click **Partial Close**, enter the quantity to close, and confirm. The corresponding margin is released.
+You can reduce your position size without closing entirely.
+Click **Partial Close**, enter the quantity to close, and confirm.
+The corresponding margin is released.
 
 ---
 
 ## Closing a position
 
-Click **Close** on any open position. Closing works the same as opening – TrueCurrent finds the best available price and executes automatically. You can close fully or partially.
+Click **Close** on any open position.
+Closing works the same as opening:
+TrueCurrent finds the best available price and executes automatically.
+You can close fully or partially.
 
 Closed positions settle instantly and released margin returns to your available balance.
 
@@ -103,6 +117,7 @@ Closed positions settle instantly and released margin returns to your available 
 Your unrealized P&L is calculated as:
 
 **For longs:**
+
 ```
 P&L = (Mark price − Entry price) × Position size
 ```

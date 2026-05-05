@@ -4,7 +4,9 @@ description: "Guide to depositing USDC into TrueCurrent using CCTP cross-chain t
 updatedAt: "2026-05-04"
 ---
 
-To trade on TrueCurrent, you need USDC in your trading account. There are two ways to get it there. Both methods reflect the deposit flow as of Q2 2026.
+To trade on TrueCurrent, you’ll need USDC in your trading account.
+You can add it in two ways.
+Both methods reflect the deposit flow as of Q2 2026.
 
 ---
 

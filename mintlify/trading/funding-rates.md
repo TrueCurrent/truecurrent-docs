@@ -79,14 +79,14 @@ In practice the VWAP fluctuates block by block; the settlement rate is their tim
 
 | Input | Value |
 |-------|-------|
-| Mark price (= Index price) | $25.00 |
-| VWAP of executed trades | $25.05 |
-| Premium | ($25.05 − $25.00) / $25.00 = **+0.20%** |
+| Mark price (= Index price) | \$25.00 |
+| VWAP of executed trades | \$25.05 |
+| Premium | (\$25.05 − \$25.00) / \$25.00 = **+0.20%** |
 | TWAP (sustained premium, 1/24 normalisation) | 0.20% / 24 ≈ **+0.0083% per hour** |
-| Position notional | 1 INJ × $25.00 = **$25.00** |
-| Hourly funding payment (long pays short) | $25.00 × 0.0083% ≈ **$0.0021 per hour** (~$0.05 per day) |
+| Position notional | 1 INJ × \$25.00 = **\$25.00** |
+| Hourly funding payment (long pays short) | \$25.00 × 0.0083% ≈ **\$0.0021 per hour** (~$0.05 per day) |
 
-At this rate, holding 1 INJ long for a week costs roughly $0.35 in funding — negligible at this position size.
+At this rate, holding 1 INJ long for a week costs roughly \$0.35 in funding — negligible at this position size.
 
 ---
 
@@ -96,13 +96,13 @@ Same market conditions as Example 1.
 
 | Input | Value |
 |-------|-------|
-| Mark price (= Index price) | $25.00 |
-| VWAP of executed trades | $25.05 |
+| Mark price (= Index price) | \$25.00 |
+| VWAP of executed trades | \$25.05 |
 | TWAP funding rate | **+0.0083% per hour** |
-| Position notional | 100 INJ × $25.00 = **$2,500** |
-| Hourly funding payment (long pays short) | $2,500 × 0.0083% ≈ **$0.21 per hour** (~$5.00 per day) |
+| Position notional | 100 INJ × \$25.00 = **\$2,500** |
+| Hourly funding payment (long pays short) | \$2,500 × 0.0083% ≈ **\$0.21 per hour** (~\$5.00 per day) |
 
-A week of holding costs roughly $35. At 10× leverage (initial margin ~$250), daily funding represents about 2% of your margin stake — a meaningful holding cost in a sustained uptrend.
+A week of holding costs roughly \$35. At 10× leverage (initial margin ~\$250), daily funding represents about 2% of your margin stake — a meaningful holding cost in a sustained uptrend.
 
 ---
 
@@ -112,13 +112,13 @@ Same market, positive funding: executed trades running above the mark price mean
 
 | Input | Value |
 |-------|-------|
-| Mark price (= Index price) | $25.00 |
-| VWAP of executed trades | $25.05 |
+| Mark price (= Index price) | \$25.00 |
+| VWAP of executed trades | \$25.05 |
 | TWAP funding rate | **+0.0083% per hour** (positive → shorts receive) |
-| Position notional | 100 INJ × $25.00 = **$2,500** |
-| Hourly funding receipt | $2,500 × 0.0083% ≈ **+$0.21 per hour** (~+$5.00 per day) |
+| Position notional | 100 INJ × \$25.00 = **\$2,500** |
+| Hourly funding receipt | \$2,500 × 0.0083% ≈ **+\$0.21 per hour** (~+\$5.00 per day) |
 
-Over a week, a 100 INJ short collects approximately $35 — equivalent to a ~14% annualised yield on $250 of initial margin at 10× leverage, from funding alone. This is sometimes called a *funding carry trade*: holding a short specifically to harvest positive funding in an overheated long-skewed market.
+Over a week, a 100 INJ short collects approximately \$35 — equivalent to a ~14% annualised yield on \$250 of initial margin at 10× leverage, from funding alone. This is sometimes called a *funding carry trade*: holding a short specifically to harvest positive funding in an overheated long-skewed market.
 
 ---
 
@@ -128,12 +128,12 @@ When executed trade prices fall below the mark price, the perpetual is at a disc
 
 | Input | Value |
 |-------|-------|
-| Mark price (= Index price) | $25.00 |
-| VWAP of executed trades | $24.95 |
-| Premium | ($24.95 − $25.00) / $25.00 = **−0.20%** |
+| Mark price (= Index price) | \$25.00 |
+| VWAP of executed trades | \$24.95 |
+| Premium | (\$24.95 − \$25.00) / \$25.00 = **−0.20%** |
 | TWAP funding rate | 0.20% / 24 ≈ **−0.0083% per hour** |
-| Position notional | 100 INJ × $25.00 = **$2,500** |
-| Hourly funding payment (short pays long) | $2,500 × 0.0083% ≈ **$0.21 per hour** (cost to shorts; income to longs) |
+| Position notional | 100 INJ × \$25.00 = **\$2,500** |
+| Hourly funding payment (short pays long) | \$2,500 × 0.0083% ≈ **\$0.21 per hour** (cost to shorts; income to longs) |
 
 Negative funding typically signals a market leaning short — aggressive selling is pushing executed prices below the oracle mark. Longs receive a small subsidy each hour as an incentive to absorb that selling pressure.
 

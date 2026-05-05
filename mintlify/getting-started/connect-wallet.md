@@ -1,12 +1,13 @@
 ---
 title: "Connect your wallet"
-description: "Connect supported wallets including Rabby, MetaMask, Keplr, Rainbow, Leap, and Phantom to TrueCurrent's non-custodial perpetuals exchange with one-time authz authorization setup."
+description: "Connect supported wallets including Rabby, MetaMask, Keplr, Rainbow, Leap, and Phantom to TrueCurrent's non-custodial perpetuals exchange with one-time authorization setup."
 updatedAt: "2026-05-04"
 ---
 
-TrueCurrent is non-custodial – you trade directly from your own wallet. No account creation, no email, no KYC.
-
-TrueCurrent is non-custodial — you trade directly from your own wallet. No account creation, no email, no KYC. Wallet support and supported chains reflect the TrueCurrent integration set as of Q2 2026.
+TrueCurrent is non-custodial.
+You trade directly from your own wallet.
+No account creation, no email, no KYC.
+Wallet support and supported chains reflect the TrueCurrent integration set as of Q2 2026.
 
 ---
 
@@ -46,3 +47,11 @@ The first time you trade, TrueCurrent will prompt you to complete a one-time aut
 This takes about 30 seconds and only needs to be done once per wallet.
 
 This authorization is specific to TrueCurrent's contract and can be revoked at any time.
+
+<Info>
+Authorization is performed using `authz`.
+
+To find out more about `authz`, for programmatic uses:
+- [`authz` transaction example](https://docs.injective.network/developers-native/examples/authz)
+- [`x/authz` native module documentation](https://docs.injective.network/developers-native/core/authz)
+</Info>
