@@ -141,7 +141,6 @@
                 "pages": [
                   "technical/architecture",
                   "technical/how-rfq-works",
-                  "technical/understanding-quotes",
                   "technical/smart-contract",
                   "technical/websocket-streams",
                   "technical/authz-model",
@@ -170,6 +169,10 @@
     {
       "source": "/trading/placing-a-trade",
       "destination": "/trading/how-to-trade"
+    },
+    {
+      "source": "/technical/understanding-quotes",
+      "destination": "/trading/understanding-quotes"
     }
   ]
 }
