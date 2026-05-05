@@ -1,18 +1,12 @@
 ---
-title: "Authorization setup (authz)"
-description: "Step-by-step guide to setting up authz grants on Injective for TrueCurrent market makers, including required message types, Python implementation, grant verification, and security best practices for automated settlement."
+title: "Authorization setup (market maker)"
+description: "Recipe: the two authz grants a market-maker wallet must give the TrueCurrent contract before its quotes can settle. Python code sample, verification, and revocation."
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent uses Injective's native `authz` module to allow the smart contract to execute trades on behalf of both traders and market makers. As a market maker, you need to grant the contract specific permissions before your quotes can settle.
+This is the operational recipe for granting the TrueCurrent contract the two message types it needs to settle your maker-side fills. It is a one-time setup per wallet.
 
----
-
-## What is authz?
-
-The Cosmos SDK `authz` module allows one address (the *granter*) to authorize another address (the *grantee*) to send specific message types on their behalf. On TrueCurrent, the *grantee* is the TrueCurrent smart contract.
-
-This is how settlement works without requiring you to manually sign every trade: when a trader accepts a quote, the contract has pre-authorized permission to submit the settlement transaction using your wallet as counterparty.
+For the conceptual model — why authz, what it protects, what the security tradeoffs are — see [Authorization model](/technical/authz-model). For the taker-side recipe (three grants), see [Takers — Authorization setup](/takers/authz-setup).
 
 ---
 
@@ -122,8 +116,8 @@ Revoking grants does not close any open positions. Your existing positions remai
 
 ---
 
-## Security note
+## Security model
 
-Authz grants are scoped to specific message types and the specific contract address. You're not giving the contract open-ended access to your wallet – only the ability to submit the specific message types listed above. Review the grant parameters carefully before signing.
+Grants are scoped to specific message types and a specific grantee address (the TrueCurrent contract); they are revocable at any time, and the contract's own onchain checks (signature verification, whitelist check, balance check) are the actual security boundary regardless of what authz allows. For the full security analysis and trust-model walkthrough, see [Authorization model](/technical/authz-model#why-not-just-use-allowances-or-signatures-per-trade).
 
-For maximum security in production, use a dedicated market making wallet separate from your personal wallet.
+For production, use a dedicated market making wallet separate from your personal or treasury wallet.

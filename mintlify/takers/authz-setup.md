@@ -1,26 +1,12 @@
 ---
-title: "Authorization setup"
-description: "--"
-updatedAt: "2026-04-08"
+title: "Authorization setup (taker)"
+description: "Recipe: the three authz grants a programmatic taker wallet must give the TrueCurrent contract before any trade can settle. Python and TypeScript code samples, verification, and revocation."
+updatedAt: "2026-05-05"
 ---
 
-Before you can settle any trades on TrueCurrent, your taker wallet must grant the TrueCurrent contract permission to submit specific message types on your behalf. This uses Injective's native `authz` module.
+This is the operational recipe for granting a TrueCurrent contract the three message types it needs to settle trades on your behalf. It is a one-time setup per wallet. Once grants are in place, every `AcceptQuote` settles atomically without requiring per-trade signatures.
 
-This is a one-time setup per wallet. Once grants are in place, every `AcceptQuote` you send can settle atomically in a single transaction without requiring multiple signatures.
-
-For the conceptual model and security analysis, see [Authorization model](/technical/authz-model).
-
----
-
-## Why takers need authz
-
-When you call `AcceptQuote`, the TrueCurrent contract needs to:
-
-1. Open your derivative position via `MsgPrivilegedExecuteContract`
-2. Move margin between your wallet and subaccount if required (`MsgSend`)
-3. Hold a reserved orderbook permission (`MsgBatchUpdateOrders`) for future contract paths
-
-Rather than making you sign each of these messages individually at settlement time, you pre-authorize the contract once. Each authorization is narrow – scoped to a specific message type and a specific grantee address (the contract).
+For the conceptual model — why authz, what it protects, what the security tradeoffs are — see [Authorization model](/technical/authz-model). For the maker-side recipe (two grants instead of three), see [Market makers — Authorization setup](/market-makers/authz-setup).
 
 ---
 
@@ -215,11 +201,8 @@ Revoking `MsgPrivilegedExecuteContract` immediately prevents any further settlem
 
 ---
 
-## Security model summary
+## Security model
 
-- Grants are scoped to **specific message types** – the contract cannot transfer arbitrary funds, only perform the operations you authorized.
-- Grants are scoped to **a specific grantee** – only the TrueCurrent contract address, nothing else.
-- Grants are **revocable at any time**, effective immediately.
-- The onchain contract logic enforces your trading parameters (`worst_price`, quote signature, quote expiry) – even a malicious contract operator could not forge a trade against your authz because the onchain verification catches it.
+Grants are scoped to specific message types and a specific grantee address (the TrueCurrent contract); they are revocable at any time, and the contract's own onchain checks (`worst_price`, signature, expiry) are the actual security boundary regardless of what authz allows. For the full security analysis and trust-model walkthrough, see [Authorization model](/technical/authz-model#why-not-just-use-allowances-or-signatures-per-trade).
 
 For production systems, run takers from wallets dedicated to RFQ trading. Don't grant from a treasury or cold wallet.
