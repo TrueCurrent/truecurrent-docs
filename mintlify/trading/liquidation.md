@@ -140,7 +140,15 @@ TrueCurrent maintains an insurance fund to protect the system against insolvent 
 
 The onchain insurance fund address can be queried on the Injective explorer for real-time balance transparency. Refer to the [Injective exchange documentation](https://docs.injective.network) for the contract address specific to each market.
 
-{/* TODO DR-142 add "## Auto-Deleveraging (ADL)" section here */}
+---
+
+## Auto-deleveraging (ADL)
+
+If a liquidation closes at a price worse than the bankruptcy price *and* the insurance fund cannot cover the shortfall, TrueCurrent activates auto-deleveraging as a last resort. ADL closes a portion of the most profitable opposite-side positions at the insolvent counterparty's bankruptcy price to absorb the deficit.
+
+ADL is rare — it only fires when the insurance fund has been depleted by an extreme event. But if you carry leveraged exposure during a tail-risk move, it is the final backstop you can be touched by even though your own margin is healthy.
+
+For when ADL activates, how the queue is ranked, the exit price you receive, and how to reduce your exposure, see [Auto-deleveraging (ADL)](/trading/adl).
 
 ---
 
