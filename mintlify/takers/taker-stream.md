@@ -13,7 +13,7 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 | Environment | WebSocket URL |
 |---|---|
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
-| Mainnet | *(not yet deployed)* |
+| Mainnet | Published here on launch |
 
 The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (market makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 

@@ -13,7 +13,7 @@ TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on
 | Network | Address |
 |---------|---------|
 | Injective Testnet | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
-| Injective Mainnet | *(TBD – available after mainnet deployment)* |
+| Injective Mainnet | Published here on launch |
 
 ---
 
@@ -118,12 +118,12 @@ The contract exposes several query methods for reading state:
 { "is_maker": { "address": "inj1..." } }
 ```
 
-*(Additional queries TBD as contract interface is finalized)*
+For the full contract message and query interface, see the source repository.
 
 ---
 
 ## Contract source code
 
-The TrueCurrent contract source code will be published at *(GitHub link TBD)* before mainnet launch. The contract is built with CosmWasm and the Injective CosmWasm SDK.
+The TrueCurrent contract source code is published in the [InjectiveLabs RFQ repository](https://github.com/InjectiveLabs/rfq). The contract is built with CosmWasm and the Injective CosmWasm SDK.
 
-A security audit is planned before mainnet deployment. Audit report will be linked here upon completion.
+A security audit is planned before mainnet deployment; the audit report will be linked here on completion.
