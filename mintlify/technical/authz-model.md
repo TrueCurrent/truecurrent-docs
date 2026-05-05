@@ -16,7 +16,7 @@ When you accept a quote on TrueCurrent, the onchain settlement involves the True
 flowchart LR
     subgraph Granters ["Granters (one-time setup)"]
         Taker["Taker wallet"]
-        Maker["Market Maker wallet"]
+        Maker["Liquidity Provider wallet"]
     end
 
     subgraph Grantee ["Grantee"]

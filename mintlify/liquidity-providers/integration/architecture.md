@@ -8,7 +8,7 @@ updatedAt: "2026-04-18"
 flowchart LR
     Taker["Retail (Taker)"]
     Indexer["RFQ Indexer<br/>(WebSocket)"]
-    MM["Market Maker (YOU)<br/>MakerStream"]
+    MM["Liquidity Provider (YOU)<br/>MakerStream"]
     Chain["Injective Chain<br/>(Settlement)"]
 
     Taker <-->|requests / quotes| Indexer

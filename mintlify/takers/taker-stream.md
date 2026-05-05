@@ -67,7 +67,7 @@ You will need to request an `api`-tier key from the TrueCurrent team once the ga
 
 ## Submitting a request
 
-An RFQ request declares what you want to trade. The indexer broadcasts it to every active liquidity provider, who each have a few hundred milliseconds to respond. {/* TODO: to add precise MM response deadline once benchmarked */}
+An RFQ request declares what you want to trade. The indexer broadcasts it to every active liquidity provider, who each have a few hundred milliseconds to respond. {/* TODO: to add precise Liquidity Provider response deadline once benchmarked */}
 
 **Request fields:**
 
@@ -228,7 +228,7 @@ const best = quotes
 
 **Choosing the window size:**
 
-The hard ceiling is the quote's `expiry`. By the time you've accounted for a few hundred milliseconds of MM response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
+The hard ceiling is the quote's `expiry`. By the time you've accounted for a few hundred milliseconds of Liquidity Provider response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
 
 - **A few hundred milliseconds** is a reasonable default – long enough to receive quotes from warm makers, short enough to leave settlement headroom.
 - **Too short** (&lt;100ms): you'll miss slower makers and reduce competition.

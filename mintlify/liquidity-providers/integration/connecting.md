@@ -50,20 +50,20 @@ and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`
 ### Connection flow
 
 ```
-MM                                    Indexer
+LP                                    Indexer
 │                                        │
 │  ── WebSocket Connect ──────────────▶  │
 │     subprotocol: grpc-ws               │
 │                                        │
 │  ◀── Connection Established ────────   │
 │                                        │
-│  ── Ping (every 1s) ───────────────▶  │  ← REQUIRED: server drops
-│  ◀── Pong ─────────────────────────   │    idle connections
+│  ── Ping (every 1s) ────────────────▶  │  ← REQUIRED: server drops
+│  ◀── Pong ──────────────────────────   │    idle connections
 │                                        │
-│  ◀── Request (RFQ from retail) ─────  │
+│  ◀── Request (RFQ from retail) ──────  │
 │                                        │
 │  ── Quote (signed) ─────────────────▶  │
-│  ◀── Quote ACK ────────────────────   │
+│  ◀── Quote ACK ─────────────────────   │
 │                                        │
 ```
 
@@ -115,14 +115,14 @@ The stream stays open but silent until you reply correctly.
 **Flow:**
 
 ```
-1. MM connects          with maker_address metadata
+1. LP connects          with maker_address metadata
 2. Indexer sends        MakerChallenge `{ nonce, evm_chain_id, expires_at }`
-3. MM signs             StreamAuthChallenge typed-data (EIP-712 v2)
-4. MM sends             MakerStreamStreamingRequest `{ message_type: "auth", auth: MakerAuth }`
+3. LP signs             StreamAuthChallenge typed-data (EIP-712 v2)
+4. LP sends             MakerStreamStreamingRequest `{ message_type: "auth", auth: MakerAuth }`
 5. Indexer streams      request / quote_ack / settlement_update / …
 ```
 
-**`MakerChallenge` fields (indexer → MM):**
+**`MakerChallenge` fields (indexer → Liquidity Provider):**
 
 | # | Field | Type | Meaning |
 |---|---|---|---|
@@ -151,7 +151,7 @@ Type string: `"StreamAuthChallenge(uint64 evmChainId,address maker,bytes32 nonce
 
 Uses the same domain separator as `SignQuote` (name `"RFQ"`, version `"1"`, `chainId`, `verifyingContract`).
 
-**`MakerAuth` fields (MM → indexer):**
+**`MakerAuth` fields (Liquidity Provider → indexer):**
 
 | # | Field | Type | Meaning |
 |---|---|---|---|

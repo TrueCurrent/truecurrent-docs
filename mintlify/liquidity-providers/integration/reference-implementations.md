@@ -14,14 +14,14 @@ The `rfq-testing` repo contains all reference implementations. Both Python and T
 | Signing | ✅ Correct | `keccak256 → secp256k1` with correct field order, `evmChainId` field #1. |
 | Auth handshake | ✅ Implemented | `MakerStreamClient` handles `MakerChallenge` automatically when configured with `auth_private_key`, `auth_evm_chain_id`, `auth_contract_address`. |
 | Ping/pong | ✅ Implemented | ~1s interval. |
-| Entry points | `examples/python-mm/main.py` (WebSocket MM reference), `examples/test_settlement.py` (full E2E) |
+| Entry points | `examples/python-mm/main.py` (WebSocket Liquidity Provider reference), `examples/test_settlement.py` (full E2E) |
 
 ### Python (native gRPC)
 
 | Aspect | Status | Notes |
 |---|---|---|
 | Transport | Native gRPC | ✅ Alternative transport using `testnet.rfq.grpc.injective.network:443`. |
-| Entry points | `examples/python-mm/main-grpc.py` (MM reference), `examples/test_settlement_grpc.py` (full E2E) |
+| Entry points | `examples/python-mm/main-grpc.py` (Liquidity Provider reference), `examples/test_settlement_grpc.py` (full E2E) |
 
 ### TypeScript (native gRPC)
 

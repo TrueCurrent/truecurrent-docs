@@ -14,7 +14,7 @@ TrueCurrent is composed of three main layers: an off-chain quote distribution la
 flowchart LR
     Taker(["Taker<br/><i>end user or bot</i>"])
     Indexer(["RFQ Indexer<br/><i>off-chain routing</i>"])
-    MM(["Market Maker<br/><i>off-chain quoting</i>"])
+    MM(["Liquidity Provider<br/><i>off-chain quoting</i>"])
 
     subgraph Injective["Injective Chain"]
         direction TB
@@ -101,7 +101,7 @@ sequenceDiagram
     Indexer->>Taker: Best quote (or N quotes)
     Taker->>Contract: AcceptQuote{quotes, worst_price, ...}
 
-    Contract->>Contract: Verify MM signature
+    Contract->>Contract: Verify Liquidity Provider signature
     Contract->>Contract: Check expiry, worst_price, nonce
     Contract->>Exchange: MsgPrivilegedExecuteContract (via authz)
     Exchange-->>Contract: Positions opened (taker + maker)

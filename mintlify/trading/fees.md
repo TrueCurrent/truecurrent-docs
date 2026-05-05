@@ -71,7 +71,7 @@ The table below illustrates how TrueCurrent's fee structure compares to typical 
 
 | Venue type | Taker fee | Maker fee | Network fee |
 |------------|-----------|-----------|-------------------|
-| **TrueCurrent** | 0 bps | n/a (paid by MM) | Free |
+| **TrueCurrent** | 0 bps | n/a (paid by Liquidity Provider) | Free |
 | Typical DEX | 5–20 bps | 0–5 bps | Transaction gas fee |
 | Typical CEX (standard tier) | 3–5 bps | 1–2 bps | None (centralised) |
 | Typical CEX (VIP tier) | 1–3 bps | 0–1 bps | None (centralised) |

@@ -88,7 +88,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - The market ID in the request is incorrect
 - Liquidity providers are whitelisted but their MakerStream is disconnected
 
-**Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the MM wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
+**Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the Liquidity Provider wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
 
 ---
 
