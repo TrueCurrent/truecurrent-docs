@@ -24,7 +24,7 @@ Any field covered by the EIP-712 v2 signature must match exactly, or settlement 
 | `quote.taker` | string | Taker's `inj1...` (from request) |
 | `quote.signature` | string | Hex, `0x`-prefixed |
 | `quote.sign_mode` | string | Required. Use `"v2"`. |
-| `quote.evm_chain_id` | uint64 | **Required when `sign_mode="v2"`.** EVM chain ID matching the EIP-712 domain (`1439` testnet, `1776` mainnet). |
+| `quote.evm_chain_id` | uint64 | `sign_mode="v2"` is enforced. EVM chain ID matching the EIP-712 domain (`1439` for testnet, `1776` for mainnet). |
 | `quote.min_fill_quantity` | string | Optional. Must match the value you signed. Use `"0"` when absent — never the empty string. |
 
 The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). The `chain_id` and `contract_address` fields above are still sent for indexer compatibility.

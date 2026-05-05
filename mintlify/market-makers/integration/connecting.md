@@ -37,7 +37,15 @@ Additional endpoints exposed by the indexer:
 | gRPC-web | `https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
 | HTTP/REST | `https://testnet.rfq.injective.network` |
 
-> **Heads-up on service naming:** the indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`) declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`. Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names. Use the public alias — that's what the testnet deployment actually accepts, and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`) uses.
+<Info>
+**Service naming**:
+
+The indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`)
+declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`.
+Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names
+Use the public alias: That's what the testnet deployment actually accepts,
+and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`) uses.
+</Info>
 
 ### Connection flow
 
@@ -126,9 +134,9 @@ The stream stays open but silent until you reply correctly.
 The `MakerChallenge` message format uses a signed integer (`sint64`),
 while the EIP-712 signature uses an unsigned integer (`uint64`).
 
-Do *not* use `uint64` when constructing this `MakerChallenge` messages,
+Do *not* use `uint64` when constructing this `MakerChallenge` message,
 only use `sint64` for the `expires_at` field.
-<Warning>
+</Warning>
 
 **`StreamAuthChallenge` typed-data layout:**
 

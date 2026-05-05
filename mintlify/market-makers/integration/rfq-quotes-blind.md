@@ -8,9 +8,9 @@ Take-profit and stop-loss orders are submitted as signed taker intents. When a m
 
 ---
 
-## Three participation modes
+## Participation mode
 
-### A. Live RFQ response (recommended starting point)
+### Live RFQ response
 
 Stay connected to MakerStream.
 When a trigger fires, you receive a standard exit RFQ request.
@@ -21,21 +21,6 @@ From your quoting system's perspective,
 a trigger-driven exit uses the same quote schema as a user-initiated request.
 The taker direction is still the direction being traded by the taker,
 and your maker-side exposure is the opposite side.
-
-### B. Pre-posted blind quotes
-
-Pre-posted blind quote books are not part of the public onboarding path yet.
-Do not ship a blind-quote integration unless the TrueCurrent team has provided
-the current production schema and test coverage for that path.
-
-### C. Do nothing (opt-out)
-
-TP/SL participation is entirely opt-in.
-If you don't respond to a trigger-driven exit request,
-and another maker has coverage at an acceptable price,
-the protocol settles without you.
-**Not responding carries no reputational cost for TP/SL events.**
-You are never obligated to participate in a signed-intent settlement.
 
 ---
 

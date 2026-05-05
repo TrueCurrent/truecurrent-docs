@@ -52,6 +52,9 @@ import os
 
 from rfq_test.clients.chain import ChainClient
 
+MM_PRIVATE_KEY = os.getenv("MM_PRIVATE_KEY")
+CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS")
+
 chain = ChainClient(env_config.chain)
 await chain.connect()
 

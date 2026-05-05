@@ -15,9 +15,9 @@ updatedAt: "2026-05-05"
   </Accordion>
 
   <Accordion title="What if my quote expires before the taker accepts?">
-    The contract rejects expired quotes; use a 2-second expiry for live MM quotes.
+    The quote will not go on chain, as both maker and taker submit their intents off chain.
 
-    Blind/TP-SL quotes can use longer windows (minutes to hours).
+    The quote only goes on chain when the order is matched.
   </Accordion>
 
   <Accordion title="Can I quote a different quantity than requested?">
