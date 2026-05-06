@@ -47,7 +47,7 @@ Steps 1–4 happen off-chain over WebSocket inside a single quote window — typ
 |---|---|
 | Indexer broadcasts request | ~10 ms |
 | Maker prices + signs + returns quote | a few hundred ms |
-| Indexer collection window | ~2 seconds (matches live quote expiry) |
+| Taker quote collection | a few hundred ms to less than the live quote expiry window |
 | Taker selects best quote and broadcasts `AcceptQuote` | ~100 ms |
 | Injective block time | ~600 ms |
 | **Total wall-clock** | **roughly 1 second once quotes start arriving** |

@@ -13,7 +13,7 @@ TrueCurrent's core logic is implemented as a CosmWasm smart contract deployed on
 | Network | Address |
 |---------|---------|
 | Injective Testnet | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
-| Injective Mainnet | Published here on launch |
+| Injective Mainnet | Contact TrueCurrent for the current production contract |
 
 ---
 

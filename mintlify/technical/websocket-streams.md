@@ -56,28 +56,28 @@ Quotes arrive as WebSocket messages on the TakerStream:
 }
 ```
 
-Use a collection window (e.g., 2 seconds after submitting the request) to gather all quotes before selecting the best one.
+Use a short collection window to gather quotes before selecting the best one. Programmatic takers commonly start around 500 ms and tune from real latency data; waiting near the full quote expiry window leaves little time for onchain settlement.
 
 **Python example:**
 
 ```python
-retail_ws = TakerStreamClient(
+taker_ws = TakerStreamClient(
     endpoint=env_config.indexer.ws_endpoint,
-    request_address=retail_wallet.inj_address,
+    request_address=taker_wallet.inj_address,
     timeout=15.0,
 )
-await retail_ws.connect()
+await taker_ws.connect()
 
-ack = await retail_ws.send_request(
+ack = await taker_ws.send_request(
     request_data,
     wait_for_response=True,
     response_timeout=10.0,
 )
 rfq_id = int(ack["rfq_id"])
 
-quotes = await retail_ws.collect_quotes(
+quotes = await taker_ws.collect_quotes(
     rfq_id=rfq_id,
-    timeout=5.0,
+    timeout=0.5,
     min_quotes=1,
 )
 
@@ -157,7 +157,7 @@ await mm_ws.send_quote(quote_data)
 | Environment | Indexer WebSocket |
 |-------------|-------------------|
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| Mainnet | Published here on launch |
+| Mainnet | Contact TrueCurrent for the current production endpoint |
 
 Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
 

@@ -90,6 +90,12 @@ Use the maker page if you will provide liquidity to other traders and respond to
   <Card title="Make markets" icon="chart-candlestick" href="/sdk-trading/makers">
     Build a maker integration: connect to MakerStream, sign quotes, manage inventory, and monitor fills.
   </Card>
+  <Card title="Set up authz" icon="key" href="/sdk-trading/authz">
+    Grant the RFQ contract the narrow permissions required for taker and maker settlement.
+  </Card>
+  <Card title="Run testnet E2E" icon="terminal" href="/sdk-trading/runbook">
+    Validate wallets, balances, grants, MakerStream auth, AcceptQuote, and TP/SL signed intents.
+  </Card>
 </CardGroup>
 
 ---
