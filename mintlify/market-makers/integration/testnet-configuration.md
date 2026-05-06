@@ -51,7 +51,7 @@ CONTRACT_ADDRESS=inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk
 ### Notes
 
 - `ws_endpoint` is the **base URL only**.
-  The `rfq-testing` client appends `/MakerStream` (makers) or `/TakerStream` (takers) automatically.
+  The `injective-rfq-toolkit` client appends `/MakerStream` (makers) or `/TakerStream` (takers) automatically.
   Do not include the service path in this value.
 - The USDC denom `erc20:0x0C382e685bbeeFE5d3d9C29e29E341fEE8E84C5d` is used when
   funding your exchange subaccount and checking balances via the chain REST API.

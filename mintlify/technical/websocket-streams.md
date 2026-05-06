@@ -37,7 +37,7 @@ Authentication: Connect with the taker's Injective address as an identifier. The
 }
 ```
 
-`request_address` is required as TakerStream connection metadata, not as a request-body field. With `rfq-testing`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
+`request_address` is required as TakerStream connection metadata, not as a request-body field. With `injective-rfq-toolkit`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
 
 ### Receiving quotes
 
@@ -159,7 +159,7 @@ await mm_ws.send_quote(quote_data)
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
 | Mainnet | Contact TrueCurrent for the current production endpoint |
 
-Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
+Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `injective-rfq-toolkit` client libraries handle the framing.
 
 See [Taker SDK trading](/sdk-trading/takers) and [Maker SDK trading](/sdk-trading/makers) for the high-level SDK integration paths.
 

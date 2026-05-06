@@ -6,14 +6,14 @@ updatedAt: "2026-05-06"
 
 Use this runbook when validating a taker or maker SDK integration on testnet. It is intentionally procedural: complete the steps in order, fix failures before moving on, then run the full settlement flow.
 
-This page is adapted from the RFQ onboarding runbook and assumes you are using the `rfq-testing`[ reference client](https://github.com/InjectiveLabs/rfq-testing).
+This page is adapted from the RFQ onboarding runbook and assumes you are using the [`injective-rfq-toolkit` reference client](https://github.com/InjectiveLabs/injective-rfq-toolkit).
 
 ---
 
 ## 1. Install the reference client
 
 ```bash
-cd rfq-testing
+cd injective-rfq-toolkit
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
@@ -55,7 +55,7 @@ curl -s \
   | python3 -m json.tool
 ```
 
-For exchange subaccount balances, query the Injective exchange module or use the balance helpers in `rfq-testing`.
+For exchange subaccount balances, query the Injective exchange module or use the balance helpers in `injective-rfq-toolkit`.
 
 ---
 
@@ -169,7 +169,7 @@ The full testnet cycle is:
 6. Taker submits `AcceptQuote` onchain.
 7. Maker receives quote and settlement updates.
 
-Use `examples/test_settlement.py` in `rfq-testing` as the canonical executable script.
+Use `examples/test_settlement.py` in `injective-rfq-toolkit` as the canonical executable script.
 
 ```bash
 set -a

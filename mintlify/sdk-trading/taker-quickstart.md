@@ -7,10 +7,10 @@ updatedAt: "2026-05-06"
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
 
 
-Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing):
+Working code lives in [`InjectiveLabs/injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit):
 
-- Python: [`examples/test_settlement.py`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/test_settlement.py)
-- TypeScript taker example: [`examples/ts-retail/main.ts`](https://github.com/InjectiveLabs/rfq-testing/blob/main/examples/ts-retail/main.ts)
+- Python: [`examples/test_settlement.py`](https://github.com/InjectiveLabs/injective-rfq-toolkit/blob/main/examples/test_settlement.py)
+- TypeScript taker example: [`examples/ts-retail/main.ts`](https://github.com/InjectiveLabs/injective-rfq-toolkit/blob/main/examples/ts-retail/main.ts)
 
 ---
 
@@ -27,11 +27,11 @@ Working code lives in [`InjectiveLabs/rfq-testing`](https://github.com/Injective
 
 ## 1. Install
 
-**Python** – clone the testing repo and install the library:
+**Python** – clone the toolkit repo and install the library:
 
 ```bash
-git clone https://github.com/InjectiveLabs/rfq-testing.git
-cd rfq-testing
+git clone https://github.com/InjectiveLabs/injective-rfq-toolkit.git
+cd injective-rfq-toolkit
 python -m venv .venv && source .venv/bin/activate
 pip install -U pip
 pip install -e ".[dev]"
@@ -40,7 +40,7 @@ pip install -e ".[dev]"
 **TypeScript** – install the Injective SDK and the example deps:
 
 ```bash
-cd rfq-testing/examples
+cd injective-rfq-toolkit/examples
 npm install
 ```
 
@@ -69,7 +69,7 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | INJ/USDC PERP | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
 
 
-Anybody can access the public RFQ streams. The reference scripts in `rfq-testing` connect without additional stream authentication.
+Anybody can access the public RFQ streams. The reference scripts in `injective-rfq-toolkit` connect without additional stream authentication.
 
 
 ---

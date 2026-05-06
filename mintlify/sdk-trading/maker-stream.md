@@ -18,7 +18,7 @@ gRPC-web over WebSocket, protobuf framing.
 
 ### Endpoints
 
-Canonical public path per `rfq-testing/configs/testnet.yaml` (ground truth — what the working Python client connects to):
+Canonical public path per `injective-rfq-toolkit/configs/testnet.yaml` (ground truth — what the working Python client connects to):
 
 - Package / service: `injective_rfq_rpc.InjectiveRfqRPC`
 - Makers subscribe via `MakerStream`
@@ -40,7 +40,7 @@ Additional endpoints exposed by the indexer:
 <Info>
   **Service naming**:
 
-  The indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`) declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`. Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names. Use the public alias: that is what the testnet deployment actually accepts, and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`) uses.
+  The indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`) declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`. Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names. Use the public alias: that is what the testnet deployment actually accepts, and it's what every working client library (`injective-rfq-toolkit`, `rfq-qa-python-tests`) uses.
 </Info>
 
 ### Connection flow
@@ -78,7 +78,7 @@ MM                                    Indexer
 
 ### Protobuf messages (maker side)
 
-The canonical proto is `injective_rfq_rpc.proto` (in `rfq-testing/src/rfq_test/proto/`). Your bidi stream uses `MakerStream`:
+The canonical proto is `injective_rfq_rpc.proto` (in `injective-rfq-toolkit/src/rfq_test/proto/`). Your bidi stream uses `MakerStream`:
 
 ```protobuf
 service InjectiveRfqRPC {
@@ -98,7 +98,7 @@ service InjectiveRfqRPC {
 - `"quote_ack"` – a `StreamAck` confirming the indexer accepted your quote
 - `"error"` – a `StreamError` describing what went wrong
 
-> Read `rfq-testing/src/rfq_test/proto/injective_rfq_rpc.proto` for the full message definitions. The Python client wraps all this for you in `src/rfq_test/clients/websocket.py::MakerStreamClient`.
+> Read `injective-rfq-toolkit/src/rfq_test/proto/injective_rfq_rpc.proto` for the full message definitions. The Python client wraps all this for you in `src/rfq_test/clients/websocket.py::MakerStreamClient`.
 
 ---
 
@@ -215,7 +215,7 @@ if resp.message_type == "challenge":
     ))
 ```
 
-**Using the `rfq-testing` client (recommended):** Pass `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address` to `MakerStreamClient` — it handles the challenge-response automatically.
+**Using the `injective-rfq-toolkit` client (recommended):** Pass `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address` to `MakerStreamClient` — it handles the challenge-response automatically.
 
 ```python
 mm_ws = MakerStreamClient(

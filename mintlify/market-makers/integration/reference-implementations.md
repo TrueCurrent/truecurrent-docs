@@ -4,7 +4,7 @@ description: "Overview and production-readiness assessment of the Python and Typ
 updatedAt: "2026-05-05"
 ---
 
-The `rfq-testing` repo contains all reference implementations. Both Python and TypeScript are production-compatible against the live indexer.
+The `injective-rfq-toolkit` repo contains all reference implementations. Both Python and TypeScript are production-compatible against the live indexer.
 
 ### Python (WebSocket / gRPC-web)
 
@@ -14,14 +14,14 @@ The `rfq-testing` repo contains all reference implementations. Both Python and T
 | Signing | ✅ Correct | `keccak256 → secp256k1` with correct field order, `evmChainId` field #1. |
 | Auth handshake | ✅ Implemented | `MakerStreamClient` handles `MakerChallenge` automatically when configured with `auth_private_key`, `auth_evm_chain_id`, `auth_contract_address`. |
 | Ping/pong | ✅ Implemented | ~1s interval. |
-| Entry points | `examples/python-mm/main.py` (WebSocket MM reference), `examples/test_settlement.py` (full E2E) |
+| Entry points | `examples/python-mm/main.py` (WebSocket maker reference), `examples/test_settlement.py` (full E2E) |
 
 ### Python (native gRPC)
 
 | Aspect | Status | Notes |
 |---|---|---|
 | Transport | Native gRPC | ✅ Alternative transport using `testnet.rfq.grpc.injective.network:443`. |
-| Entry points | `examples/python-mm/main-grpc.py` (MM reference), `examples/test_settlement_grpc.py` (full E2E) |
+| Entry points | `examples/python-mm/main-grpc.py` (maker reference), `examples/test_settlement_grpc.py` (full E2E) |
 
 ### TypeScript (native gRPC)
 
@@ -42,11 +42,11 @@ The `rfq-testing` repo contains all reference implementations. Both Python and T
 
 ### Repository
 
-All examples live in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing).
+All examples live in [`InjectiveLabs/injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit).
 
 ```bash
-git clone https://github.com/InjectiveLabs/rfq-testing.git
-cd rfq-testing
+git clone https://github.com/InjectiveLabs/injective-rfq-toolkit.git
+cd injective-rfq-toolkit
 pip install -e ".[dev]"
 ```
 

@@ -102,7 +102,7 @@ The domain `chainId` is the EVM chain ID, not the Cosmos chain ID.
 
 ## Sign and submit a conditional order
 
-Use `sign_conditional_order_v2` from `rfq-testing` to produce the EIP-712 v2 digest signature, then submit via `TakerStreamClient.send_conditional_order`. The helper returns a `0x`-prefixed 65-byte signature; pass it through unchanged.
+Use `sign_conditional_order_v2` from `injective-rfq-toolkit` to produce the EIP-712 v2 digest signature, then submit via `TakerStreamClient.send_conditional_order`. The helper returns a `0x`-prefixed 65-byte signature; pass it through unchanged.
 
 ```python
 import os

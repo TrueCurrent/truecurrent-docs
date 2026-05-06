@@ -24,7 +24,7 @@ A programmatic taker must grant the following three message types to the TrueCur
 
 ## Setting up grants
 
-**Python** – using the helper from `rfq-testing`:
+**Python** – using the helper from `injective-rfq-toolkit`:
 
 ```python
 from rfq_test.clients.chain import ChainClient

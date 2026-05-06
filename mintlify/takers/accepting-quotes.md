@@ -89,7 +89,7 @@ const signatureB64 = Buffer.from(sigHex, "hex").toString("base64");
 
 If you skip the conversion, the contract returns a signature verification error that looks like the *maker* signed badly. However the true cause of the error is *encoding*.
 
-The `ContractClient.accept_quote()` helper in `rfq-testing` handles all three of these automatically. If you're building from scratch, apply them yourself.
+The `ContractClient.accept_quote()` helper in `injective-rfq-toolkit` handles all three of these automatically. If you're building from scratch, apply them yourself.
 
 ---
 

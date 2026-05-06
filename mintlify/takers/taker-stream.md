@@ -15,13 +15,13 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
 | Mainnet | Published here on launch |
 
-The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `injective-rfq-toolkit` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 
 ---
 
 ## Authentication
 
-Anybody can access the public RFQ streams. TakerStream is address-routed: you provide your Injective address when opening the stream, and the indexer routes quotes for your requests back to that address. The reference scripts in `rfq-testing` connect this way out of the box.
+Anybody can access the public RFQ streams. TakerStream is address-routed: you provide your Injective address when opening the stream, and the indexer routes quotes for your requests back to that address. The reference scripts in `injective-rfq-toolkit` connect this way out of the box.
 
 ---
 
@@ -41,7 +41,7 @@ An RFQ request declares what you want to trade. The indexer broadcasts it to eve
 | `worst_price` | string | Hard price limit. Quotes worse than this are rejected onchain. |
 | `expiry` | uint64 | Unix ms after which the request is ignored. Typically now + 5 min. |
 
-`request_address` is required as TakerStream connection metadata. With `rfq-testing`, set it on `TakerStreamClient`; do not put it in the RFQ request body.
+`request_address` is required as TakerStream connection metadata. With `injective-rfq-toolkit`, set it on `TakerStreamClient`; do not put it in the RFQ request body.
 
 **Python:**
 
@@ -202,7 +202,7 @@ You can also use a **first-fit pattern**: accept the first quote that satisfies 
 
 The wire protocol is slightly different from what most of the examples suggest. It's worth understanding if you're building a production taker.
 
-**On the wire, the taker's outgoing request (`RFQRequestInputType`) carries a `client_id` (UUID), not an `rfq_id`.** The indexer assigns the `rfq_id` when it receives the request, then broadcasts an inbound request (`RFQRequestType`) to all MMs with both `client_id` and the newly-minted `rfq_id`. MMs quote against the assigned `rfq_id`. When the taker calls `collect_quotes(rfq_id=...)`, it's matching on that indexer-assigned value. The `Request` unary RPC's `RequestResponse` returns `{status, client_id, rfq_id}` so you can learn the assigned id synchronously — see the `injective_rfq_rpc.proto` message definitions in `rfq-testing/src/rfq_test/proto/`.
+**On the wire, the taker's outgoing request (`RFQRequestInputType`) carries a `client_id` (UUID), not an `rfq_id`.** The indexer assigns the `rfq_id` when it receives the request, then broadcasts an inbound request (`RFQRequestType`) to all MMs with both `client_id` and the newly-minted `rfq_id`. MMs quote against the assigned `rfq_id`. When the taker calls `collect_quotes(rfq_id=...)`, it's matching on that indexer-assigned value. The `Request` unary RPC's `RequestResponse` returns `{status, client_id, rfq_id}` so you can learn the assigned id synchronously — see the `injective_rfq_rpc.proto` message definitions in `injective-rfq-toolkit/src/rfq_test/proto/`.
 
 Use ACK-based correlation. Generating a local millisecond timestamp and treating it as the settlement `rfq_id` is not reliable: the indexer assigns the actual `rfq_id`, and makers quote against that assigned value.
 

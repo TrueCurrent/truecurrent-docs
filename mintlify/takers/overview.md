@@ -91,6 +91,6 @@ What you are **not** trusting:
 - You will need a machine that can hold a WebSocket connection open – serverless-in-a-box patterns work, but cold-start latency eats into your quote window.
 - All programmatic taker traffic today is against **testnet** (`injective-888`). Mainnet endpoints go live at a later phase.
 
-- The reference implementation for everything in this section lives at [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) – Python library, TypeScript examples, and testnet config.
+- The reference implementation for everything in this section lives at [`InjectiveLabs/injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit) – Python library, TypeScript examples, and testnet config.
 
 Anybody can access the public RFQ streams. The reference scripts work out of the box without additional stream authentication.

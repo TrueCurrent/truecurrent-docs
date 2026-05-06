@@ -63,4 +63,4 @@ If you've integrated with other RFQ venues, three things on TrueCurrent are wort
 
 ## Reference repository
 
-All examples live in [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing). The Python `rfq_test` package is the reference client for both makers and takers; the `examples/` directory has working scripts for Python (WebSocket and gRPC), TypeScript, and Go.
+All examples live in [`InjectiveLabs/injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit). The Python `rfq_test` package is the reference client for both makers and takers; the `examples/` directory has working scripts for Python (WebSocket and gRPC), TypeScript, and Go.

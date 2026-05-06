@@ -15,7 +15,7 @@ For a full lifecycle walkthrough — including authz setup, quote collection, an
 
 | SDK | Repository | Status |
 |---|---|---|
-| **Python (taker + MM reference)** | [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) | Reference client tested against the live testnet indexer |
+| **Python (taker + maker reference)** | [`InjectiveLabs/injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit) | Reference client tested against the live testnet indexer |
 | **TypeScript (Injective SDK)** | [`InjectiveLabs/injective-ts`](https://github.com/InjectiveLabs/injective-ts) | Production-ready; no TrueCurrent-specific taker helpers yet |
 
 The Python `rfq_test` package is the canonical reference for takers. It is the only client tested against the live testnet indexer. The TypeScript side relies on `@injectivelabs/sdk-ts` directly, with no TrueCurrent-specific wrapper yet.
@@ -26,11 +26,11 @@ For maker reference implementations (both Python and TypeScript), see [Reference
 
 ## Installation
 
-**Python** — clone the testnet repo and install the `rfq_test` package with its development dependencies:
+**Python** — clone the toolkit repo and install the `rfq_test` package with its development dependencies:
 
 ```bash
-git clone https://github.com/InjectiveLabs/rfq-testing.git
-cd rfq-testing
+git clone https://github.com/InjectiveLabs/injective-rfq-toolkit.git
+cd injective-rfq-toolkit
 python -m venv .venv && source .venv/bin/activate
 pip install -U pip
 pip install -e ".[dev]"
@@ -181,4 +181,4 @@ Do not override the contract address or chain IDs unless you are intentionally p
 - [TakerStream](/takers/taker-stream) — request schema, quote collection, and rfq_id correlation
 - [Accepting quotes](/takers/accepting-quotes) — `AcceptQuote` message structure, multi-quote aggregation, encoding requirements
 - [Signed taker intents](/takers/signed-intents) — programmatic TP/SL and conditional orders
-- [Reference implementations (MM)](/market-makers/integration/reference-implementations) — maker side SDK and Python/TypeScript reference clients
+- [Reference implementations](/market-makers/integration/reference-implementations) — maker side SDK and Python/TypeScript reference clients

@@ -91,7 +91,7 @@ and you should not pass `binding_kind` or `nonce` into the helper for live taker
 
 ## 4. Sign with the Python helper
 
-Use `sign_quote_v2` from `rfq-testing`.
+Use `sign_quote_v2` from `injective-rfq-toolkit`.
 It builds the EIP-712 type hash, applies the domain separator,
 and produces a 65-byte signature with compact y-parity (`v=0/1`).
 Do not use `eth_sign`, `personal_sign`,
