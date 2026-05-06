@@ -6,7 +6,7 @@ updatedAt: "2026-05-06"
 
 This walkthrough shows the basic flow for opening a first position on TrueCurrent. Start with a small size and low leverage while you learn how margin, price tolerance, funding, and liquidation behave.
 
-<video src="/videos/Clipboard-20260505-225050-097.mp4" controls />
+<video src="/videos/Clipboard-20260506-164114-642.mp4" controls />
 
 ---
 
