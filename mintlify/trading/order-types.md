@@ -19,11 +19,11 @@ TrueCurrent's execution model is RFQ-only. On every trade, the system solicits c
 
 ## RFQ fill (primary)
 
-Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered market makers. Each maker responds with a signed quote within the collection window (2 seconds). The best quote wins and settles onchain in a single atomic transaction.
+Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered market makers. Makers respond with signed quotes inside a short collection window. The best executable quote wins and settles onchain in a single atomic transaction.
 
-**When it executes:** immediately on trade submission; fills within the quote collection window.
+**When it executes:** immediately on trade submission; fills after quote collection and onchain settlement.
 
-**Price guarantee:** `worst_price` in the signed intent is enforced. If the market moves beyond that limit before settlement, the trigger may fail rather than fill at a worse price.
+**Price guarantee:** `worst_price` is enforced onchain. If the market moves beyond that limit before settlement, the trade fails rather than fill at a worse price.
 
 **When to use:** always – this is the path for every trade opened or closed through the UI or API.
 
