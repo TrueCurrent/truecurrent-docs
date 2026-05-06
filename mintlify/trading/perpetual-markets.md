@@ -1,6 +1,6 @@
 ---
 title: "Perpetual markets"
-description: "Introduction to perpetual futures trading on TrueCurrent covering leverage, long and short positions, mark pricing, cross-margin, funding rates, liquidation mechanics, and the mark price source."
+description: "Learn the core mechanics of perpetual futures on TrueCurrent, including leverage, margin, funding, mark price, and liquidation."
 updatedAt: "2026-05-06"
 ---
 
@@ -10,8 +10,7 @@ TrueCurrent offers perpetual futures – leveraged positions on asset prices wit
 
 ## What is a perpetual?
 
-A perpetual futures contract lets you gain leveraged exposure to an asset's price without owning the asset itself.
-Unlike traditional futures (which expire on a fixed date), perpetuals can be held indefinitely.
+A perpetual futures contract lets you gain leveraged exposure to an asset's price without owning the asset itself. Unlike traditional futures (which expire on a fixed date), perpetuals can be held indefinitely.
 
 Your profit or loss is determined by the difference between your entry price and the current price, multiplied by your position size.
 
@@ -27,12 +26,9 @@ Your profit or loss is determined by the difference between your entry price and
 
 ## Mark price vs. last traded price
 
-**Mark price** is the fair value of the perpetual, derived from TrueCurrent's onchain price oracle.
-It's used for all P&L calculations and liquidation checks.
-It tracks the underlying spot price closely and is designed to resist short-term manipulation.
+**Mark price** is the fair-value price used for P&L, margin checks, liquidations, funding, and TP/SL trigger evaluation. It is derived from external oracle sources.
 
-**Last traded price** is the most recent fill price on TrueCurrent.
-It may briefly diverge from mark price, but funding rates keep them anchored over time.
+**Last traded price** is the most recent fill price on TrueCurrent. It can differ from mark price because RFQ fills execute against quoted prices from liquidity providers.
 
 Your unrealized P&L is always based on **mark price**.
 
@@ -42,7 +38,7 @@ Your unrealized P&L is always based on **mark price**.
 
 When you open a position, you allocate **margin** – USDC collateral that backs your position.
 
-```
+```text
 Position notional = Quantity × Price
 Leverage = Notional / Margin
 ```
@@ -51,8 +47,7 @@ Leverage = Notional / Margin
 
 **Maintenance margin** is the minimum to keep it open.
 
-**Liquidation trigger** is when your margin falls below maintenance margin due to adverse price movement.
-This is when your position is liquidated.
+**Liquidation trigger** is when your margin falls below maintenance margin due to adverse price movement. This is when your position is liquidated.
 
 ---
 
@@ -63,11 +58,9 @@ When the mark price reaches your **liquidation price**, your position is automat
 - The liquidation system closes your position at current market prices
 - Your remaining margin covers the settlement
 - Any shortfall is absorbed by the insurance fund
-- Any surplus above the minimum cost is returned to your account
+- Any surplus after liquidation is split between the liquidator and the insurance fund for that market
 
-**Liquidation price** is visible for every open position.
-Monitor it.
-If you're getting close, you can:
+**Liquidation price** is visible for every open position. Monitor it. If you're getting close, you can:
 
 - Add margin to your position
 - Partially close to reduce exposure
@@ -75,15 +68,12 @@ If you're getting close, you can:
 
 ---
 
-## Cross-margin
+## Isolated margin
 
-TrueCurrent uses **cross-margin** – all positions in your subaccount share the same margin pool.
-Profits from one position can offset losses in another, which is more capital efficient.
-However, a large losing position can draw on the margin of your other positions.
+TrueCurrent uses **isolated margin** – all positions in your subaccount have a unique margin pool. Profits from one position cannot offset losses in another. You can get liquidated on one position while making profits on another.
 
 ---
 
 ## Mark price source
 
-Every market has an onchain mark price.
-This price is publicly visible and is used for P&L, liquidation checks, funding, and trigger-order evaluation.
+Every market has an onchain mark price. The source may vary by market, but the resulting mark price is publicly visible and used for P&L, liquidation checks, funding, and trigger-order evaluation.

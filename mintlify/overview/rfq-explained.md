@@ -1,12 +1,12 @@
 ---
 title: "RFQ explained"
-description: "Deep dive into Request for Quote (RFQ) trading on TrueCurrent, comparing it to AMMs and order books, explaining market maker pricing, quote expiry, and zero-slippage execution for perpetual futures."
+description: "Learn how RFQ trading works on TrueCurrent, how liquidity providers price quotes, and how RFQ differs from AMMs and order books."
 updatedAt: "2026-05-05"
 ---
 
-Request for Quote (RFQ) is a trading model where a buyer or seller solicits price quotes from one or more liquidity providers before committing to a trade. Unlike automated pricing models, RFQ involves human or algorithmic market makers actively pricing each individual trade.
+Request for Quote (RFQ) is a trading model where you request executable prices from multiple liquidity providers before committing to a trade. On TrueCurrent, RFQ brings competitive pricing onchain: quotes are signed, time-limited, and settled only if they match your trade parameters.
 
-RFQ has been the backbone of institutional trading in traditional finance for decades – used in bond markets, FX, and derivatives. TrueCurrent brings this model onchain, combining the pricing quality of institutional markets with the transparency and self-custody of DeFi.
+RFQ has been used in institutional markets like bonds, FX, and derivatives for decades. TrueCurrent adapts that model for onchain perpetuals, combining professional liquidity with transparent, self-custodial settlement.
 
 ---
 
@@ -16,11 +16,11 @@ Automated Market Makers (AMMs) like Uniswap price trades using a mathematical fo
 
 - **Price impact.** Every trade moves the pool's price. The larger the trade, the worse the execution price.
 - **MEV exposure.** Because trades are predictable and public before confirmation, bots can front-run or sandwich your transaction.
-- **Fixed pricing.** AMMs can't react to off-chain information; they only know their pool balances.
+- **Formula-based pricing.** AMMs can't react to off-chain information; they only know their pool balances.
 
-In TrueCurrent's RFQ model, prices are set by professional market makers who monitor real-time market data across centralized and decentralized venues. They can price each trade based on actual current conditions, not a formula. The result:
+In TrueCurrent's RFQ model, prices are set by professional liquidity providers who monitor real-time market data across centralized and decentralized venues. They can price each trade based on actual current conditions, not a formula. The result:
 
-- **Zero slippage.** Your price is fixed at quote time. It doesn't move between when you see the quote and when it settles.
+- **Fixed-price execution.** Your price is fixed at quote time. It doesn't move between when you see the quote and when it settles.
 - **MEV resistance.** Signed quotes are atomic – there's nothing for a bot to extract from the price discovery process.
 - **Better prices for larger trades.** Market makers can offer tighter spreads on larger sizes than any AMM pool.
 
@@ -28,20 +28,20 @@ In TrueCurrent's RFQ model, prices are set by professional market makers who mon
 
 ## RFQ vs. order books
 
-Traditional onchain order books (like the one Injective natively provides, and which Helix uses) match passive limit orders. This is more efficient than AMMs for liquid markets, but RFQ is still meaningfully different:
+Traditional onchain order books (like the one Injective natively provides) match passive limit orders. This is more efficient than AMMs for liquid markets, but RFQ is still meaningfully different:
 
-- **Active vs. passive liquidity.** Limit orders sit idle until matched. RFQ market makers actively respond to each trade request, so you always get a fresh, competitive price.
-- **No queue.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
+- **Active vs. passive liquidity.** Limit orders sit idle until matched. RFQ liquidity providers actively respond to each trade request, so you always get a fresh, competitive price.
+- **Dedicated quote response.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
 - **Better for large sizes.** A large market order on an order book walks up the book, paying progressively worse prices. RFQ market makers can absorb larger sizes at a single price.
 
 ---
 
-## How market makers price quotes
+## How liquidity providers price quotes
 
-When a market maker receives your RFQ request, they consider several factors:
+When a liquidity provider receives your RFQ request, they consider several factors:
 
-1. **Current mid-market price** from Injective's oracle and/or external reference venues
-2. **Their existing inventory** – a maker who is already long INJ may offer a better price to reduce that position
+1. **Current market price** from various reference venues
+2. **Their existing inventory** – a maker who is already long BTC may offer a better price to reduce that position
 3. **Market volatility** – wider spreads in volatile markets, tighter in calm ones
 4. **Order size** – pricing adjusts for the quantity being requested
 5. **Competition** – knowing they're competing against other makers incentivizes tighter quotes
@@ -52,10 +52,6 @@ This real-time, size-aware pricing is fundamentally superior to static formula p
 
 ## Quote expiry and settlement timing
 
-Every quote includes an expiry timestamp.
-For live market maker quotes, expiry is typically 2 seconds:
-Short enough to prevent stale prices from lingering,
-but long enough for settlement to confirm.
-TP/SL blind quotes may have longer expiry windows (minutes to hours).
+Every quote includes an expiry timestamp. For live quotes, expiry is typically 2 seconds: Short enough to prevent stale prices from lingering, but long enough for settlement to confirm.
 
-When you accept a quote, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.
+When TrueCurrent accepts a quote within your specified parameters, the onchain settlement must happen before the quote expires. The TrueCurrent contract verifies the expiry as part of settlement validation. If a quote expires before settlement confirms, the transaction will be rejected and you'll need to request a new quote.

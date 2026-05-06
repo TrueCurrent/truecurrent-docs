@@ -1,6 +1,6 @@
 ---
 title: "Funding rates"
-description: "Understand perpetual funding rates on TrueCurrent: hourly payments between longs and shorts, how the Injective exchange module computes the rate, how it lands on your margin, and the strategic implications for holding cost."
+description: "Learn how funding rates work on TrueCurrent, when payments happen, and how funding affects your position margin. "
 updatedAt: "2026-05-05"
 ---
 
@@ -27,37 +27,35 @@ The full formula, the sampling cadence, the funding-cap parameter, and the stale
 
 - [Injective docs — Margin & funding rates](https://docs.injective.network/defi/trading/margin-funding-rates#funding-rates)
 
-The page above is the source of truth. If you are building a quoting model, a risk system, or any tool that must agree with the chain at sub-bp accuracy, use the Injective docs and the onchain `DerivativeMarket` parameters rather than the summary on this page.
-
 ---
 
 ## What you see in the UI
 
 In the market header, TrueCurrent shows:
 
-- **Current funding rate** — the rate that will be applied at the next hourly settlement
-- **Countdown to next funding** — time until that settlement
+- **Current funding rate** – the rate that will be applied at the next hourly settlement
+- **Countdown to next funding** – time until that settlement
 
 A positive rate means longs are currently paying shorts. A negative rate means shorts are paying longs. Funding rates close to zero indicate the perpetual is well-anchored to spot, which is the healthy state.
 
 ### Converting the hourly rate
 
 | Frequency | Formula |
-|-----------|---------|
+| --- | --- |
 | Hourly (displayed in UI) | rate as shown |
 | Daily | hourly rate × 24 |
 | Annualised (indicative) | hourly rate × 8,760 |
 
-**Worked example:** an hourly rate of +0.005% equals +0.12% per day and roughly +43.8% annualised — a moderate bull-market condition.
+**Worked example:** an hourly rate of \+0.005% equals \+0.12% per day and roughly \+43.8% annualised – a moderate bull-market condition.
 
 ### Typical ranges by market condition
 
 | Condition | Hourly rate | Daily rate | What it signals |
-|-----------|-------------|------------|-----------------|
+| --- | --- | --- | --- |
 | Calm / sideways | ±0.000% – ±0.003% | ±0.00% – ±0.07% | Perp well-anchored; balanced longs and shorts |
 | Trending (mild) | ±0.003% – ±0.010% | ±0.07% – ±0.24% | Market leaning one way; moderate premium or discount |
 | Trending (strong) | ±0.010% – ±0.030% | ±0.24% – ±0.72% | Persistent directional pressure; noticeable holding cost |
-| Highly volatile / squeezed | ±0.030%+ | ±0.72%+ | Extreme dislocation; holding cost can be significant |
+| Highly volatile / squeezed | ±0.030%\+ | ±0.72%\+ | Extreme dislocation; holding cost can be significant |
 
 These ranges are indicative. Rates during dislocations or squeezes can briefly exceed the volatile range before the per-market cap takes effect.
 
@@ -67,8 +65,8 @@ These ranges are indicative. Rates during dislocations or squeezes can briefly e
 
 Historical rates are accessible through:
 
-- **TrueCurrent explorer** — per-market funding history with settlement timestamps
-- **Indexer API** — the `/derivatives/markets/{marketId}/funding` endpoint returns historical funding-rate snapshots over any date range
+- **Injective explorer** – per-market funding history with settlement timestamps
+- **Indexer API** – the `/derivatives/markets/{marketId}/funding` endpoint returns historical funding-rate snapshots over any date range
 
 Reviewing funding history before entering a long-duration position helps set realistic expectations for holding cost, particularly in markets with a track record of persistent positive or negative rates.
 

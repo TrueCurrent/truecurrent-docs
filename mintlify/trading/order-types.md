@@ -1,17 +1,17 @@
 ---
 title: "Order types"
-description: "Complete reference for all order types on TrueCurrent: RFQ fill, take profit, stop loss, and signed intents — when each executes, its price guarantee, and when to use it."
+description: "Learn the order types TrueCurrent supports, including RFQ fills, take profit, stop loss, and signed intents."
 updatedAt: "2026-05-06"
 ---
 
-TrueCurrent's execution model is RFQ-only. On every trade, the system solicits competitive signed quotes from professional market makers and fills at the best available price — with zero taker fees. Conditional trigger orders (TP/SL) automate exits using the same RFQ quote path. This page documents every order type, what guarantee it carries, and when to reach for it.
+TrueCurrent's execution model is RFQ-only. On every trade, the system solicits competitive signed quotes from professional liquidity providers and fills at the best available price – with zero taker fees. Conditional trigger orders (TP/SL) automate exits using the same RFQ quote path. This page documents every order type, what guarantee it carries, and when to reach for it.
 
 ---
 
 ## Execution model overview
 
 | Execution path | Who fills | Price guarantee | Taker fee |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | RFQ | Competing market makers | `worst_price` enforced onchain | Zero |
 | Trigger (TP/SL) | Market makers via relayer | `worst_price` in signed intent | Zero |
 
@@ -19,15 +19,15 @@ TrueCurrent's execution model is RFQ-only. On every trade, the system solicits c
 
 ## RFQ fill (primary)
 
-Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered market makers. Each maker responds with a signed quote within the collection window (~2 seconds). The best quote wins and settles onchain in a single atomic transaction.
+Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered market makers. Each maker responds with a signed quote within the collection window (2 seconds). The best quote wins and settles onchain in a single atomic transaction.
 
 **When it executes:** immediately on trade submission; fills within the quote collection window.
 
-**Price guarantee:** your `worst_price` parameter is enforced by the contract — the RFQ fill cannot settle at a less favorable price. If no maker can satisfy your `worst_price`, the trade does not execute and your margin is released.
+**Price guarantee:** `worst_price` in the signed intent is enforced. If the market moves beyond that limit before settlement, the trigger may fail rather than fill at a worse price.
 
-**When to use:** always — this is the path for every trade opened or closed through the UI or API.
+**When to use:** always – this is the path for every trade opened or closed through the UI or API.
 
-**Zero taker fees** apply to all RFQ fills. The market maker pays a 4 bps fee on filled volume; you pay nothing.
+**Zero taker fees apply to RFQ fills.** The configured maker fee is paid by the liquidity provider who fills the trade; the taker pays no protocol fee.
 
 See [Price tolerance](/trading/slippage-and-worst-price) for how to set `worst_price` and recommended tolerance ranges. See [How RFQ works](/technical/how-rfq-works) for the full protocol detail.
 
@@ -61,12 +61,12 @@ A stop loss order closes your position automatically when the price moves agains
 
 **When it executes:** same as take profit — the relayer fires `AcceptSignedIntent` when the trigger condition is satisfied.
 
-**Price guarantee:** `worst_price` in the signed intent is enforced; in a fast-moving market, if no maker can beat your `worst_price` the order will retry until it fills.
+**Price guarantee:** `worst_price` in the signed intent is enforced. In a fast-moving market, if no maker can beat your `worst_price`, the order may fail rather than settle at a worse price.
 
 **When to use:** to cap downside automatically; essential protection for leveraged positions held overnight or during high-volatility periods.
 
 <Warning>
-Setting a stop loss very close to your entry price at high leverage risks being stopped out by normal market noise. Give your position room to breathe while still protecting against a meaningful adverse move. See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
+  Setting a stop loss very close to your entry price at high leverage risks being stopped out by normal market noise. Give your position room to breathe while still protecting against a meaningful adverse move. See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
 </Warning>
 
 See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. For programmatic use, see [Taker SDK trading](/sdk-trading/takers).
@@ -84,6 +84,7 @@ A signed taker intent is a pre-authorized, conditional trade instruction that yo
 **When to use:** when you cannot be online at the exact moment a trade should fire; the canonical mechanism behind TP/SL orders; also used by programmatic takers building automated strategies.
 
 **v1 constraints:**
+
 - Exit/protective flow only — `margin` must be `0` (cannot open new positions via signed intent)
 - `unfilled_action` must be `null`
 - Maximum deadline: 30 days from signing
@@ -95,11 +96,11 @@ See [Taker SDK trading](/sdk-trading/takers) for the SDK-level signed-intent flo
 ## What TrueCurrent does not offer
 
 <Note>
-This list is for traders arriving from platforms with a full CLOB order type suite. Understanding what TrueCurrent does not offer prevents building integrations against order types that do not exist.
+  This list is for traders arriving from platforms with a full CLOB order type suite. Understanding what TrueCurrent does not offer prevents building integrations against order types that do not exist.
 </Note>
 
 | Order type | Status | Note |
-|---|---|---|
+| --- | --- | --- |
 | Resting limit orders | **Not available** | TC has no public order book; every fill is an RFQ |
 | Order book market / limit fallback | **Not available** | Every trade is RFQ-only; partial-fill quantity is simply not traded |
 | TWAP (time-weighted average price) | **Not available** | TC has no native TWAP execution; replicate externally by splitting trades over time via the API |
@@ -116,7 +117,6 @@ This list is for traders arriving from platforms with a full CLOB order type sui
 ## Related pages
 
 - [Trigger orders (TP/SL)](/trading/trigger-orders) — UI setup and worked examples
-- [Trigger orders — advanced](/trading/trigger-orders-advanced) — programmatic execution, silent failure modes, `worst_price` gap scenarios
 - [Price tolerance](/trading/slippage-and-worst-price) — setting `worst_price` and tolerance ranges
 - [How RFQ works](/technical/how-rfq-works) — RFQ protocol detail, timing, and validation
 - [Taker SDK trading](/sdk-trading/takers) — SDK flow for programmatic trading and signed intents

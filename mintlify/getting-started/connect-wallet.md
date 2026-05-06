@@ -1,13 +1,10 @@
 ---
 title: "Connect your wallet"
-description: "Connect supported wallets including Rabby, MetaMask, Keplr, and Rainbow to TrueCurrent's non-custodial perpetuals exchange with one-time authorization setup."
+description: "Connect a supported wallet to TrueCurrent and complete the one-time authorization required for non-custodial trading."
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent is non-custodial.
-You trade directly from your own wallet.
-No account creation, no email, no KYC.
-Wallet support and supported chains reflect the TrueCurrent integration set as of Q2 2026.
+Your wallet is your TrueCurrent account. Connect a supported wallet, complete the one-time authorization, and trade directly from your own address – no account creation.
 
 ---
 
@@ -29,21 +26,23 @@ Wallet support and supported chains reflect the TrueCurrent integration set as o
 
 Your address will appear in the top right when connected.
 
+<video src="/videos/Clipboard-20260505-215724-873-1.mp4" controls />
+
 {/* SCREENSHOT SLOT: connect-wallet — wallet picker modal opened from the top-right "Start here" button, showing the four supported wallets. */}
 
 ---
 
 ## One-time setup
 
-The first time you trade, TrueCurrent will prompt you to complete a one-time authorization that allows the exchange to execute trades on your behalf.
-This takes about 30 seconds and only needs to be done once per wallet.
+The first time you trade, TrueCurrent asks you to approve a one-time `authz` authorization. This lets TrueCurrent execute the specific trading actions needed for settlement without taking custody of your funds.
 
-This authorization is specific to TrueCurrent's contract and can be revoked at any time.
+The authorization is scoped to TrueCurrent, only needs to be completed once per wallet, and can be revoked later.
 
 <Info>
-Authorization is performed using `authz`.
+  Authorization is performed using `authz`.
 
-To find out more about `authz`, for programmatic uses:
-- [`authz` transaction example](https://docs.injective.network/developers-native/examples/authz)
-- [`x/authz` native module documentation](https://docs.injective.network/developers-native/core/authz)
+  To find out more about `authz`, for programmatic uses:
+
+  - [`authz` transaction example](https://docs.injective.network/developers-native/examples/authz)
+  - [`x/authz` native module documentation](https://docs.injective.network/developers-native/core/authz)
 </Info>

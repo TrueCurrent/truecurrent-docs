@@ -1,10 +1,10 @@
 ---
 title: "Price tolerance"
-description: "Configure price tolerance and worst-price protection on TrueCurrent to guarantee execution limits, prevent adverse fills, and manage slippage during volatile market conditions."
+description: "Set the worst price you are willing to accept and understand how price tolerance protects execution on TrueCurrent."
 updatedAt: "2026-05-06"
 ---
 
-When you place a trade on TrueCurrent, you set a **price tolerance** – a worst-case price you're willing to accept. TrueCurrent will never execute your trade at a price less favorable than this limit.
+When you place a trade on TrueCurrent, you set a **maximum slippage** – from which a worst-case price you're willing to accept is derived. TrueCurrent will never execute your trade at a price less favorable than this limit.
 
 ---
 
@@ -16,26 +16,6 @@ TrueCurrent then automatically finds the best available price from liquidity pro
 
 - For a **long** position: your worst price is the highest you're willing to pay
 - For a **short** position: your worst price is the lowest you're willing to receive
-
----
-
-## Setting your tolerance
-
-You can set price tolerance as a **percentage from mark price** (recommended) or as a specific price.
-
-**Percentage (recommended):** TrueCurrent automatically calculates your worst price based on the current mark price at confirmation time. For example, with 1% tolerance on a long when an asset is at $4.50:
-
-```
-Worst price = $4.50 × 1.01 = $4.545
-```
-
-**Recommended settings:**
-
-| Market conditions | Recommended tolerance |
-|---|---|
-| Normal | 0.5% – 1% |
-| Moderate volatility | 1% – 2% |
-| High volatility | 2% – 5% |
 
 ---
 
