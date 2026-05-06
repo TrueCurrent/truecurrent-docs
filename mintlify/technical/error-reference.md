@@ -20,7 +20,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 - Wrong EVM chain ID in the EIP-712 domain (`1439` on testnet, `1776` on mainnet)
 - Wrong RFQ contract address in the EIP-712 domain
 
-**Resolution:** Review the [Signing quotes](/market-makers/signing-quotes) documentation carefully. Test on testnet and compare your signed message construction against the reference implementation.
+**Resolution:** Review the [Maker SDK trading](/sdk-trading/makers) signing requirements carefully. Test on testnet and compare your signed message construction against the reference implementation.
 
 ---
 
@@ -54,7 +54,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
 
-**Resolution:** Re-run the authz grant setup. See [Authorization setup](/market-makers/authz-setup) (for market makers) or [Connect your wallet](../getting-started/connect-wallet) (for traders).
+**Resolution:** Re-run the required authz setup. See [Maker SDK trading](/sdk-trading/makers) for maker setup or [Taker SDK trading](/sdk-trading/takers) for taker setup.
 
 ---
 
@@ -72,7 +72,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
 
-**Resolution:** Apply for whitelist approval. See [Getting whitelisted](/market-makers/getting-whitelisted).
+**Resolution:** Apply for whitelist approval. See [Maker SDK trading](/sdk-trading/makers).
 
 ---
 
@@ -84,7 +84,7 @@ These apply specifically to TP/SL settlement via `AcceptSignedIntent`.
 
 **Cause:** Either the v2 EIP-712 signature failed recovery, or the `epoch` / `lane_version` counter has been incremented since the intent was signed (i.e. the intent has been cancelled or superseded).
 
-**Resolution:** Re-read the current `epoch` and `lane_version` from the contract before signing a new intent. For the cancellation paths that bump these counters, see [Signed taker intents — Epochs and lanes](/takers/signed-intents#epochs-and-lanes).
+**Resolution:** Re-read the current `epoch` and `lane_version` from the contract before signing a new intent. See [Taker SDK trading](/sdk-trading/takers).
 
 ---
 

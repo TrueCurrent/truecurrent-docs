@@ -6,7 +6,7 @@ updatedAt: "2026-04-24"
 
 Trigger orders (Take Profit/ Stop Loss, or TP/SL) on TrueCurrent behave differently from traditional exchange stop orders. If you are building against the SDK or API, you need to understand how they work under the hood and where they can fail.
 
-This page covers more advanced operational use cases. For the user-facing explanation, see [Trigger orders (TP/SL)](/trading/trigger-orders). For the full technical specification, see [Signed taker intents](/takers/signed-intents).
+This page covers more advanced operational use cases. For the user-facing explanation, see [Trigger orders (TP/SL)](/trading/trigger-orders). For programmatic use, see [Taker SDK trading](/sdk-trading/takers).
 
 ---
 
@@ -136,4 +136,4 @@ If you are building a programmatic trading system, you accept responsibility for
 - Querying position state before creating protective orders
 - Managing `lane_version` and `epoch` to avoid stale intents
 
-See [Best practices](/takers/best-practices) for operational guidance on running a programmatic taker.
+See [Taker SDK trading](/sdk-trading/takers) for operational guidance on running a programmatic taker.

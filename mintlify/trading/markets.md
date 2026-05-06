@@ -19,7 +19,7 @@ New markets on TrueCurrent require at least one registered market maker willing 
 3. The market is deployed via Injective governance (this sets tick size, lot size, IMR, MMR, funding cap, and max open interest)
 4. The market is enabled in the TrueCurrent UI
 
-If you are a market maker interested in supporting a new market, see [Getting whitelisted](/market-makers/getting-whitelisted).
+If you are a market maker interested in supporting a new market, see [Maker SDK trading](/sdk-trading/makers).
 
 ---
 

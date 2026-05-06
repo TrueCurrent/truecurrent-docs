@@ -24,7 +24,7 @@ The contract has two settlement entrypoints:
 | Entrypoint | Who calls it | When |
 |---|---|---|
 | `AcceptQuote` | Taker directly | Synchronous: taker is online and accepting right now. Full quote flow (blind or per-request). |
-| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs a reduce-only exit, relayer fires when a mark-price trigger is satisfied. See [Signed taker intents](/takers/signed-intents). |
+| `AcceptSignedIntent` | Relayer (on taker's behalf) | Conditional: taker pre-signs a reduce-only exit, relayer fires when a mark-price trigger is satisfied. See [Taker SDK trading](/sdk-trading/takers). |
 
 The two entrypoints share the same settlement path once validated — `AcceptSignedIntent` converts the signed intent into `AcceptQuoteArgs` internally and runs `AcceptQuote`'s fill loop.
 

@@ -80,51 +80,13 @@
                 ]
               },
               {
-                "group": "Takers",
+                "group": "SDK Trading",
                 "icon": "",
                 "expanded": false,
                 "pages": [
-                  "takers/overview",
-                  "takers/sdk",
-                  "takers/quickstart",
-                  "takers/authz-setup",
-                  "takers/taker-stream",
-                  "takers/accepting-quotes",
-                  "takers/signed-intents",
-                  "takers/best-practices"
-                ]
-              },
-              {
-                "group": "Market Makers",
-                "icon": "",
-                "expanded": false,
-                "pages": [
-                  "market-makers/overview",
-                  "market-makers/getting-whitelisted",
-                  "market-makers/maker-stream",
-                  "market-makers/signing-quotes",
-                  "market-makers/authz-setup",
-                  "market-makers/quoting-guidelines",
-                  {
-                    "group": "Integration Guide",
-                    "icon": "",
-                    "expanded": true,
-                    "pages": [
-                      "market-makers/integration/index",
-                      "market-makers/integration/architecture",
-                      "market-makers/integration/quick-start",
-                      "market-makers/integration/setup",
-                      "market-makers/integration/connecting",
-                      "market-makers/integration/rfq-requests",
-                      "market-makers/integration/rfq-quotes-sign",
-                      "market-makers/integration/rfq-quotes-send",
-                      "market-makers/integration/rfq-quotes-blind",
-                      "market-makers/integration/protocol-reference",
-                      "market-makers/integration/reference-implementations",
-                      "market-makers/integration/testnet-configuration",
-                      "market-makers/integration/faq"
-                    ]
-                  }
+                  "sdk-trading/overview",
+                  "sdk-trading/takers",
+                  "sdk-trading/makers"
                 ]
               },
               {
@@ -159,6 +121,126 @@
     "eyebrows": "breadcrumbs"
   },
   "redirects": [
+    {
+      "source": "/takers",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/overview",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/sdk",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/quickstart",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/authz-setup",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/taker-stream",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/accepting-quotes",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/signed-intents",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/takers/best-practices",
+      "destination": "/sdk-trading/takers"
+    },
+    {
+      "source": "/market-makers",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/overview",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/getting-whitelisted",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/maker-stream",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/signing-quotes",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/authz-setup",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/quoting-guidelines",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/index",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/architecture",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/quick-start",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/setup",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/connecting",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/rfq-requests",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/rfq-quotes-sign",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/rfq-quotes-send",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/rfq-quotes-blind",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/protocol-reference",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/reference-implementations",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/testnet-configuration",
+      "destination": "/sdk-trading/makers"
+    },
+    {
+      "source": "/market-makers/integration/faq",
+      "destination": "/sdk-trading/makers"
+    },
     {
       "source": "/trading/placing-a-trade",
       "destination": "/trading/how-to-trade"

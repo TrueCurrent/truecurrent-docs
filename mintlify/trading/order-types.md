@@ -69,7 +69,7 @@ A stop loss order closes your position automatically when the price moves agains
 Setting a stop loss very close to your entry price at high leverage risks being stopped out by normal market noise. Give your position room to breathe while still protecting against a meaningful adverse move. See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
 </Warning>
 
-See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. For programmatic use, see [Signed taker intents](/takers/signed-intents).
+See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. For programmatic use, see [Taker SDK trading](/sdk-trading/takers).
 
 ---
 
@@ -88,7 +88,7 @@ A signed taker intent is a pre-authorized, conditional trade instruction that yo
 - `unfilled_action` must be `null`
 - Maximum deadline: 30 days from signing
 
-See [Signed taker intents](/takers/signed-intents) for the full protocol specification including signing, quote binding modes, cancellation, and execution semantics.
+See [Taker SDK trading](/sdk-trading/takers) for the SDK-level signed-intent flow.
 
 ---
 
@@ -119,4 +119,4 @@ This list is for traders arriving from platforms with a full CLOB order type sui
 - [Trigger orders — advanced](/trading/trigger-orders-advanced) — programmatic execution, silent failure modes, `worst_price` gap scenarios
 - [Price tolerance](/trading/slippage-and-worst-price) — setting `worst_price` and tolerance ranges
 - [How RFQ works](/technical/how-rfq-works) — RFQ protocol detail, timing, and validation
-- [Signed taker intents](/takers/signed-intents) — signed intent specification for programmatic takers
+- [Taker SDK trading](/sdk-trading/takers) — SDK flow for programmatic trading and signed intents
