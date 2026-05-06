@@ -1,7 +1,7 @@
 ---
 title: "Your first trade"
 description: "Open your first TrueCurrent perpetuals position: choose a market, set margin and leverage, review your worst price, and monitor liquidation risk."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-06"
 ---
 
 This walkthrough shows the basic flow for opening a first position on TrueCurrent. Start with a small size and low leverage while you learn how margin, price tolerance, funding, and liquidation behave.
@@ -50,11 +50,11 @@ Higher leverage amplifies both gains and losses. Beware of the risks associated 
 
 ## Step 4: Set your price tolerance
 
-Before confirming, you'll see a **quoted price** and a **slippage amount**. The quoted price less the maximum slippage is the least favorable execution price you are willing to accept.
+Before confirming, you'll see a **quoted price** and a **slippage amount**. TrueCurrent converts these into a **worst price**: the highest price you will pay when going long, or the lowest price you will receive when going short.
 
 For example, if BTC is currently quoting at \$100,000 and your slippage tolerance is set to 0.25%, you will not get filled on a long above \$100,250.
 
-TrueCurrent will not settle your trade at a price worse than this price. If no liquidity provider can satisfy it, the trade does not execute.
+TrueCurrent will not settle your trade at a price worse than this limit. If no liquidity provider can satisfy it, the trade does not execute.
 
 ---
 

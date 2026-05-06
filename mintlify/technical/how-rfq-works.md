@@ -60,9 +60,9 @@ Live quotes are signed with `expiry = now + 2_000` ms. The contract rejects any 
 
 Every maker quote is signed with EIP-712 v2 over a `SignQuote` typed-data struct. The signature covers — in field order — the EVM chain ID, market ID, RFQ ID, taker address, taker direction, taker margin, taker quantity, maker address, maker subaccount nonce, maker quantity, maker margin, price, expiry kind + value, min fill quantity, and a binding kind derived from whether `taker` is set.
 
-For the canonical schema and reference signing helpers (`sign_quote_v2`), see [Building & signing quotes](/market-makers/integration/rfq-quotes-sign).
+For the maker-side integration path, see [Maker SDK trading](/sdk-trading/makers).
 
-The taker does not sign anything for `AcceptQuote` itself — the transaction is broadcast under the taker's private key in the standard Cosmos SDK way. For TP/SL exits, the taker pre-signs a `SignedTakerIntent` (also EIP-712 v2); see [Signed taker intents](/takers/signed-intents).
+The taker does not sign anything for `AcceptQuote` itself — the transaction is broadcast under the taker's private key in the standard Cosmos SDK way. For TP/SL exits, the taker pre-signs a `SignedTakerIntent` (also EIP-712 v2); see [Taker SDK trading](/sdk-trading/takers).
 
 ---
 
@@ -80,7 +80,7 @@ When `AcceptQuote` lands, the contract walks the `quotes` array in submission or
 | Maker has sufficient available balance for their margin | Skip with "insufficient maker balance" |
 | Filling this quote wouldn't fall below maker's `min_fill_quantity` | Skip with "below min fill" |
 
-A failed check skips that quote and continues with the next — the transaction does not abort. After the loop, the contract requires at least one quote filled; otherwise the transaction fails with `all quotes rejected`. See [Accepting quotes](/takers/accepting-quotes) for the per-quote validation detail and how to read `quote_results`.
+A failed check skips that quote and continues with the next — the transaction does not abort. After the loop, the contract requires at least one quote filled; otherwise the transaction fails with `all quotes rejected`. See [Taker SDK trading](/sdk-trading/takers) for the taker-side settlement flow.
 
 ---
 
@@ -110,5 +110,5 @@ If RFQ collects no acceptable quotes, the request is cancelled, your margin is r
 - [RFQ explained](/overview/rfq-explained) — the user-facing case for RFQ vs AMMs and order books
 - [Architecture](/technical/architecture) — system layers, trust model, what the indexer does
 - [Smart contract](/technical/smart-contract) — `AcceptQuote` message, queries, settlement event
-- [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — full EIP-712 v2 signing reference for makers
-- [Accepting quotes](/takers/accepting-quotes) — the taker side of `AcceptQuote`, including multi-quote aggregation and `quote_results`
+- [Maker SDK trading](/sdk-trading/makers) — maker setup, MakerStream, quote signing, and quote operations
+- [Taker SDK trading](/sdk-trading/takers) — taker setup, quote collection, settlement, and signed intents

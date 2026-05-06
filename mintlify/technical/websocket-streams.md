@@ -161,7 +161,7 @@ await mm_ws.send_quote(quote_data)
 
 Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `rfq-testing` client libraries handle the framing.
 
-See [Takers: TakerStream](/takers/taker-stream) and [Market makers: MakerStream](/market-makers/maker-stream) for the full request and quote schemas on each stream.
+See [Taker SDK trading](/sdk-trading/takers) and [Maker SDK trading](/sdk-trading/makers) for the high-level SDK integration paths.
 
 ---
 

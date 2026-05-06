@@ -22,7 +22,7 @@ In TrueCurrent's RFQ model, prices are set by professional liquidity providers w
 
 - **Fixed-price execution.** Your price is fixed at quote time. It doesn't move between when you see the quote and when it settles.
 - **MEV resistance.** Signed quotes are atomic – there's nothing for a bot to extract from the price discovery process.
-- **Better prices for larger trades.** Market makers can offer tighter spreads on larger sizes than any AMM pool. 
+- **Better prices for larger trades.** Market makers can offer tighter spreads on larger sizes than any AMM pool.
 
 ---
 

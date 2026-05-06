@@ -1,7 +1,7 @@
 ---
 title: "Quoting guidelines"
 description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
-updatedAt: "2026-05-05"
+updatedAt: "2026-05-06"
 ---
 
 This page covers best practices for market makers on TrueCurrent.
@@ -112,20 +112,20 @@ Common hedging approaches:
 
 ---
 
-## Replicating the index price
+## Tracking the mark price
 
-To minimise adverse selection, market makers should construct the same reference price that TrueCurrent uses — rather than relying on a single CEX or a different composite.
+To minimise adverse selection and avoid rejected quotes, market makers should price around the same reference the contract validates against: the current onchain mark price.
 
-TrueCurrent's index price is derived from the **Injective oracle module**, which aggregates from sources including major centralised exchanges and onchain oracle providers. For most markets, the primary source CEXes are large-volume venues trading the same asset.
+TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, P&L, and liquidation checks.
 
-**To replicate:**
+**To track it:**
 
-1. Identify the source exchanges used for the relevant market's oracle feed. These are listed in the market's onchain parameters (queryable via the Injective exchange module).
-2. Subscribe to the top-of-book or trade feed from each source.
-3. Compute a median (or equal-weight average) of the best bids and asks from each source.
-4. Use this composite as your reference mid.
+1. Query the relevant derivative market from the Injective exchange module.
+2. Read the current `mark_price`.
+3. Normalize price decimals and tick size before using it in quote logic.
+4. Refresh continuously and treat stale or unavailable mark price data as a no-quote condition.
 
-The closer your reference price is to TrueCurrent's oracle, the smaller the basis between your quote and the oracle-derived mark price — and the less adverse selection you experience from oracle-aware takers.
+You can still use external venues, private feeds, and inventory models to calculate your own fair value. Just keep contract-facing validation centered on mark price: quotes too far from the current mark will be rejected even if your offchain model says they are fair.
 
 ---
 

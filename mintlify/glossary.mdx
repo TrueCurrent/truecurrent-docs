@@ -1,7 +1,7 @@
 ---
 title: "Glossary"
 description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and market-making used throughout this documentation."
-updatedAt: "2026-04-28"
+updatedAt: "2026-05-06"
 ---
 
 ## A
@@ -34,7 +34,7 @@ The mark price at which unrealized losses would fully consume a position's margi
 
 **basis**:
 
-The premium or discount at which a perpetual contract trades relative to the spot index price. Basis is incorporated into the mark price formula: `mark_price = index_price + basis`.
+The premium or discount between a quoted or traded perpetual price and the market's mark price. In TrueCurrent docs, basis is used as a general pricing term rather than a separate displayed price.
 
 **blind quote**:
 
@@ -68,11 +68,11 @@ Injective's native on-chain derivatives trading primitive (not a smart contract)
 
 **funding factor**:
 
-A protocol parameter that controls how aggressively the funding rate responds to divergence between mark price and index price. A higher funding factor causes faster convergence.
+A protocol parameter in Injective's funding calculation. It controls how aggressively funding responds when the perpetual trades away from its reference market.
 
 **funding rate**:
 
-An hourly payment exchanged between long and short position holders to keep the perpetual price anchored to the spot index price. A positive rate means longs pay shorts (perpetual at a premium); a negative rate means shorts pay longs (perpetual at a discount). Payments are applied automatically to your margin.
+An hourly payment exchanged between long and short position holders to keep the perpetual price anchored to its reference market. A positive rate means longs pay shorts; a negative rate means shorts pay longs. Payments are applied automatically to your margin.
 
 ## G
 
@@ -81,10 +81,6 @@ An hourly payment exchanged between long and short position holders to keep the 
 The wire protocol used by TrueCurrent's WebSocket streams. Messages are length-prefixed using HTTP/2-style framing rather than raw JSON; clients must frame and deframe accordingly.
 
 ## I
-
-**index price**:
-
-A real-time spot price aggregated from multiple external exchanges and published by the Injective oracle. The index price is the foundation for mark price calculations and funding rate payments.
 
 **initial margin rate (IMR)**:
 
@@ -140,7 +136,7 @@ Account equity divided by position notional value. Liquidation triggers when thi
 
 **mark price**:
 
-The fair-value price of a perpetual, derived from the index price plus a funding basis adjustment. Mark price is used for P&L calculations, margin ratio checks, liquidation triggers, and trigger-order evaluation — it is not the execution price.
+The market reference price of a perpetual. Mark price is published onchain and used for P&L calculations, margin ratio checks, liquidation triggers, trigger-order evaluation, and quote validation. It is not the execution price.
 
 **market maker**:
 
@@ -186,7 +182,7 @@ The maximum acceptable slippage expressed as a percentage deviation from the cur
 
 **quoted price**:
 
-The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price (fair value estimate) and index price (spot reference). Trigger orders execute against quotes, but the trigger condition itself is evaluated against mark price.
+The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price, which is the market reference price. Trigger orders execute against quotes, but the trigger condition itself is evaluated against mark price.
 
 ## R
 
@@ -262,4 +258,4 @@ A hard price limit enforced by the TrueCurrent smart contract on every trade. Fo
 
 **zero-margin settlement**:
 
-Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is exposed via signed intents (TP/SL exits) by signing with `margin: "0"`. See [Signed taker intents](/takers/signed-intents).
+Settlement of a position close where the taker contributes no new margin — only existing position equity is used. In TrueCurrent v1, zero-margin settlement is exposed via signed intents (TP/SL exits) by signing with `margin: "0"`. See [Taker SDK trading](/sdk-trading/takers).

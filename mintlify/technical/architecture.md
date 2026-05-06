@@ -118,7 +118,7 @@ Step-by-step:
 7. **Settlement (exchange module):** Contract uses `authz` to open positions for both taker and maker through Injective's exchange module
 8. **Position update:** Both wallets' subaccounts reflect the new positions
 
-For the conditional / TP-SL variant, substitute steps 1–5 with the [signed taker intent](/takers/signed-intents) flow: the taker signs in advance, a relayer submits `AcceptSignedIntent` when the trigger is satisfied. Steps 6–8 are the same.
+For the conditional / TP-SL variant, substitute steps 1–5 with the signed-intent flow described in [Taker SDK trading](/sdk-trading/takers): the taker signs in advance, and a relayer submits `AcceptSignedIntent` when the trigger is satisfied. Steps 6–8 are the same.
 
 ---
 

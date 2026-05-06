@@ -86,4 +86,12 @@ Institutional liquidity providers who quote on TrueCurrent pay a **4 bps (0.04%)
 
 The 4 bps maker fee is **flat – it does not vary by volume, market, or liquidity provider tier**. There are no rebates or tiered maker fee schedules currently.
 
-See [Market maker overview](/market-makers/overview) for details.
+See [Maker SDK trading](/sdk-trading/makers) for details.
+
+---
+
+## Builder codes
+
+TrueCurrent does not currently operate a public builder code or referral programme. If you are an institutional partner or venue operator interested in fee-sharing or co-marketing arrangements, contact the TrueCurrent team directly.
+
+See [Maker SDK trading](/sdk-trading/makers) for the current market maker fee model and whitelisting process.

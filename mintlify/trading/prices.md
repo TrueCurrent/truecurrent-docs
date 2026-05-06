@@ -1,100 +1,86 @@
 ---
-title: "Mark, and quoted prices"
-description: "Understand the difference between index price, mark price, quoted price, and indicative price on TrueCurrent. "
-updatedAt: "2026-04-30"
+title: "Mark and quoted prices"
+description: "Understand the difference between mark price, quoted price, estimated price, and worst price on TrueCurrent."
+updatedAt: "2026-05-06"
 ---
 
-TrueCurrent uses three distinct prices, each serving a specific purpose. Understanding the difference helps you interpret your P&L, anticipate liquidations, and know exactly what price you traded at.
-
----
-
-## Index price
-
-The **index price** is the real-time spot price of the underlying asset, aggregated from external sources. It represents the broader market's consensus on where an asset is actually trading.
-
-The index price is the foundation for the mark price and funding rate calculation. It is not the price you trade at.
-
-### Oracle construction
-
-TrueCurrent's index price is sourced from the **Injective oracle module**, which aggregates prices from a set of vetted external providers. The oracle network includes:
-
-- **Major centralised exchanges** – spot price feeds from leading venues by volume
-- **Onchain oracle providers** – integrated via the Injective oracle module, which supports providers such as Pyth Network for certain markets
-
-**Aggregation methodology:** The index price is computed as a **median** (or weighted average, as configured per market) of the available source prices at the time of sampling. Using a median rather than an average means a single outlier or temporarily manipulated source cannot materially move the index.
-
-**Update cadence:** Oracle prices on Injective are updated on each block (approximately every 1–2 seconds). TrueCurrent's mark price and funding rate calculations consume the latest available oracle price at each settlement event.
-
-**Staleness circuit breakers:** If oracle price feeds fall behind by more than a defined staleness threshold, the Injective exchange module halts funding settlements and may restrict new position openings until fresh prices are available. This prevents liquidations from being triggered by stale or manipulated prices.
-
-<Note>
-  **TrueCurrent does not apply a CEX-weighted median.** Unlike some other perpetual venues (which weight CEX sources by volume), TrueCurrent's index price uses the Injective oracle aggregation, which is governed by the Injective protocol and treats sources according to the oracle module's configuration — not a proprietary weighting scheme controlled by TrueCurrent. This means the index price methodology is transparent and verifiable onchain.
-</Note>
-
-For the canonical mark and index price model that TrueCurrent inherits from Injective, refer to the [Injective perpetuals documentation](https://docs.injective.network/defi/trading/derivatives-perpetuals) and the market's onchain parameters.
+TrueCurrent uses **mark price** as the market reference price and **quoted price** as the execution price. Mark price determines risk and trigger conditions. Quoted price determines what you actually trade at.
 
 ---
 
 ## Mark price
 
-The **mark price** is TrueCurrent's fair-value price for a perpetual contract. It is derived from the index price with adjustments for the current funding rate basis:
+The **mark price** is the reference price for a TrueCurrent perpetual market. It is the price used by the protocol and UI to value open positions and evaluate risk.
 
-$P_{mark} = P_{index} + \text{Basis}$
+Mark price is used for:
 
-where the basis reflects the premium or discount at which the perpetual trades relative to spot.
+- **Unrealized P&L** — how your open position is valued before you close it
+- **Margin ratio** — how close your position is to liquidation
+- **Liquidation** — liquidation checks are evaluated against mark price
+- **Trigger orders** — take profit and stop loss triggers fire when mark price crosses your trigger level
+- **Price validation** — `worst_price` and maker quotes must stay within the allowed band around mark price
 
-### Basis calculation
-
-The basis is not simply the instantaneous difference between the perpetual mid and spot. It is computed using a smoothed premium:
-
-- **Impact price:** The basis is measured using an impact-notional-weighted price — the average execution price for a hypothetical buy and sell order of a defined notional size against the order book. This is more manipulation-resistant than using the raw order book mid.
-- **EMA smoothing:** The raw basis is passed through an exponential moving average (EMA) to reduce the influence of transient spikes. The EMA window is set per market as a governance parameter.
-- **Blend:** The final mark price blends the smoothed basis with the index price. In liquid, well-anchored markets the mark price tracks the index closely; in dislocated markets, the EMA prevents the mark from snapping violently.
-
-**Manipulation resistance:** Because the basis is derived from impact prices rather than quoted prices, spoofing the order book mid does not directly move the mark price — an attacker would need to execute actual trades of significant notional size to shift the impact price.
-
-Mark price is the price used for:
-
-- **Unrealized P&L** – your open position value
-- **Margin ratio** – determining how close you are to liquidation
-- **Liquidation** – your position is liquidated when mark price reaches your liquidation price
-- **Funding payments** – calculated based on the mark/index divergence
-
-Mark price is **not** the price your trade executes at.
-
-For how P&L is calculated across the position lifecycle (open, hold, funding, close), see [Margin trading](/trading/margin-trading).
+Mark price is **not** your execution price. You do not buy or sell at mark price unless a market maker's quote happens to match it.
 
 ---
 
 ## Quoted price
 
-The **quoted price** is the actual execution price – the price at which your trade fills. On TrueCurrent, this comes directly from institutional liquidity providers who compete to offer you the best rate.
+The **quoted price** is the price offered by a market maker through TrueCurrent's RFQ flow. This is the price that becomes your fill price if the quote is selected and settles onchain.
 
-Because liquidity providers price each trade based on live market conditions, the quoted price will typically be very close to the mark price, with a small competitive spread.
+When you submit a trade, TrueCurrent requests signed quotes from liquidity providers. Each quote includes a price, quantity, expiry, maker address, and signature. TrueCurrent selects the best executable quote automatically:
 
-Quoted price is used for:
+- For a **long**, lower quoted prices are better because you are buying
+- For a **short**, higher quoted prices are better because you are selling
 
-- **Trade execution** – your entry and exit prices
-- **Realized P&L** – what you actually bought or sold at
-- **Trigger orders (TP/SL)** – take profit and stop loss triggers are evaluated against mark price; the resulting close executes against the best available quote within `worst_price`
+Your quoted price is used for:
+
+- **Trade execution** — the entry or exit price of the fill
+- **Realized P&L** — the price used when your position closes
+- **Trade history** — the fill price shown for settled trades
+
+Quoted price can differ from mark price. That difference is the effective spread you receive from the RFQ market maker.
 
 ---
 
-## Indicative price
+## Estimated price
 
-Before you confirm a trade, TrueCurrent displays an **indicative price** – an estimate of what your quoted price is likely to be, based on current market conditions.
+Before you confirm a trade, the UI may show an **estimated price**. This is a preview based on current market conditions. It is not a signed quote and is not guaranteed.
 
-The indicative price is not a firm quote. The actual quoted price is determined at execution time when liquidity providers respond. In stable markets, the two will be nearly identical. In fast-moving markets, they may differ slightly.
+The final execution price is determined only after market makers respond with signed quotes. In calm markets, the estimated price and final quoted price should usually be close. In fast-moving markets, they can differ.
 
-Your [price tolerance](/trading/slippage-and-worst-price) setting determines the maximum deviation you'll accept between the indicative price and the actual quoted price. The trade will never execute at a price worse than your specified limit.
+---
+
+## Worst price
+
+Your **worst price** is the least favorable execution price you are willing to accept. It is derived from your price tolerance or set directly, depending on the flow.
+
+- For a **long**, worst price is the highest price you are willing to pay
+- For a **short**, worst price is the lowest price you are willing to receive
+
+TrueCurrent will not settle a trade at a price worse than your `worst_price`. If no maker quote can satisfy that limit, the trade does not execute.
+
+`worst_price` is also checked against mark price. The contract rejects prices that are too far away from the current mark price, even if the taker signed them.
+
+---
+
+## Trigger orders
+
+Take profit and stop loss orders use both mark price and quoted price:
+
+1. The **trigger condition** is evaluated against mark price
+2. Once triggered, the close is executed through the RFQ quote path
+3. The selected quote must satisfy the signed `worst_price`
+
+This means a trigger can fire without guaranteeing a fill. If the market moves beyond your allowed worst price before settlement, the close can fail instead of filling at a worse price.
 
 ---
 
 ## Summary
 
 | Price | What it is | Used for |
-| --- | --- | --- |
-| **Index price** | Median of external oracle feeds (CEX spot \+ onchain oracles) | Mark price calculation, funding rates |
-| **Mark price** | Index price \+ EMA-smoothed impact-price basis | P&L, margin ratio, liquidation |
-| **Quoted price** | Actual execution price from liquidity providers | Trade fills, realized P&L, TP/SL triggers |
-| **Indicative price** | Pre-trade estimate of quoted price | Shown in UI before you confirm |
+|-------|------------|----------|
+| **Mark price** | Market reference price | P&L, margin ratio, liquidation, TP/SL triggers, price validation |
+| **Quoted price** | Signed market-maker execution price | Trade fills, realized P&L, trade history |
+| **Estimated price** | Pre-trade UI preview | Showing an approximate expected fill before quotes are collected |
+| **Worst price** | Your execution limit | Preventing settlement at a worse price than you accepted |

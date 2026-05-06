@@ -1,7 +1,7 @@
 ---
 title: "Why TrueCurrent"
 description: "See how TrueCurrent compares with AMMs and order books across fees, execution quality, custody, and MEV resistance."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-06"
 ---
 
 TrueCurrent is built for traders who want professional execution without taker fees or custodial deposits. Instead of routing trades through an AMM pool or walking an order book, TrueCurrent asks competing liquidity providers for executable prices and settles the best available quote within your limits.
@@ -18,7 +18,10 @@ Many perpetual exchanges charge taker fees of 0.02–0.07% per trade. On TrueCur
 
 On an AMM, the quoted price can move between order submission and execution. Large trades push prices up or down, sometimes significantly. Bots can front-run your transaction.
 
-On TrueCurrent, you set a maximum slippage tolerance (e.g. price ceiling/floor) and confirm. TrueCurrent automatically collects prices from competing institutional liquidity providers and executes at the best one. You never pay more than you're willing to – and you never have to shop for a quote yourself.
+On TrueCurrent, you set the worst price you're willing to accept and confirm.
+TrueCurrent automatically collects prices from competing institutional liquidity providers and executes at the best one.
+The trade never settles outside your limit –
+and you never have to shop for a quote yourself.
 
 ---
 
