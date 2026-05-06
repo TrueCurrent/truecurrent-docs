@@ -12,14 +12,14 @@ TrueCurrent's execution model is RFQ-only. On every trade, the system solicits c
 
 | Execution path | Who fills | Price guarantee | Taker fee |
 | --- | --- | --- | --- |
-| RFQ | Competing market makers | `worst_price` enforced onchain | Zero |
-| Trigger (TP/SL) | Market makers via relayer | `worst_price` in signed intent | Zero |
+| RFQ | Competing makers | `worst_price` enforced onchain | Zero |
+| Trigger (TP/SL) | Makers via relayer | `worst_price` in signed intent | Zero |
 
 ---
 
 ## RFQ fill (primary)
 
-Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered market makers. Makers respond with signed quotes inside a short collection window. The best executable quote wins and settles onchain in a single atomic transaction.
+Every trade on TrueCurrent is an RFQ. When you submit a trade, the indexer broadcasts the request to all registered makers. Makers respond with signed quotes inside a short collection window. The best executable quote wins and settles onchain in a single atomic transaction.
 
 **When it executes:** immediately on trade submission; fills after quote collection and onchain settlement.
 
@@ -105,7 +105,7 @@ See [Taker SDK trading](/sdk-trading/takers) for the SDK-level signed-intent flo
 | Order book market / limit fallback | **Not available** | Every trade is RFQ-only; partial-fill quantity is simply not traded |
 | TWAP (time-weighted average price) | **Not available** | TC has no native TWAP execution; replicate externally by splitting trades over time via the API |
 | Scale / ladder orders | **Not available** | No built-in order scaling; implement by submitting multiple individual trades |
-| Iceberg orders | **Not available** | Full quantity is broadcast to all market makers on each RFQ |
+| Iceberg orders | **Not available** | Full quantity is broadcast to all makers on each RFQ |
 | Isolated-margin order forms | **Not available** | TC is cross-margin only — there is no isolated-margin trade flow. See [Margin trading](/trading/margin-trading) |
 | Post-only / maker-only limit orders | **Not available** | TC's primary execution is RFQ; makers are institutional liquidity providers, not retail users posting to the book |
 | Fill-or-kill (FOK) | **Not available** | Partial fills are handled by the contract's quote-by-quote consumption; there is no FOK mode |

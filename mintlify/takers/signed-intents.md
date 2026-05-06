@@ -32,7 +32,7 @@ sequenceDiagram
     autonumber
     participant Taker
     participant Indexer as Indexer / Relayer
-    participant MMs as Market Makers
+    participant MMs as Makers
     participant Chain as Injective Chain
     participant Contract as RFQ Contract
 

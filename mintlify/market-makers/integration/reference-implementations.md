@@ -1,6 +1,6 @@
 ---
 title: "Reference implementations"
-description: "Overview and production-readiness assessment of the Python and TypeScript reference implementations for TrueCurrent market maker integration."
+description: "Overview and production-readiness assessment of the Python and TypeScript reference implementations for TrueCurrent maker integration."
 updatedAt: "2026-05-05"
 ---
 

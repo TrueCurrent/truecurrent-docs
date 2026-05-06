@@ -1,23 +1,23 @@
 ---
-title: "Market makers: overview"
-description: "Overview of TrueCurrent's market maker program including RFQ liquidity provision, MakerStream integration, quote signing requirements, fee structure, and whitelist application process for professional liquidity providers on Injective."
+title: "Makers: overview"
+description: "Overview of TrueCurrent's maker program including RFQ liquidity provision, MakerStream integration, quote signing requirements, fee structure, and whitelist application process for professional liquidity providers on Injective."
 updatedAt: "2026-05-01"
 ---
 
-TrueCurrent's liquidity is powered by professional market makers. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
+TrueCurrent's liquidity is powered by institutional liquidity providers. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
 
 ---
 
-## The market maker role
+## The maker role
 
-As a market maker on TrueCurrent, you:
+As a maker on TrueCurrent, you:
 
 1. **Connect to the MakerStream** – a WebSocket endpoint delivering live trade requests from users
 2. **Evaluate each request** – assess the market, direction, size, and your current inventory
 3. **Respond with a signed quote** – within a response window of a few hundred milliseconds, submit a cryptographically signed price commitment 
 4. **Settle onchain** – when a user accepts your quote, the TrueCurrent smart contract settles both sides atomically on Injective
 
-You compete against other registered market makers for every trade. Best price wins.
+You compete against other registered makers for every trade. Best price wins.
 
 ---
 
@@ -25,23 +25,23 @@ You compete against other registered market makers for every trade. Best price w
 
 **Users pay nothing.** TrueCurrent charges zero taker fees – retail traders trade for free.
 
-**Market makers pay 4 bps (0.04%) per filled trade.** This is how the protocol is sustained while keeping trading free for users. The fee is assessed on the notional value of each fill.
+**Makers pay 4 bps (0.04%) per filled trade.** This is how the protocol is sustained while keeping trading free for users. The fee is assessed on the notional value of each fill.
 
 ---
 
-## Economics for market makers
+## Economics for makers
 
 **Revenue:** You earn the spread between your quoted price and the true mid-market price, minus the 4 bps protocol fee. Tighter spreads win more trades; wider spreads earn more per trade. Finding the optimal balance is the core skill.
 
 **Risk:** You take on the opposite side of each trade. If you fill a taker long on INJ and the price drops, you're short and losing mark-to-market. Managing net inventory is the primary challenge.
 
-**Hedging:** Most professional market makers hedge fills immediately on external venues (CEXes, spot markets) to remain directionally neutral while capturing the spread.
+**Hedging:** Most institutional liquidity providers hedge fills immediately on external venues (CEXes, spot markets) to remain directionally neutral while capturing the spread.
 
 ---
 
-## Becoming a market maker
+## Becoming a maker
 
-TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting whitelisted](/market-makers/getting-whitelisted).
+TrueCurrent uses a whitelist of approved makers. To apply, see [Getting whitelisted](/market-makers/getting-whitelisted).
 
 ---
 
@@ -64,4 +64,4 @@ TrueCurrent uses a whitelist of approved market makers. To apply, see [Getting w
 
 ## Capital requirements
 
-There is no hard minimum, but you must maintain sufficient quote-asset margin in your subaccount to back the quotes you submit. On the current testnet market, that quote asset is USDC. Quotes submitted without adequate margin result in failed settlements. A healthy market maker maintains enough capital to cover the maximum aggregate notional of their open quotes.
+There is no hard minimum, but you must maintain sufficient quote-asset margin in your subaccount to back the quotes you submit. On the current testnet market, that quote asset is USDC. Quotes submitted without adequate margin result in failed settlements. A healthy maker maintains enough capital to cover the maximum aggregate notional of their open quotes.

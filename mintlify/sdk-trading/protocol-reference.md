@@ -8,7 +8,7 @@ updatedAt: "2026-05-06"
 
 ```mermaid
 sequenceDiagram
-    participant MM as Market Maker
+    participant MM as Maker
     participant IDX as RFQ Indexer
     participant Taker as Taker
     participant Chain as Injective Chain
@@ -50,7 +50,7 @@ Summary from your side:
 sequenceDiagram
     participant Taker as Taker (offline)
     participant IDX as Indexer / Relayer
-    participant MM as Market Maker
+    participant MM as Maker
     participant Chain as Chain
 
     Taker->>IDX: Submit SignedTakerIntent (TP/SL, pre-signed)

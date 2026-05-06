@@ -1,16 +1,16 @@
 ---
 title: "Getting whitelisted"
-description: "Requirements and application process for joining TrueCurrent's market maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
+description: "Requirements and application process for joining TrueCurrent's maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent uses an approved market maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
+TrueCurrent uses an approved maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
 
 ---
 
 ## Why a whitelist?
 
-The whitelist ensures that every market maker on TrueCurrent is:
+The whitelist ensures that every maker on TrueCurrent is:
 
 - Technically integrated and able to respond reliably within the 2-second window
 - Capitalized sufficiently to back their quotes
@@ -51,7 +51,7 @@ Once your testnet integration is verified end-to-end, you're ready to apply.
 
 ## Application process
 
-To apply for market maker whitelist access:
+To apply for maker whitelist access:
 
 1. Reach out via the channels listed on the [Support](/support) page (Discord, Telegram, or `support@tc.xyz`).
 2. Provide your Injective maker wallet address.
@@ -72,11 +72,11 @@ or use `ContractClient.is_maker_registered()` which handles pagination automatic
 
 ## Staying in good standing
 
-Your market maker status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
+Your maker status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
 
 - Response rate falls below an acceptable threshold (consistently failing to quote within 2 seconds)
 - Quotes are systematically off-market (quoting prices that never win and appear designed to game metrics)
 - Settlements consistently fail due to insufficient margin
 - Any behavior that degrades the experience for traders
 
-This is not about penalizing normal market making decisions (like widening spreads in volatile markets) – it's about maintaining a healthy, reliable RFQ pool.
+This is not about penalizing normal maker discretion, such as widening spreads in volatile markets. It is about maintaining a healthy, reliable RFQ pool.

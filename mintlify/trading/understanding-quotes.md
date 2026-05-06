@@ -4,7 +4,7 @@ description: "Understand what TrueCurrent RFQ quotes contain, how signed quotes 
 updatedAt: "2026-05-01"
 ---
 
-When you submit a trade on TrueCurrent, market makers respond with signed RFQ quotes. TrueCurrent selects the best executable quote automatically, so understanding quote fields helps you understand what was filled and why a trade may not execute.
+When you submit a trade on TrueCurrent, makers respond with signed RFQ quotes. TrueCurrent selects the best executable quote automatically, so understanding quote fields helps you understand what was filled and why a trade may not execute.
 
 ---
 
@@ -37,6 +37,6 @@ If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e.
 
 ## What happens if no quotes are received?
 
-If no market maker responds within the collection window, the request is cancelled and no margin is debited from your wallet – nothing settles onchain, and you pay nothing. Prices update continuously, so you can submit a new request immediately.
+If no maker responds within the collection window, the request is cancelled and no margin is debited from your wallet – nothing settles onchain, and you pay nothing. Prices update continuously, so you can submit a new request immediately.
 
 This is uncommon on liquid markets, where multiple makers compete on every request. It mostly happens during extreme volatility, in deep illiquid markets, or when your `worst_price` is tight enough that no maker is willing to fill at it.

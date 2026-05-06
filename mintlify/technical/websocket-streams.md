@@ -4,7 +4,7 @@ description: "Integration guide for TrueCurrent's TakerStream and MakerStream We
 updatedAt: "2026-05-01"
 ---
 
-TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for market makers.
+TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for makers.
 
 ---
 
@@ -88,7 +88,7 @@ best = min(quotes, key=lambda q: float(q.get("price", "999")))
 
 ## MakerStream
 
-The MakerStream is used exclusively by whitelisted market makers to receive trade requests and submit quotes.
+The MakerStream is used exclusively by whitelisted makers to receive trade requests and submit quotes.
 
 ### Connection
 
@@ -185,4 +185,4 @@ for attempt in range(MAX_RETRIES):
         await asyncio.sleep(delay)
 ```
 
-Note that during a disconnection, any requests broadcast to other market makers will still be serviced by them – you only miss the requests during your specific downtime window.
+Note that during a disconnection, any requests broadcast to other makers will still be serviced by them – you only miss the requests during your specific downtime window.

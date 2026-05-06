@@ -1,6 +1,6 @@
 ---
 title: "Maker whitelist"
-description: "Requirements and application process for joining TrueCurrent's market maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
+description: "Requirements and application process for joining TrueCurrent's maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
 updatedAt: "2026-05-06"
 ---
 
@@ -10,7 +10,7 @@ TrueCurrent uses an approved maker whitelist. Only whitelisted addresses can sub
 
 ## Why a whitelist?
 
-The whitelist ensures that every market maker on TrueCurrent is:
+The whitelist ensures that every maker on TrueCurrent is:
 
 - Technically integrated and able to respond reliably within the 2-second window
 - Capitalized sufficiently to back their quotes

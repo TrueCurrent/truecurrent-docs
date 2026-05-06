@@ -4,7 +4,7 @@ description: "Pointer page: the canonical MakerStream documentation lives in the
 updatedAt: "2026-05-05"
 ---
 
-The canonical MakerStream documentation — connection details, the EIP-712 v2 auth challenge handshake, the request and quote message schemas, and reconnection patterns — lives in the [Market makers integration guide](/market-makers/integration/index):
+The canonical MakerStream documentation — connection details, the EIP-712 v2 auth challenge handshake, the request and quote message schemas, and reconnection patterns — lives in the [Makers integration guide](/market-makers/integration/index):
 
 - [Connecting to the RFQ stream](/market-makers/integration/connecting) — endpoint, gRPC-web framing, ping cadence, and the `MakerChallenge` / `MakerAuth` handshake
 - [Receiving RFQ requests](/market-makers/integration/rfq-requests) — request fields and how to interpret them

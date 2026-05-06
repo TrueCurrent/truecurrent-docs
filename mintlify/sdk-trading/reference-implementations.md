@@ -1,6 +1,6 @@
 ---
 title: "Reference implementations"
-description: "Overview of the Python, TypeScript, and Go reference implementations for TrueCurrent taker and market maker SDK integrations."
+description: "Overview of the Python, TypeScript, and Go reference implementations for TrueCurrent taker and maker SDK integrations."
 updatedAt: "2026-05-06"
 ---
 

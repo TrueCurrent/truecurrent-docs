@@ -37,7 +37,7 @@ Quotes carry an `expiry` that's guaranteed valid for a short window from signing
 
 **What eats the budget:**
 
-- Market maker response (a few hundred milliseconds)
+- Maker response (a few hundred milliseconds)
 - Your collection window (whatever's left after MM response)
 - Quote selection and message building (~100ms)
 - Network RTT to the chain gRPC endpoint (~50–200ms)

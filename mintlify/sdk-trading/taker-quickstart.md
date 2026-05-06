@@ -69,9 +69,8 @@ The testnet config (`configs/testnet.yaml`) already points at:
 | INJ/USDC PERP | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
 
 
-> **API key – currently not required.** Today, you can connect to the testnet indexer without any authentication. The reference scripts in `rfq-testing` work as-is. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, you'll need to add `RFQ_API_KEY=...` to your `.env` and pass it on every WebSocket connect and HTTP request. Programmatic / HFT takers will also need to ask the TrueCurrent team for an `api`-tier key – the default rate limit on a regular key (10 req/s) is way below what HFT needs. See [Rate limiting](/sdk-trading/taker-best-practices#rate-limiting) for the breakdown.
->
-> 
+Anybody can access the public RFQ streams. The reference scripts in `rfq-testing` connect without additional stream authentication.
+
 
 ---
 

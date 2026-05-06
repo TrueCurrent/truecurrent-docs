@@ -12,14 +12,14 @@ The live list of supported markets, current parameters (tick size, max leverage,
 
 ## How new markets are listed
 
-New markets on TrueCurrent require at least one registered market maker willing to provide liquidity. The listing process is:
+New markets on TrueCurrent require at least one registered maker willing to provide liquidity. The listing process is:
 
 1. The community or the team identifies demand for a new market
-2. At least one market maker commits to providing RFQ liquidity
+2. At least one maker commits to providing RFQ liquidity
 3. The market is deployed via Injective governance (this sets tick size, lot size, IMR, MMR, funding cap, and max open interest)
 4. The market is enabled in the TrueCurrent UI
 
-If you are a market maker interested in supporting a new market, see [Maker SDK trading](/sdk-trading/makers).
+If you are a maker interested in supporting a new market, see [Maker SDK trading](/sdk-trading/makers).
 
 ---
 

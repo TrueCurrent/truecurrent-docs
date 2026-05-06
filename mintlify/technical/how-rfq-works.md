@@ -15,7 +15,7 @@ sequenceDiagram
     autonumber
     actor Taker
     participant Indexer as RFQ Indexer
-    participant MMs as Market Makers
+    participant MMs as Makers
     participant Contract as TrueCurrent Contract
     participant Exchange as Exchange Module
 
@@ -37,7 +37,7 @@ sequenceDiagram
     Contract-->>Taker: Settlement event
 ```
 
-Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's positions.
+Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the maker's positions.
 
 ---
 

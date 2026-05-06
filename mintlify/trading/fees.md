@@ -94,4 +94,4 @@ See [Maker SDK trading](/sdk-trading/makers) for details.
 
 TrueCurrent does not currently operate a public builder code or referral programme. If you are an institutional partner or venue operator interested in fee-sharing or co-marketing arrangements, contact the TrueCurrent team directly.
 
-See [Maker SDK trading](/sdk-trading/makers) for the current market maker fee model and whitelisting process.
+See [Maker SDK trading](/sdk-trading/makers) for the current maker fee model and whitelisting process.

@@ -1,6 +1,6 @@
 ---
 title: "Glossary"
-description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and market-making used throughout this documentation."
+description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and maker operations used throughout this documentation."
 updatedAt: "2026-05-06"
 ---
 
@@ -38,7 +38,7 @@ The premium or discount between a quoted or traded perpetual price and the marke
 
 **blind quote**:
 
-A market maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind quotes are pre-posted to the indexer so that take-profit and stop-loss orders can settle even when the maker is not actively online at the moment a trigger fires.
+A maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind quotes are pre-posted to the indexer so that take-profit and stop-loss orders can settle even when the maker is not actively online at the moment a trigger fires.
 
 ## C
 
@@ -92,7 +92,7 @@ A protocol reserve that covers shortfalls when a liquidated position is closed b
 
 **inventory**:
 
-A market maker's net open position accumulated from filled trades. Managing inventory is central to market-making economics — makers typically hedge inventory promptly to remain directionally neutral and capture the spread.
+A maker's net open position accumulated from filled trades. Managing inventory is central to maker economics — makers typically hedge inventory promptly to remain directionally neutral and capture the spread.
 
 ## L
 
@@ -120,7 +120,7 @@ The mark price at which a position's margin ratio will equal the maintenance mar
 
 **MakerStream**:
 
-The WebSocket endpoint used by whitelisted market makers to receive live RFQ requests broadcast by the indexer and to submit signed quotes in response.
+The WebSocket endpoint used by whitelisted makers to receive live RFQ requests broadcast by the indexer and to submit signed quotes in response.
 
 **maintenance margin rate (MMR)**:
 
@@ -138,9 +138,9 @@ Account equity divided by position notional value. Liquidation triggers when thi
 
 The market reference price of a perpetual. Mark price is published onchain and used for P&L calculations, margin ratio checks, liquidation triggers, trigger-order evaluation, and quote validation. It is not the execution price.
 
-**market maker**:
+**maker**:
 
-A whitelisted institutional liquidity provider that connects to the MakerStream, evaluates RFQ requests, and responds with signed price quotes. Market makers take the opposite side of each trade and typically hedge their resulting inventory.
+A whitelisted institutional liquidity provider that connects to the MakerStream, evaluates RFQ requests, and responds with signed price quotes. Makers take the opposite side of each trade and typically hedge their resulting inventory.
 
 **min_fill_quantity**:
 
@@ -152,7 +152,7 @@ An Injective exchange message type. Listed in the canonical taker authz grant se
 
 **MsgPrivilegedExecuteContract**:
 
-An Injective exchange message type that allows the TrueCurrent contract to open and manage derivative positions on behalf of a user. This is the core `authz` grant required by both traders and market makers.
+An Injective exchange message type that allows the TrueCurrent contract to open and manage derivative positions on behalf of a user. This is the core `authz` grant required by both traders and makers.
 
 **MsgSend**:
 
@@ -182,13 +182,13 @@ The maximum acceptable slippage expressed as a percentage deviation from the cur
 
 **quoted price**:
 
-The actual execution price at which a trade fills, taken from a market maker's signed quote. Distinct from mark price, which is the market reference price. Trigger orders execute against quotes, but the trigger condition itself is evaluated against mark price.
+The actual execution price at which a trade fills, taken from a maker's signed quote. Distinct from mark price, which is the market reference price. Trigger orders execute against quotes, but the trigger condition itself is evaluated against mark price.
 
 ## R
 
 **RFQ** (Request for Quote):
 
-TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted market makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
+TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
 
 **rfq_id**:
 
@@ -202,11 +202,11 @@ A pre-authorized, cryptographically signed conditional order created by a taker 
 
 **slippage**:
 
-The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on market-maker fills because the price is fixed at quote time. `worst_price` is the hard onchain limit — no fill can settle past it.
+The difference between the expected execution price and the actual fill price. TrueCurrent's RFQ model eliminates slippage on maker fills because the price is fixed at quote time. `worst_price` is the hard onchain limit — no fill can settle past it.
 
 **spread**:
 
-The difference between a market maker's ask price (for longs) and bid price (for shorts). Market makers earn the spread, net of the 4 bps protocol fee, as compensation for providing liquidity and managing risk.
+The difference between a maker's ask price (for longs) and bid price (for shorts). Makers earn the spread, net of the 4 bps protocol fee, as compensation for providing liquidity and managing risk.
 
 **stop loss (SL)**:
 
@@ -228,7 +228,7 @@ A trigger order that automatically closes a position when mark price reaches a f
 
 **TakerStream**:
 
-The WebSocket endpoint used by traders (and programmatic takers) to submit RFQ requests and receive signed quotes from market makers.
+The WebSocket endpoint used by traders (and programmatic takers) to submit RFQ requests and receive signed quotes from makers.
 
 **trigger order**:
 
@@ -248,7 +248,7 @@ Profit or loss on an open position based on the current mark price, updated cont
 
 **whitelist**:
 
-The registry of market maker addresses approved to submit quotes on TrueCurrent. Gaining whitelist status requires completing a testnet integration and passing a team review. The contract rejects settlement attempts from non-whitelisted maker addresses.
+The registry of maker addresses approved to submit quotes on TrueCurrent. Gaining whitelist status requires completing a testnet integration and passing a team review. The contract rejects settlement attempts from non-whitelisted maker addresses.
 
 **worst_price**:
 

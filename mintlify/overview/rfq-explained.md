@@ -22,7 +22,7 @@ In TrueCurrent's RFQ model, prices are set by professional liquidity providers w
 
 - **Fixed-price execution.** Your price is fixed at quote time. It doesn't move between when you see the quote and when it settles.
 - **MEV resistance.** Signed quotes are atomic – there's nothing for a bot to extract from the price discovery process.
-- **Better prices for larger trades.** Market makers can offer tighter spreads on larger sizes than any AMM pool.
+- **Better prices for larger trades.** Makers can offer tighter spreads on larger sizes than any AMM pool.
 
 ---
 
@@ -32,7 +32,7 @@ Traditional onchain order books (like the one Injective natively provides) match
 
 - **Active vs. passive liquidity.** Limit orders sit idle until matched. RFQ liquidity providers actively respond to each trade request, so you always get a fresh, competitive price.
 - **Dedicated quote response.** On a busy order book, your market order competes with others. With RFQ, you have a dedicated quoting window.
-- **Better for large sizes.** A large market order on an order book walks up the book, paying progressively worse prices. RFQ market makers can absorb larger sizes at a single price.
+- **Better for large sizes.** A large market order on an order book walks up the book, paying progressively worse prices. RFQ makers can absorb larger sizes at a single price.
 
 ---
 
