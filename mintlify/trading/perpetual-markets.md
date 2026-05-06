@@ -1,7 +1,7 @@
 ---
 title: "Perpetual markets"
-description: "Introduction to perpetual futures trading on TrueCurrent covering leverage, long and short positions, mark pricing, cross-margin, funding rates, liquidation mechanics, and oracle price feeds."
-updatedAt: "2026-05-04"
+description: "Introduction to perpetual futures trading on TrueCurrent covering leverage, long and short positions, mark pricing, cross-margin, funding rates, liquidation mechanics, and the mark price source."
+updatedAt: "2026-05-06"
 ---
 
 TrueCurrent offers perpetual futures – leveraged positions on asset prices with no expiration date.
@@ -83,8 +83,7 @@ However, a large losing position can draw on the margin of your other positions.
 
 ---
 
-## Oracle and index price
+## Mark price source
 
-Every market's mark price comes from TrueCurrent's onchain oracle, which aggregates data from multiple sources.
-This price is publicly visible onchain –
-liquidations and P&L calculations are fully transparent and verifiable.
+Every market has an onchain mark price.
+This price is publicly visible and is used for P&L, liquidation checks, funding, and trigger-order evaluation.

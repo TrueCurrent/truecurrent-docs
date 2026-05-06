@@ -1,7 +1,7 @@
 ---
 title: "How TrueCurrent works"
 description: "Explanation of TrueCurrent's RFQ perpetuals trading flow where professional liquidity providers compete to offer best prices with zero taker fees, non-custodial settlement, and guaranteed price execution."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-06"
 ---
 
 TrueCurrent is a perpetuals exchange where professional liquidity providers compete to give you the best possible price on every trade. You set your parameters, and TrueCurrent automatically finds and executes at the best available price – no manual quote acceptance required.
@@ -26,7 +26,7 @@ Set your margin, leverage, and price tolerance (the worst price you're willing t
 When you click **Trade**, TrueCurrent automatically collects prices from institutional liquidity providers, picks the best one, and executes –
 all in under a second.
 
-You'll see an estimated price and can set your price floor before confirming.
+You'll see an estimated price and can set your execution limit before confirming.
 The trade will never execute at a less favorable price than your limit.
 
 ### Your position is live
@@ -42,7 +42,7 @@ The trade will never execute at a less favorable price than your limit.
 **Best price, automatically.** TrueCurrent collects quotes from competing liquidity providers and executes at the best one.
 You never need to manually accept a quote.
 
-**Your price floor is always respected.** You set a price tolerance before trading.
+**Your execution limit is always respected.** You set a price tolerance before trading.
 The trade will never execute at a worse price than your limit –
 if no provider can beat it, the trade simply doesn't go through.
 

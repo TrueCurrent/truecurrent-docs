@@ -1,7 +1,7 @@
 ---
 title: "Order types"
 description: "Complete reference for all order types on TrueCurrent: RFQ fill, take profit, stop loss, and signed intents — when each executes, its price guarantee, and when to use it."
-updatedAt: "2026-05-05"
+updatedAt: "2026-05-06"
 ---
 
 TrueCurrent's execution model is RFQ-only. On every trade, the system solicits competitive signed quotes from professional market makers and fills at the best available price — with zero taker fees. Conditional trigger orders (TP/SL) automate exits using the same RFQ quote path. This page documents every order type, what guarantee it carries, and when to reach for it.
@@ -46,7 +46,7 @@ A take profit order closes your position automatically when the price reaches a 
 
 **When to use:** to lock in gains automatically without watching the market; can be set at position open or added later.
 
-**Trigger evaluated against:** mark price (not the quoted price or index price). The contract re-evaluates the trigger at execution time.
+**Trigger evaluated against:** mark price, not quoted price. The contract re-evaluates the trigger at execution time.
 
 See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions and worked examples.
 

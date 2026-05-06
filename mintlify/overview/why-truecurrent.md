@@ -1,7 +1,7 @@
 ---
 title: "Why TrueCurrent"
 description: "Comparison of TrueCurrent's zero-fee RFQ trading against AMM DEXs and order book exchanges, highlighting MEV resistance, tight spreads, true non-custody, and best-price execution advantages."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-06"
 ---
 
 ## Free to trade
@@ -20,9 +20,9 @@ On an AMM, the quoted price can move between order submission and execution.
 Large trades push prices up or down, sometimes significantly.
 Bots can front-run your transaction.
 
-On TrueCurrent, you set a price floor and confirm.
+On TrueCurrent, you set the worst price you're willing to accept and confirm.
 TrueCurrent automatically collects prices from competing institutional liquidity providers and executes at the best one.
-You never pay more than you're willing to –
+The trade never settles outside your limit –
 and you never have to shop for a quote yourself.
 
 ---

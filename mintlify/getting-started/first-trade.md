@@ -1,7 +1,7 @@
 ---
 title: "Your first trade"
 description: "Step-by-step tutorial for executing your first perpetual futures trade on TrueCurrent, covering market selection, leverage setup, price tolerance, position monitoring, and funding rate considerations."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-06"
 ---
 
 A step-by-step guide to opening your first position on TrueCurrent. All workflows below reflect the platform as of 2026 — typical fill times under one second, zero taker fees, and hourly funding intervals.
@@ -52,7 +52,7 @@ Before confirming, you'll see an **estimated price** and a **worst price** you'r
 You can adjust how tight or loose this tolerance is.
 
 TrueCurrent will never execute your trade at a price worse than your limit.
-If no liquidity provider can beat your floor, the trade simply won't go through.
+If no liquidity provider can beat your limit, the trade simply won't go through.
 
 ---
 

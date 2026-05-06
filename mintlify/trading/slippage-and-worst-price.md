@@ -1,7 +1,7 @@
 ---
 title: "Price tolerance"
 description: "Configure price tolerance and worst-price protection on TrueCurrent to guarantee execution limits, prevent adverse fills, and manage slippage during volatile market conditions."
-updatedAt: "2026-04-06"
+updatedAt: "2026-05-06"
 ---
 
 When you place a trade on TrueCurrent, you set a **price tolerance** – a worst-case price you're willing to accept. TrueCurrent will never execute your trade at a price less favorable than this limit.
@@ -10,7 +10,7 @@ When you place a trade on TrueCurrent, you set a **price tolerance** – a worst
 
 ## How it works
 
-Before confirming a trade, you'll see an **estimated price** based on current market conditions. You also set a **worst price** – your floor (for longs) or ceiling (for shorts).
+Before confirming a trade, you'll see an **estimated price** based on current market conditions. You also set a **worst price**: the highest price you will pay when going long, or the lowest price you will receive when going short.
 
 TrueCurrent then automatically finds the best available price from liquidity providers. If no provider can beat your worst price, the trade doesn't go through. Your margin is returned and you can try again.
 
