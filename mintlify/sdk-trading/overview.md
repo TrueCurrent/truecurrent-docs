@@ -1,5 +1,5 @@
 ---
-title: "SDK Trading"
+title: "Intro to SDK Trading"
 description: "Trade or make markets on TrueCurrent programmatically through the SDK: choose a taker or maker integration path, understand the RFQ lifecycle, and know what must be set up before going live."
 updatedAt: "2026-05-06"
 ---
@@ -9,7 +9,7 @@ TrueCurrent can be used from the web app or through an SDK integration. The SDK 
 There are two integration roles:
 
 | Role | What you do | Best for |
-|---|---|---|
+| --- | --- | --- |
 | **Taker** | Request quotes, choose the best executable price, and settle a trade onchain | Trading bots, execution desks, strategy engines, apps embedding TrueCurrent trading |
 | **Market maker** | Receive RFQ requests, price them, sign quotes, and manage inventory | Professional liquidity providers and market-making systems |
 
@@ -87,6 +87,7 @@ Use the maker page if you will provide liquidity to other traders and respond to
   <Card title="Trade as a taker" icon="code" href="/sdk-trading/takers">
     Build programmatic trading: request quotes, select execution, settle onchain, and manage TP/SL intents.
   </Card>
+
   <Card title="Make markets" icon="chart-candlestick" href="/sdk-trading/makers">
     Build a maker integration: connect to MakerStream, sign quotes, manage inventory, and monitor fills.
   </Card>

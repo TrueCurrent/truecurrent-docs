@@ -9,7 +9,7 @@ updatedAt: "2026-05-06"
 gRPC-web over WebSocket, protobuf framing.
 
 | Property | Value |
-|---|---|
+| --- | --- |
 | Protocol | gRPC-web over WebSocket |
 | Subprotocol | `grpc-ws` |
 | Serialization | Protobuf (binary framing) |
@@ -25,31 +25,27 @@ Canonical public path per `rfq-testing/configs/testnet.yaml` (ground truth — w
 - Takers subscribe via `TakerStream`
 
 | Environment | MakerStream URL |
-|---|---|
+| --- | --- |
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
 | Mainnet | Contact TrueCurrent for the current production endpoint |
 
 Additional endpoints exposed by the indexer:
 
 | Transport | URL |
-|---|---|
+| --- | --- |
 | gRPC | `testnet.rfq.grpc.injective.network:443` |
 | gRPC-web | `https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
 | HTTP/REST | `https://testnet.rfq.injective.network` |
 
 <Info>
-**Service naming**:
+  **Service naming**:
 
-The indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`)
-declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`.
-Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names.
-Use the public alias: that is what the testnet deployment actually accepts,
-and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`) uses.
+  The indexer's internal proto file (`rfq-indexer/proto/rfq/v1/api.proto`) declares the service as `rfq.v1.RfqService` with methods `StreamRequest` / `StreamQuote`. Public traffic is fronted under the `InjectiveRfqRPC` alias with `MakerStream` / `TakerStream` method names. Use the public alias: that is what the testnet deployment actually accepts, and it's what every working client library (`rfq-testing`, `rfq-qa-python-tests`) uses.
 </Info>
 
 ### Connection flow
 
-```
+```text
 MM                                    Indexer
 │                                        │
 │  ── WebSocket Connect ──────────────▶  │
@@ -69,7 +65,7 @@ MM                                    Indexer
 
 ### Message framing
 
-```
+```text
 ┌──────────┬──────────────┬──────────────────────────┐
 │ Flag (1) │ Length (4 BE) │ Protobuf Payload (N)     │
 │   0x00   │              │                           │
@@ -96,11 +92,11 @@ service InjectiveRfqRPC {
 
 **What you receive** — a `MakerStreamResponse` tagged by `message_type`:
 
-- `"challenge"` — a `MakerChallenge` one-shot auth challenge (see [Auth handshake](#auth-handshake) below — must be handled before any `request` events arrive)
-- `"pong"` — server-side heartbeat
-- `"request"` — an `RFQRequestType` broadcast from a taker
-- `"quote_ack"` — a `StreamAck` confirming the indexer accepted your quote
-- `"error"` — a `StreamError` describing what went wrong
+- `"challenge"` – a `MakerChallenge` one-shot auth challenge (see [Auth handshake](#auth-handshake) below — must be handled before any `request` events arrive)
+- `"pong"` – server-side heartbeat
+- `"request"` – an `RFQRequestType` broadcast from a taker
+- `"quote_ack"` – a `StreamAck` confirming the indexer accepted your quote
+- `"error"` – a `StreamError` describing what went wrong
 
 > Read `rfq-testing/src/rfq_test/proto/injective_rfq_rpc.proto` for the full message definitions. The Python client wraps all this for you in `src/rfq_test/clients/websocket.py::MakerStreamClient`.
 
@@ -108,13 +104,11 @@ service InjectiveRfqRPC {
 
 ### Auth handshake
 
-Before the indexer forwards any `request` events,
-it issues a one-shot EIP-712 v2 challenge against the maker address announced in connection metadata.
-The stream stays open but silent until you reply correctly.
+Before the indexer forwards any `request` events, it issues a one-shot EIP-712 v2 challenge against the maker address announced in connection metadata. The stream stays open but silent until you reply correctly.
 
 **Flow:**
 
-```
+```text
 1. MM connects          with maker_address metadata
 2. Indexer sends        MakerChallenge `{ nonce, evm_chain_id, expires_at }`
 3. MM signs             StreamAuthChallenge typed-data (EIP-712 v2)
@@ -125,17 +119,15 @@ The stream stays open but silent until you reply correctly.
 **`MakerChallenge` fields (indexer → MM):**
 
 | # | Field | Type | Meaning |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | `nonce` | string | Hex-encoded 32 bytes. Decode to raw bytes for signing. |
 | 2 | `evm_chain_id` | uint64 | Chain ID for the EIP-712 domain (`1439` testnet, `1776` mainnet). |
 | 3 | `expires_at` | sint64 | Unix milliseconds. Sign and reply within ~30s. |
 
 <Warning>
-The `MakerChallenge` message format uses a signed integer (`sint64`),
-while the EIP-712 signature uses an unsigned integer (`uint64`).
+  The `MakerChallenge` message format uses a signed integer (`sint64`), while the EIP-712 signature uses an unsigned integer (`uint64`).
 
-Do *not* use `uint64` when constructing this `MakerChallenge` message,
-only use `sint64` for the `expires_at` field.
+  Do _not_ use `uint64` when constructing this `MakerChallenge` message, only use `sint64` for the `expires_at` field.
 </Warning>
 
 **`StreamAuthChallenge` typed-data layout:**
@@ -143,7 +135,7 @@ only use `sint64` for the `expires_at` field.
 Type string: `"StreamAuthChallenge(uint64 evmChainId,address maker,bytes32 nonce,uint64 expiresAt)"`
 
 | # | Field | Type | Encoding |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | `evmChainId` | uint64 | Big-endian, right-aligned in 32 bytes. |
 | 2 | `maker` | address | 20 bytes from `bech32_to_evm(maker_inj)`, left-padded. |
 | 3 | `nonce` | bytes32 | Raw 32 bytes from `MakerChallenge.nonce`. Hex-decoded, **not** keccak-hashed. |
@@ -154,7 +146,7 @@ Uses the same domain separator as `SignQuote` (name `"RFQ"`, version `"1"`, `cha
 **`MakerAuth` fields (MM → indexer):**
 
 | # | Field | Type | Meaning |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | `evm_chain_id` | uint64 | Same value as `MakerChallenge.evm_chain_id`. |
 | 2 | `signature` | string | `0x`-prefixed 65 bytes (r ‖ s ‖ v, v=0/1). |
 
@@ -237,11 +229,7 @@ await mm_ws.connect()
 ```
 
 <Info>
-**Troubleshooting**:
+  **Troubleshooting**:
 
-If your stream connects, pings return pongs,
-but you never receive `request` events:
-The auth challenge was not handled, or the signature failed.
-Check that you handle `message_type: "challenge"`
-and that your `MakerAuth` uses the correct `evm_chain_id`.
+  If your stream connects, pings return pongs, but you never receive `request` events: The auth challenge was not handled, or the signature failed. Check that you handle `message_type: "challenge"` and that your `MakerAuth` uses the correct `evm_chain_id`.
 </Info>

@@ -6,7 +6,7 @@ updatedAt: "2026-05-06"
 
 Use this runbook when validating a taker or maker SDK integration on testnet. It is intentionally procedural: complete the steps in order, fix failures before moving on, then run the full settlement flow.
 
-This page is adapted from the RFQ onboarding runbook and assumes you are using the `rfq-testing` reference client.
+This page is adapted from the RFQ onboarding runbook and assumes you are using the `rfq-testing`[ reference client](https://github.com/InjectiveLabs/rfq-testing).
 
 ---
 
@@ -300,7 +300,7 @@ Use `CancelAllIntents` only when you need to invalidate every lane for the taker
 ## Common blockers
 
 | Symptom | Likely cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | Maker stream connects but receives no requests | Maker did not answer `MakerChallenge` | Configure `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address` |
 | `authorization not found` | Missing or expired authz grant | Re-run [Authorization setup](/sdk-trading/authz) |
 | Quote rejected for signature | Decimal string changed after signing, wrong EVM chain ID, or wrong contract domain | Quantize before signing and send the exact signed strings |

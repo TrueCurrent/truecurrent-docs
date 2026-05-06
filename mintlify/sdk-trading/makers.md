@@ -4,7 +4,7 @@ description: "High-level guide for market makers using the TrueCurrent SDK: whit
 updatedAt: "2026-05-06"
 ---
 
-Market makers provide liquidity to TrueCurrent takers. A maker system listens for RFQ requests, prices each request, signs a quote, and sends it back through MakerStream.
+Makers provide liquidity to TrueCurrent takers. A maker system listens for RFQ requests, prices each request, signs a quote, and sends it back through MakerStream.
 
 The taker decides whether to accept the quote. If accepted, the TrueCurrent contract verifies the maker signature and settles both sides on Injective.
 
@@ -21,7 +21,7 @@ The maker path is for professional liquidity providers and trading systems that 
 - Keep sufficient margin available
 - Monitor quote quality and settlement outcomes
 
-Market makers must be approved before their quotes are routed to takers.
+Makers must be approved before their quotes are routed to takers.
 
 ---
 
@@ -43,7 +43,7 @@ You should be ready to provide:
 A maker wallet needs:
 
 | Requirement | Why it matters |
-|---|---|
+| --- | --- |
 | INJ gas balance | Required for setup and operational transactions |
 | USDC margin | Collateral for maker-side positions |
 | Exchange subaccount funding | Quotes settle into Injective exchange subaccounts |
@@ -117,7 +117,7 @@ After a fill, update:
 Market-making systems should include these controls before quoting live:
 
 | Control | Why it matters |
-|---|---|
+| --- | --- |
 | Price-feed freshness checks | Avoid stale quotes and adverse selection |
 | Mark-price tracking | Contract validation is centered on mark price |
 | Tick-size quantization | Unquantized prices or quantities fail validation |
@@ -162,23 +162,6 @@ Keep these rules visible in your implementation checklist:
 - Treat missing or stale mark price data as a no-quote condition
 
 On testnet, the EVM chain ID is `1439`. Mainnet uses `1776`.
-
----
-
-## Maker standing
-
-TrueCurrent monitors maker reliability because poor maker behavior directly affects trader execution.
-
-You can lose standing if your system:
-
-- Frequently misses the response window
-- Quotes prices that are consistently not executable
-- Allows accepted quotes to fail from insufficient margin
-- Sends malformed or invalid signatures
-- Quotes from an unregistered address
-- Degrades trader execution quality
-
-Normal market-making discretion is expected. You can widen spreads, reduce size, or stop quoting during volatility. The important requirement is that quotes you do send are intentional, valid, and backed by capital.
 
 ---
 
