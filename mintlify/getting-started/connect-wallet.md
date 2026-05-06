@@ -26,7 +26,7 @@ Your wallet is your TrueCurrent account. Connect a supported wallet, complete th
 
 Your address will appear in the top right when connected.
 
-<video src="/videos/Clipboard-20260505-215724-873-1.mp4" controls />
+<video src="/videos/Clipboard-20260506-164541-780.mp4" controls />
 
 {/* SCREENSHOT SLOT: connect-wallet — wallet picker modal opened from the top-right "Start here" button, showing the four supported wallets. */}
 
