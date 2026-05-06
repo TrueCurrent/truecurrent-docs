@@ -12,7 +12,7 @@ If you're a human trader clicking buttons, you want [How to trade](/trading/how-
 
 ## What a programmatic taker does
 
-A taker is the party *requesting* a trade. You submit a Request for Quote, receive signed quotes from whitelisted market makers, pick the best ones, and settle onchain. The RFQ flow is **pull-based**: you don't post orders to a book and wait – you broadcast a request, and makers respond within a brief window.
+A taker is the party *requesting* a trade. You submit a Request for Quote, receive signed quotes from whitelisted makers, pick the best ones, and settle onchain. The RFQ flow is **pull-based**: you don't post orders to a book and wait – you broadcast a request, and makers respond within a brief window.
 
 This is different from an orderbook exchange in three important ways:
 
@@ -93,6 +93,4 @@ What you are **not** trusting:
 
 - The reference implementation for everything in this section lives at [`InjectiveLabs/rfq-testing`](https://github.com/InjectiveLabs/rfq-testing) – Python library, TypeScript examples, and testnet config.
 
-> **API key requirements (current vs future):** today, takers connect to the testnet indexer with no authentication and no rate limit – the reference scripts work out of the box. Once the [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is deployed in front of the public indexer, every taker request will require an API key, and the default per-key rate limit (10 req/s, burst 20) is too low for HFT. Programmatic high-frequency takers will need an `api`-tier key provisioned with a custom rate limit. See [Authentication](/takers/taker-stream#authentication) and [Rate limiting](/takers/best-practices#rate-limiting) for what changes when that happens.
->
-> 
+Anybody can access the public RFQ streams. The reference scripts work out of the box without additional stream authentication.

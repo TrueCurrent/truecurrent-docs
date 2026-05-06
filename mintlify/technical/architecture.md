@@ -14,7 +14,7 @@ TrueCurrent is composed of three main layers: an off-chain quote distribution la
 flowchart LR
     Taker(["Taker<br/><i>end user or bot</i>"])
     Indexer(["RFQ Indexer<br/><i>off-chain routing</i>"])
-    MM(["Market Maker<br/><i>off-chain quoting</i>"])
+    MM(["Maker<br/><i>off-chain quoting</i>"])
 
     subgraph Injective["Injective Chain"]
         direction TB
@@ -35,7 +35,7 @@ flowchart LR
     class Contract,Exchange onchain
 ```
 
-**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the market maker's positions.
+**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the maker's positions.
 
 ---
 
@@ -45,20 +45,20 @@ flowchart LR
 
 The indexer is TrueCurrent's off-chain coordination layer. It:
 
-- Maintains the registry of whitelisted market maker addresses
+- Maintains the registry of whitelisted maker addresses
 - Operates the **TakerStream** WebSocket (for traders submitting requests)
-- Operates the **MakerStream** WebSocket (for market makers receiving requests and submitting quotes)
-- Routes requests to all active market makers
+- Operates the **MakerStream** WebSocket (for makers receiving requests and submitting quotes)
+- Routes requests to all active makers
 - Collects and forwards quotes back to traders
 - Selects the best quote for presentation
 
-The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and market makers. Even if the indexer were to behave maliciously, it could not forge a market maker's signature or alter the terms of a quote.
+The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and makers. Even if the indexer were to behave maliciously, it could not forge a maker's signature or alter the terms of a quote.
 
 ### TrueCurrent smart contract (onchain)
 
 Deployed on Injective as a CosmWasm contract, the TrueCurrent contract is the trust anchor of the system. It:
 
-- Verifies market maker signatures on each `AcceptQuote` call
+- Verifies maker signatures on each `AcceptQuote` call
 - Enforces the trader's `worst_price` constraint
 - Checks quote expiry
 - Confirms both parties have sufficient margin
@@ -85,7 +85,7 @@ sequenceDiagram
     autonumber
     actor Taker
     participant Indexer
-    participant MMs as Market Makers
+    participant MMs as Makers
     participant Contract as TrueCurrent Contract
     participant Exchange as Exchange Module
 
@@ -132,6 +132,6 @@ For the conditional / TP-SL variant, substitute steps 1–5 with the signed-inte
 
 **What you do not need to trust:**
 
-- Individual market makers to honor prices – the signature enforces it onchain
+- Individual makers to honor prices – the signature enforces it onchain
 - TrueCurrent to hold or secure your funds – assets stay in your subaccount at all times
 - Centralized infrastructure for settlement – all final settlement is onchain

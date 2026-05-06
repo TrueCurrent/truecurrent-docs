@@ -12,7 +12,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 ### `signature verification failed`
 
-**Cause:** The market maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
+**Cause:** The maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
 
 **Common causes:**
 - Using the old JSON-signing path instead of `rfq_test.crypto.eip712.sign_quote_v2`
@@ -30,10 +30,10 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Common causes:**
 - Quote `expiry` was set too short (less than the time needed for the taker to accept + block confirmation)
-- System clock skew on the market maker's server
+- System clock skew on the maker's server
 - Network delay between quote submission and onchain settlement
 
-**Resolution:** Set quote expiry to `now + 2_000` ms (2 seconds) for live RFQ quotes — that is the canonical window every market-maker reference uses. Ensure your server uses NTP time synchronization. If your settlement chain RTT routinely chews through that budget, co-locate closer to the chain gRPC endpoint rather than extending the expiry — wider expiries widen your exposure to stale-price losses.
+**Resolution:** Set quote expiry to `now + 2_000` ms (2 seconds) for live RFQ quotes — that is the canonical window every maker reference implementation uses. Ensure your server uses NTP time synchronization. If your settlement chain RTT routinely chews through that budget, co-locate closer to the chain gRPC endpoint rather than extending the expiry — wider expiries widen your exposure to stale-price losses.
 
 ---
 
@@ -46,7 +46,7 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
 
-**Resolution (market makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
+**Resolution (makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
 
 ---
 
@@ -64,13 +64,13 @@ This page lists common errors you may encounter when integrating with TrueCurren
 
 **Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
 
-**Resolution (market makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
+**Resolution (makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
 
 ---
 
 ### `maker not whitelisted`
 
-**Cause:** The maker address in the quote is not on the TrueCurrent approved market maker whitelist.
+**Cause:** The maker address in the quote is not on the TrueCurrent approved maker whitelist.
 
 **Resolution:** Apply for whitelist approval. See [Maker SDK trading](/sdk-trading/makers).
 
@@ -111,10 +111,10 @@ These apply specifically to TP/SL settlement via `AcceptSignedIntent`.
 **Symptom:** The taker's `collect_quotes()` returns an empty list after the collection window.
 
 **Common causes:**
-- No market makers are currently active for the requested market
+- No makers are currently active for the requested market
 - The requesting taker address is not recognized by the indexer (connection issue)
 - The market ID in the request is incorrect
-- Market makers are whitelisted but their MakerStream is disconnected
+- Makers are whitelisted but their MakerStream is disconnected
 
 **Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the MM wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
 

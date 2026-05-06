@@ -6,7 +6,7 @@ updatedAt: "2026-05-05"
 
 This is the operational recipe for granting a TrueCurrent contract the three message types it needs to settle trades on your behalf. It is a one-time setup per wallet. Once grants are in place, every `AcceptQuote` settles atomically without requiring per-trade signatures.
 
-For the conceptual model — why authz, what it protects, what the security tradeoffs are — see [Authorization model](/technical/authz-model). For the maker-side recipe (two grants instead of three), see [Market makers — Authorization setup](/market-makers/authz-setup).
+For the conceptual model — why authz, what it protects, what the security tradeoffs are — see [Authorization model](/technical/authz-model). For the maker-side recipe (two grants instead of three), see [Makers — Authorization setup](/market-makers/authz-setup).
 
 ---
 

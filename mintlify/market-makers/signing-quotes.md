@@ -4,7 +4,7 @@ description: "Pointer page: the canonical EIP-712 v2 quote signing reference liv
 updatedAt: "2026-05-05"
 ---
 
-The canonical quote-signing reference — EIP-712 v2 domain, the `SignQuote` typed-data schema with field order, the `sign_quote_v2` helper, decimal-formatting rules, and common signing failures — lives in the [Market makers integration guide](/market-makers/integration/rfq-quotes-sign).
+The canonical quote-signing reference — EIP-712 v2 domain, the `SignQuote` typed-data schema with field order, the `sign_quote_v2` helper, decimal-formatting rules, and common signing failures — lives in the [Makers integration guide](/market-makers/integration/rfq-quotes-sign).
 
 Quick links:
 

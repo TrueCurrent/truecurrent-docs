@@ -20,13 +20,13 @@ Mark price is used for:
 - **Trigger orders** — take profit and stop loss triggers fire when mark price crosses your trigger level
 - **Price validation** — `worst_price` and maker quotes must stay within the allowed band around mark price
 
-Mark price is **not** your execution price. You do not buy or sell at mark price unless a market maker's quote happens to match it.
+Mark price is **not** your execution price. You do not buy or sell at mark price unless a maker's quote happens to match it.
 
 ---
 
 ## Quoted price
 
-The **quoted price** is the price offered by a market maker through TrueCurrent's RFQ flow. This is the price that becomes your fill price if the quote is selected and settles onchain.
+The **quoted price** is the price offered by a maker through TrueCurrent's RFQ flow. This is the price that becomes your fill price if the quote is selected and settles onchain.
 
 When you submit a trade, TrueCurrent requests signed quotes from liquidity providers. Each quote includes a price, quantity, expiry, maker address, and signature. TrueCurrent selects the best executable quote automatically:
 
@@ -39,7 +39,7 @@ Your quoted price is used for:
 - **Realized P&L** — the price used when your position closes
 - **Trade history** — the fill price shown for settled trades
 
-Quoted price can differ from mark price. That difference is the effective spread you receive from the RFQ market maker.
+Quoted price can differ from mark price. That difference is the effective spread you receive from the RFQ maker.
 
 ---
 
@@ -47,7 +47,7 @@ Quoted price can differ from mark price. That difference is the effective spread
 
 Before you confirm a trade, the UI may show an **estimated price**. This is a preview based on current market conditions. It is not a signed quote and is not guaranteed.
 
-The final execution price is determined only after market makers respond with signed quotes. In calm markets, the estimated price and final quoted price should usually be close. In fast-moving markets, they can differ.
+The final execution price is determined only after makers respond with signed quotes. In calm markets, the estimated price and final quoted price should usually be close. In fast-moving markets, they can differ.
 
 ---
 
@@ -81,6 +81,6 @@ This means a trigger can fire without guaranteeing a fill. If the market moves b
 | Price | What it is | Used for |
 |-------|------------|----------|
 | **Mark price** | Market reference price | P&L, margin ratio, liquidation, TP/SL triggers, price validation |
-| **Quoted price** | Signed market-maker execution price | Trade fills, realized P&L, trade history |
+| **Quoted price** | Signed maker quote price | Trade fills, realized P&L, trade history |
 | **Estimated price** | Pre-trade UI preview | Showing an approximate expected fill before quotes are collected |
 | **Worst price** | Your execution limit | Preventing settlement at a worse price than you accepted |

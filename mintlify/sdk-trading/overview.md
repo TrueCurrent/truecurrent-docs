@@ -4,16 +4,16 @@ description: "Trade or make markets on TrueCurrent programmatically through the 
 updatedAt: "2026-05-06"
 ---
 
-TrueCurrent can be used from the web app or through an SDK integration. The SDK path is for teams that want to automate trading, embed RFQ execution in another product, or run professional market-making infrastructure.
+TrueCurrent can be used from the web app or through an SDK integration. The SDK path is for teams that want to automate trading, embed RFQ execution in another product, or run institutional liquidity-provider infrastructure.
 
 There are two integration roles:
 
 | Role | What you do | Best for |
 | --- | --- | --- |
 | **Taker** | Request quotes, choose the best executable price, and settle a trade onchain | Trading bots, execution desks, strategy engines, apps embedding TrueCurrent trading |
-| **Market maker** | Receive RFQ requests, price them, sign quotes, and manage inventory | Professional liquidity providers and market-making systems |
+| **Maker** | Receive RFQ requests, price them, sign quotes, and manage inventory | Professional liquidity providers and maker systems |
 
-Most traders are takers. Market makers must be approved before their quotes are routed to users.
+Most traders are takers. Makers must be approved before their quotes are routed to users.
 
 ---
 
@@ -22,8 +22,8 @@ Most traders are takers. Market makers must be approved before their quotes are 
 SDK trading uses the same RFQ model as the web app:
 
 1. A taker requests a trade
-2. The request is routed to active market makers
-3. Market makers respond with signed quotes
+2. The request is routed to active makers
+3. Makers respond with signed quotes
 4. The taker selects the best quote or quote set
 5. The TrueCurrent contract verifies the quote and settles both sides on Injective
 
@@ -45,7 +45,7 @@ For takers, the SDK path covers:
 - Submitting settlement transactions
 - Creating and cancelling signed TP/SL intents
 
-For market makers, the SDK path covers:
+For makers, the SDK path covers:
 
 - Connecting to MakerStream
 - Completing the maker auth challenge
@@ -67,7 +67,7 @@ Every SDK integration needs:
 - The current RFQ contract address and market configuration
 - A plan for authz grant creation, monitoring, and revocation
 
-Market makers also need:
+Makers also need:
 
 - Whitelist approval
 - Reliable price feeds

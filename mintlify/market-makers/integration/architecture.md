@@ -1,6 +1,6 @@
 ---
 title: "Architecture overview"
-description: "High-level overview of how TrueCurrent's RFQ system connects retail takers, the RFQ indexer, market makers, and the Injective chain for atomic on-chain settlement."
+description: "High-level overview of how TrueCurrent's RFQ system connects retail takers, the RFQ indexer, makers, and the Injective chain for atomic on-chain settlement."
 updatedAt: "2026-04-18"
 ---
 
@@ -8,7 +8,7 @@ updatedAt: "2026-04-18"
 flowchart LR
     Taker["Retail (Taker)"]
     Indexer["RFQ Indexer<br/>(WebSocket)"]
-    MM["Market Maker (YOU)<br/>MakerStream"]
+    MM["Maker (YOU)<br/>MakerStream"]
     Chain["Injective Chain<br/>(Settlement)"]
 
     Taker <-->|requests / quotes| Indexer
@@ -25,8 +25,8 @@ flowchart LR
 ### How it works
 
 1. **Retail user** sends an RFQ request via the **TakerStream** WebSocket.
-2. **RFQ Indexer** broadcasts the request to all connected **Market Makers** via **MakerStream**.
-3. **Market Makers** price, sign, and return a quote over MakerStream.
+2. **RFQ Indexer** broadcasts the request to all connected **Makers** via **MakerStream**.
+3. **Makers** price, sign, and return a quote over MakerStream.
 4. **Indexer** relays quotes back to the taker after a collection window.
 5. **Retail user** picks a quote and calls `AcceptQuote` on the RFQ contract.
 6. **Contract** verifies the MM signature and settles the trade as a synthetic position.

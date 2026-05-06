@@ -1,10 +1,10 @@
 ---
 title: "Integration guide"
-description: "Overview of the TrueCurrent market-maker integration: what you connect to, what you sign, what you settle, and where to start in the guide depending on whether you're scaffolding a new MM or porting an existing one."
+description: "Overview of the TrueCurrent maker integration: what you connect to, what you sign, what you settle, and where to start in the guide depending on whether you're scaffolding a new maker or porting an existing one."
 updatedAt: "2026-05-05"
 ---
 
-This guide walks you from a fresh Injective wallet to a market maker quoting live on TrueCurrent. The flow is short:
+This guide walks you from a fresh Injective wallet to a maker quoting live on TrueCurrent. The flow is short:
 
 1. **Generate an Injective wallet** and share the `inj1…` address with the TrueCurrent team
 2. **Get whitelisted** on the RFQ contract (admin call)
@@ -30,7 +30,7 @@ If you've integrated with other RFQ venues, three things on TrueCurrent are wort
 
 ## Recommended reading order
 
-**Scaffolding a new market maker:**
+**Scaffolding a new maker:**
 
 1. [Architecture overview](/market-makers/integration/architecture) — the three parties, what each does
 2. [Quick start checklist](/market-makers/integration/quick-start) — the seven-step path from wallet to first quote
@@ -41,7 +41,7 @@ If you've integrated with other RFQ venues, three things on TrueCurrent are wort
 7. [Sending quotes](/market-makers/integration/rfq-quotes-send) — wire format, ACK / error responses
 8. [Reference implementations](/market-makers/integration/reference-implementations) — Python, TypeScript, Go entry points
 
-**Porting an existing market-maker stack:**
+**Porting an existing maker stack:**
 
 1. [Protocol reference](/market-makers/integration/protocol-reference) — full sequence diagrams (sync `AcceptQuote` and TP/SL `AcceptSignedIntent` paths) plus testnet market list
 2. [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — the `SignQuote` field order is precise; mismatches fail signature verification silently

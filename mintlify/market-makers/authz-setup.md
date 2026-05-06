@@ -1,6 +1,6 @@
 ---
-title: "Authorization setup (market maker)"
-description: "Recipe: the two authz grants a market-maker wallet must give the TrueCurrent contract before its quotes can settle. Python code sample, verification, and revocation."
+title: "Authorization setup (maker)"
+description: "Recipe: the two authz grants a maker wallet must give the TrueCurrent contract before its quotes can settle. Python code sample, verification, and revocation."
 updatedAt: "2026-05-05"
 ---
 
@@ -12,7 +12,7 @@ For the conceptual model â€” why authz, what it protects, what the security trad
 
 ## Required grants
 
-As a market maker, you need to grant the following message types to the TrueCurrent contract:
+As a maker, you need to grant the following message types to the TrueCurrent contract:
 
 | Message type | Purpose |
 |---|---|
@@ -77,7 +77,7 @@ Each grant requires a separate transaction. Wait **3 seconds** between grants â€
 
 ## Grant expiry
 
-By default, authz grants can be set to expire after a specified duration. TrueCurrent recommends setting grants with no expiry (or a very long expiry), so your market making operations aren't interrupted by expired authorizations.
+By default, authz grants can be set to expire after a specified duration. TrueCurrent recommends setting grants with no expiry (or a very long expiry), so your maker operations aren't interrupted by expired authorizations.
 
 If you set an expiry, make sure to renew grants before they expire. Expired grants will cause settlement failures.
 
@@ -120,4 +120,4 @@ Revoking grants does not close any open positions. Your existing positions remai
 
 Grants are scoped to specific message types and a specific grantee address (the TrueCurrent contract); they are revocable at any time, and the contract's own onchain checks (signature verification, whitelist check, balance check) are the actual security boundary regardless of what authz allows. For the full security analysis and trust-model walkthrough, see [Authorization model](/technical/authz-model#why-not-just-use-allowances-or-signatures-per-trade).
 
-For production, use a dedicated market making wallet separate from your personal or treasury wallet.
+For production, use a dedicated maker wallet separate from your personal or treasury wallet.

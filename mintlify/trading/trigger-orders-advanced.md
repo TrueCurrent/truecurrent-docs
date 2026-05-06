@@ -32,7 +32,7 @@ When a trigger fires, the relayer must find maker quotes and submit a valid `Acc
 
 ### No maker quotes available
 
-If no market maker is quoting at the moment the trigger fires — because they're offline, have insufficient balance, or have withdrawn liquidity — there are no quotes to fill against. The relayer cannot construct a valid settlement transaction.
+If no maker is quoting at the moment the trigger fires — because they're offline, have insufficient balance, or have withdrawn liquidity — there are no quotes to fill against. The relayer cannot construct a valid settlement transaction.
 
 ### Contract rejection
 
@@ -53,7 +53,7 @@ In a fast-moving market, this creates a gap scenario:
 **Stop loss example:**
 1. You open a long at \$5.00 and set a stop loss at \$4.80 with `worst_price = $4.75`.
 2. The market drops sharply. The mark price blows through \$4.80 and reaches \$4.60 before the relayer can land the transaction.
-3. At execution time, the trigger condition (mark ≤ \$4.80) is satisfied. But no market maker is willing to quote at \$4.75 or better when the mark price is at \$4.60 — the asset is now worth less than your floor.
+3. At execution time, the trigger condition (mark ≤ \$4.80) is satisfied. But no maker is willing to quote at \$4.75 or better when the mark price is at \$4.60 — the asset is now worth less than your floor.
 4. The settlement fails. Your stop loss did not execute.
 
 **Take profit example:**

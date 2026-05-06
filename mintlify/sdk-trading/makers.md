@@ -1,6 +1,6 @@
 ---
 title: "Maker SDK trading"
-description: "High-level guide for market makers using the TrueCurrent SDK: whitelist approval, MakerStream connection, auth challenge, quote signing, risk controls, settlement, and monitoring."
+description: "High-level guide for makers using the TrueCurrent SDK: whitelist approval, MakerStream connection, auth challenge, quote signing, risk controls, settlement, and monitoring."
 updatedAt: "2026-05-06"
 ---
 
@@ -114,7 +114,7 @@ After a fill, update:
 
 ## Required controls
 
-Market-making systems should include these controls before quoting live:
+Maker systems should include these controls before quoting live:
 
 | Control | Why it matters |
 | --- | --- |

@@ -1,6 +1,6 @@
 ---
 title: "Frequently asked questions"
-description: "Comprehensive FAQ covering TrueCurrent's RFQ trading model, non-custodial security, zero fees, market maker program, liquidation mechanics, funding rates, and wallet authorization on Injective."
+description: "Comprehensive FAQ covering TrueCurrent's RFQ trading model, non-custodial security, zero fees, maker program, liquidation mechanics, funding rates, and wallet authorization on Injective."
 updatedAt: "2026-05-06"
 ---
 
@@ -10,7 +10,7 @@ updatedAt: "2026-05-06"
   <Accordion title="What is TrueCurrent?">
     TrueCurrent is a non-custodial perpetuals exchange on Injective that uses a Request for Quote (RFQ) system.
 
-    Instead of trading against an automated market maker or a passive order book, you receive live, competitive quotes from professional market makers and execute at the locked-in price with no slippage.
+    Instead of trading against an automated market maker or a passive order book, you receive live, competitive quotes from institutional liquidity providers and execute at the locked-in price with no slippage.
   </Accordion>
 
   <Accordion title="Is TrueCurrent non-custodial?">
@@ -42,7 +42,7 @@ updatedAt: "2026-05-06"
   <Accordion title="What fees does TrueCurrent charge?">
     TrueCurrent charges zero protocol fees to traders — no taker fee, no gas fee, and no deposit or withdrawal fee.
 
-    Market makers pay a 4 bps (0.04%) protocol fee on filled volume, which is how the protocol sustains itself while keeping trading free for users. See [Fees](/trading/fees) for the full breakdown.
+    Makers pay a 4 bps (0.04%) protocol fee on filled volume, which is how the protocol sustains itself while keeping trading free for users. See [Fees](/trading/fees) for the full breakdown.
   </Accordion>
 
   <Accordion title="Which wallets are supported?">
@@ -58,12 +58,12 @@ updatedAt: "2026-05-06"
 
 <AccordionGroup>
   <Accordion title="What is an RFQ?">
-    RFQ (Request for Quote) is TrueCurrent's trading model where professional market makers compete in real time to fill your order at a fixed, firm price.
+    RFQ (Request for Quote) is TrueCurrent's trading model where institutional liquidity providers compete in real time to fill your order at a fixed, firm price.
 
     Unlike Automated Market Makers (AMMs), the price is locked at *quote time* and doesn't change during settlement. See [RFQ explained](/overview/rfq-explained) for a full explanation.
   </Accordion>
 
-  <Accordion title="What happens if no market maker responds to my request?">
+  <Accordion title="What happens if no maker responds to my request?">
     The request is cancelled and your margin is released. Nothing settles onchain, so you pay nothing. You can submit a new request immediately — prices update continuously.
 
     This is rare on liquid markets, where multiple makers compete on every request.
@@ -76,7 +76,7 @@ updatedAt: "2026-05-06"
   </Accordion>
 
   <Accordion title="Why did my quote expire before I could accept?">
-    Live market maker quotes are valid for about 2 seconds. That window is short by design — it protects makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
+    Live maker quotes are valid for about 2 seconds. That window is short by design — it protects makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
 
     If a quote expires before settlement confirms, simply request a new one. The process is fast.
   </Accordion>
@@ -108,10 +108,10 @@ updatedAt: "2026-05-06"
 
 ---
 
-## Market makers
+## Makers
 
 <AccordionGroup>
-  <Accordion title="How do I become a market maker?">
+  <Accordion title="How do I become a maker?">
     Apply for whitelist access by contacting the TrueCurrent team and completing a testnet integration.
 
     You'll need to demonstrate your system is working correctly on testnet before being approved. See [Maker SDK trading](/sdk-trading/makers) for the full process.
@@ -124,25 +124,25 @@ updatedAt: "2026-05-06"
   </Accordion>
 
   <Accordion title="Why is my quote not winning trades?">
-    Your price is likely less competitive than other market makers.
+    Your price is likely less competitive than other makers.
 
     Review your pricing model and reference data sources. Also verify that your `authz` grants are current and your margin is sufficient. Quote wins that fail at settlement still count against your metrics.
   </Accordion>
 
-  <Accordion title="Can I see who other market makers are?">
-    Market maker addresses are visible onchain via `AcceptQuote` transaction history, but the whitelist is not publicly published.
+  <Accordion title="Can I see who other makers are?">
+    Maker addresses are visible onchain via `AcceptQuote` transaction history, but the whitelist is not publicly published.
 
     You can observe trade history to infer which makers are currently active.
   </Accordion>
 
-  <Accordion title="What fees do market makers pay?">
-    Market makers pay a 4 bps (0.04%) protocol fee on filled volume; traders pay nothing.
+  <Accordion title="What fees do makers pay?">
+    Makers pay a 4 bps (0.04%) protocol fee on filled volume; traders pay nothing.
 
-    Revenue for market makers comes from the spread between bid and ask, net of the 4 bps fee. See [Fees](/trading/fees) and [Maker SDK trading](/sdk-trading/makers) for details.
+    Revenue for makers comes from the spread between bid and ask, net of the 4 bps fee. See [Fees](/trading/fees) and [Maker SDK trading](/sdk-trading/makers) for details.
   </Accordion>
 
-  <Accordion title="How is market maker performance monitored?">
-    TrueCurrent monitors market makers on response rate, price competitiveness, settlement success rate, and overall quoting behavior.
+  <Accordion title="How is maker performance monitored?">
+    TrueCurrent monitors makers on response rate, price competitiveness, settlement success rate, and overall quoting behavior.
 
     Consistently failing to respond within the 2-second window, quoting off-market prices, or allowing settlements to fail due to insufficient margin will negatively affect your standing and may result in removal from the whitelist. See [Maker SDK trading](/sdk-trading/makers) for the full criteria.
   </Accordion>

@@ -61,7 +61,7 @@ For exchange subaccount balances, query the Injective exchange module or use the
 
 ## 4. Verify maker whitelist
 
-Market makers must be registered before MakerStream routes requests to them and before their quotes can settle.
+Makers must be registered before MakerStream routes requests to them and before their quotes can settle.
 
 ```bash
 curl -s \

@@ -76,7 +76,7 @@ Use the ACK-returned `rfq_id` for quote collection and settlement. Do not genera
 
 ### 3. Collect quotes
 
-Market makers respond with signed quotes. Your taker system collects quotes for a short window and filters by `rfq_id`.
+Makers respond with signed quotes. Your taker system collects quotes for a short window and filters by `rfq_id`.
 
 For a long, lower quote prices are better. For a short, higher quote prices are better.
 

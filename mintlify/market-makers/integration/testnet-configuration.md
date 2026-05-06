@@ -1,6 +1,6 @@
 ---
 title: "Testnet configuration"
-description: "Complete testnet configuration reference for TrueCurrent market maker integration: chain settings, RFQ indexer endpoints, contract address, faucet, and environment variables."
+description: "Complete testnet configuration reference for TrueCurrent maker integration: chain settings, RFQ indexer endpoints, contract address, faucet, and environment variables."
 updatedAt: "2026-05-05"
 ---
 

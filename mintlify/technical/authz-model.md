@@ -4,19 +4,19 @@ description: "Detailed explanation of Injective's authz authorization model enab
 updatedAt: "2026-05-05"
 ---
 
-TrueCurrent uses Injective's native `authz` module to allow the smart contract to act on behalf of both traders and market makers during settlement. This page explains the model in detail.
+TrueCurrent uses Injective's native `authz` module to allow the smart contract to act on behalf of both traders and makers during settlement. This page explains the model in detail.
 
 ---
 
 ## Overview
 
-When you accept a quote on TrueCurrent, the onchain settlement involves the TrueCurrent contract calling Injective's exchange module to open positions for both you and the market maker. Rather than requiring both parties to sign separate transactions at settlement time, TrueCurrent uses pre-granted authorizations so the contract can bundle everything into a single atomic transaction.
+When you accept a quote on TrueCurrent, the onchain settlement involves the TrueCurrent contract calling Injective's exchange module to open positions for both you and the maker. Rather than requiring both parties to sign separate transactions at settlement time, TrueCurrent uses pre-granted authorizations so the contract can bundle everything into a single atomic transaction.
 
 ```mermaid
 flowchart LR
     subgraph Granters ["Granters (one-time setup)"]
         Taker["Taker wallet"]
-        Maker["Market Maker wallet"]
+        Maker["Maker wallet"]
     end
 
     subgraph Grantee ["Grantee"]
@@ -65,7 +65,7 @@ This is secure because:
 
 ---
 
-## Required grants for market makers
+## Required grants for makers
 
 | Message type | Why it's needed |
 |---|---|

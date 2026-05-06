@@ -15,57 +15,19 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 | Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
 | Mainnet | Published here on launch |
 
-The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (market makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `rfq-testing` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
 
 ---
 
 ## Authentication
 
-### Today
-
-The TakerStream is **address-based** and **unauthenticated**. You tell the stream your Injective address on connect, the indexer routes quotes for your requests back to you, and no API key is required. The reference scripts in `rfq-testing` connect this way out of the box.
-
-### Once the RFQ Gateway is deployed
-
-The [RFQ Gateway](https://github.com/InjectiveLabs/rfq-gateway) is an authenticated reverse proxy that will sit in front of the public indexer. When it goes live, every taker connection will need an API key. The address-based routing still applies, but now layered behind API-key auth.
-
-**How to pass the key** (per gateway transport):
-
-| Transport | Method |
-|---|---|
-| WebSocket (gRPC-web framed) | `?api_key=...` query param on connect, **or** first-message auth (see below) |
-| HTTP/REST | `X-API-Key` header, **or** `?api_key=...` query param |
-| gRPC | `x-api-key` metadata |
-
-For WebSocket connections, the first-message auth form is preferred over the query param – keys in URLs leak into logs and referrer headers. The first message sent after the WebSocket upgrade should be:
-
-```json
-{"jsonrpc": "2.0", "id": 0, "method": "auth", "params": {"api_key": "rfq_api_..."}}
-```
-
-**Endpoints may move to a gateway-fronted hostname.** Today's testnet endpoints (`testnet.rfq.ws.injective.network`, `testnet.rfq.injective.network`, `testnet.rfq.grpc.injective.network`) may either be cut over to point at the gateway transparently – in which case the URLs stay the same and you only need to start sending an API key – or replaced with new gateway-specific DNS names. Either way, the transport (gRPC-web framed over WebSocket) and message shapes don't change; only the auth layer in front of them does.
-
-
-**Settlement is unaffected.** `AcceptQuote` goes directly to the smart contract on Injective, not through the gateway. The gateway controls quote *discovery* (the indexer path), not onchain settlement. Your authz grants and contract call sites don't change.
-
-### Key tiers
-
-The gateway defines three tiers, of which only one is relevant to programmatic takers:
-
-| Tier | Description | Status |
-|---|---|---|
-| `frontend` | Origin-locked, unlimited rate. For the TrueCurrent web app only. | Live in gateway codebase |
-| `maker` | For whitelisted market makers. Configurable rate limit. | Live in gateway codebase |
-| `api` | **For programmatic / HFT takers.** Configurable rate limit, no origin lock. | **Future – not yet provisioned** |
-
-You will need to request an `api`-tier key from the TrueCurrent team once the gateway is live. The default rate limit for a freshly-issued key (10 req/s, burst 20) is far below HFT needs – make sure to ask for a higher per-key rate when you request it.
-
+Anybody can access the public RFQ streams. TakerStream is address-routed: you provide your Injective address when opening the stream, and the indexer routes quotes for your requests back to that address. The reference scripts in `rfq-testing` connect this way out of the box.
 
 ---
 
 ## Submitting a request
 
-An RFQ request declares what you want to trade. The indexer broadcasts it to every active market maker, who each have a few hundred milliseconds to respond. 
+An RFQ request declares what you want to trade. The indexer broadcasts it to every active maker, who each have a few hundred milliseconds to respond.
 
 **Request fields:**
 
@@ -157,7 +119,7 @@ After submitting, quotes stream in over the same connection as they're produced 
 |---|---|---|
 | `rfq_id` | string | Matches your request (note: stringified on the Python side) |
 | `market_id` | string | Matches your request |
-| `maker` | string | Market maker's `inj1...` address |
+| `maker` | string | Maker's `inj1...` address |
 | `taker` | string | Your address (echoed) |
 | `taker_direction` | string | Echoes your direction as `"long"` / `"short"` |
 | `margin` | string | Margin the maker is committing to cover their side |

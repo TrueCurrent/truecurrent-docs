@@ -1,10 +1,10 @@
 ---
 title: "Quoting guidelines"
-description: "Best practices for TrueCurrent market makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
+description: "Best practices for TrueCurrent makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
 updatedAt: "2026-05-06"
 ---
 
-This page covers best practices for market makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your market maker standing in good shape.
+This page covers best practices for makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your maker standing in good shape.
 
 ---
 
@@ -70,7 +70,7 @@ Below is a worked example of building a competitive two-sided quote for an INJ/U
 
 ## Tracking the mark price
 
-To minimize adverse selection and avoid rejected quotes, market makers should price around the same reference the contract validates against: the current onchain mark price.
+To minimize adverse selection and avoid rejected quotes, makers should price around the same reference the contract validates against: the current onchain mark price.
 
 TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, P&L, and liquidation checks.
 
