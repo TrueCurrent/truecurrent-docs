@@ -1,6 +1,6 @@
 ---
-title: "Sending quotes"
-description: "Wire format and field reference for sending signed quotes over MakerStream, including quote ACK and error response handling."
+title: "Sending quotes (legacy)"
+description: "Legacy wire format and field reference for sending signed maker quotes over TrueCurrent MakerStream, including quote ACK and error responses."
 updatedAt: "2026-05-05"
 ---
 

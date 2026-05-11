@@ -1,6 +1,6 @@
 ---
 title: "Maker whitelist"
-description: "Requirements and application process for joining TrueCurrent's maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
+description: "Requirements and application process for joining the TrueCurrent maker whitelist: testnet integration, capital, technical prerequisites, and performance."
 updatedAt: "2026-05-06"
 ---
 

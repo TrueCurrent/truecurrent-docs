@@ -1,6 +1,6 @@
 ---
-title: "Signing quotes"
-description: "Pointer page: the canonical EIP-712 v2 quote signing reference lives in the integration guide. The SignQuote schema, the sign_quote_v2 helper, and the common signing failures are all there."
+title: "Signing quotes (legacy pointer)"
+description: "Legacy pointer page; the canonical TrueCurrent EIP-712 v2 quote signing reference and SignQuote schema now live in the SDK trading guide."
 updatedAt: "2026-05-05"
 ---
 

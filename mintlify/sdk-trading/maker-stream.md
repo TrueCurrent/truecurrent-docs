@@ -1,6 +1,6 @@
 ---
 title: "MakerStream"
-description: "Technical details for connecting to TrueCurrent's MakerStream WebSocket: protocol, endpoints, message framing, protobuf definitions, and connection flow including keep-alive pings."
+description: "Connect to TrueCurrent's MakerStream WebSocket: protocol, endpoints, message framing, protobuf definitions, auth handshake, and keep-alive ping handling."
 updatedAt: "2026-05-06"
 ---
 

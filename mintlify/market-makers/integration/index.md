@@ -1,6 +1,6 @@
 ---
 title: "Integration guide"
-description: "Overview of the TrueCurrent maker integration: what you connect to, what you sign, what you settle, and where to start in the guide depending on whether you're scaffolding a new maker or porting an existing one."
+description: "Legacy overview of the TrueCurrent maker integration: what you connect to, what you sign, what you settle, and where to start whether scaffolding or porting."
 updatedAt: "2026-05-05"
 ---
 

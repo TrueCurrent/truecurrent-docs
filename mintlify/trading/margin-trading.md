@@ -1,5 +1,6 @@
 ---
 title: "Margin trading"
+description: "Understand margin, leverage, account equity, margin ratio, and available margin on TrueCurrent, and how each affects your perpetuals liquidation risk."
 updatedAt: "2026-04-30"
 ---
 

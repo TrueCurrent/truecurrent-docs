@@ -1,6 +1,6 @@
 ---
 title: "Advanced trigger orders (TP/SL) for API and SDK"
-description: "Advanced operational details for take-profit and stop-loss trigger orders on TrueCurrent, including off-chain execution, silent failures, worst_price gaps in fast markets, and differences between frontend and SDK behavior."
+description: "Operational details for TrueCurrent TP/SL trigger orders: off-chain execution, silent failures, worst_price gaps in fast markets, and frontend vs SDK behavior."
 updatedAt: "2026-04-24"
 ---
 

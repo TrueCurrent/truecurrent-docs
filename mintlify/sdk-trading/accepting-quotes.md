@@ -1,6 +1,6 @@
 ---
 title: "Accepting quotes"
-description: "Complete reference for the AcceptQuote contract message used by RFQ takers on TrueCurrent, including single-quote and multi-quote aggregation, required encoding conversions, matching order, partial fills, and every onchain validation check."
+description: "Reference for the AcceptQuote contract message used by TrueCurrent RFQ takers: single and multi-quote aggregation, encoding, partial fills, and validation."
 updatedAt: "2026-05-06"
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: "Testnet configuration"
-description: "Complete testnet configuration reference for TrueCurrent maker integration: chain settings, RFQ indexer endpoints, contract address, faucet, and environment variables."
+title: "Testnet configuration (legacy)"
+description: "Legacy testnet configuration for TrueCurrent maker integration: chain settings, RFQ indexer endpoints, contract address, faucet, and environment variables."
 updatedAt: "2026-05-05"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Maker SDK trading"
-description: "High-level guide for makers using the TrueCurrent SDK: whitelist approval, MakerStream connection, auth challenge, quote signing, risk controls, settlement, and monitoring."
+description: "High-level guide for makers using the TrueCurrent SDK: whitelisting, MakerStream connection, quote signing, risk controls, settlement, and monitoring."
 updatedAt: "2026-05-06"
 ---
 

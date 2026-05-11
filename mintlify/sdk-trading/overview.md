@@ -1,6 +1,6 @@
 ---
-title: "Intro to SDK Trading"
-description: "Trade or make markets on TrueCurrent programmatically through the SDK: choose a taker or maker integration path, understand the RFQ lifecycle, and know what must be set up before going live."
+title: "Programmatic RFQ trading with the TrueCurrent SDK"
+description: "Trade or make markets on TrueCurrent programmatically: pick a taker or maker integration path, learn the RFQ lifecycle, and prepare what is needed to go live."
 updatedAt: "2026-05-06"
 ---
 

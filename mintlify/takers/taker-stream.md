@@ -1,6 +1,6 @@
 ---
-title: "TakerStream"
-description: "Reference for TrueCurrent's TakerStream WebSocket API including connection setup, gRPC-web framing, request message schema, quote subscription, collection windows, filtering, and reconnection patterns for programmatic takers."
+title: "TakerStream (legacy)"
+description: "Legacy TakerStream WebSocket reference: connection setup, gRPC-web framing, request schema, quote subscription, collection windows, filtering, and reconnection."
 updatedAt: "2026-05-01"
 ---
 

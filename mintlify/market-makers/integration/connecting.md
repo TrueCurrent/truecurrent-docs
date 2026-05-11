@@ -1,6 +1,6 @@
 ---
 title: "Connecting to the RFQ stream"
-description: "Technical details for connecting to TrueCurrent's MakerStream WebSocket: protocol, endpoints, message framing, protobuf definitions, and connection flow including keep-alive pings."
+description: "Legacy guide for connecting to the TrueCurrent MakerStream WebSocket: protocol, endpoints, message framing, protobuf definitions, and keep-alive pings."
 updatedAt: "2026-05-05"
 ---
 

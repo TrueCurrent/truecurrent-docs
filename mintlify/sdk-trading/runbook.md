@@ -1,6 +1,6 @@
 ---
 title: "Testnet runbook"
-description: "Operational testnet checklist for SDK traders: environment setup, wallet config, balances, authz, smoke tests, E2E AcceptQuote settlement, and TP/SL signed-intent validation."
+description: "Operational testnet checklist for SDK traders: environment setup, wallet config, balances, authz, smoke tests, E2E AcceptQuote, and TP/SL signed-intent checks."
 updatedAt: "2026-05-06"
 ---
 

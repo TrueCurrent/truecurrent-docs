@@ -1,6 +1,6 @@
 ---
 title: "How to trade"
-description: "This is the full trading workflow for opening, managing, and closing positions after your wallet is connected and funded."
+description: "Full TrueCurrent workflow for opening, managing, and closing perpetuals positions: choose a market, set leverage, accept an RFQ quote, and monitor risk."
 updatedAt: "2026-05-04"
 ---
 

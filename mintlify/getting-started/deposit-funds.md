@@ -1,6 +1,6 @@
 ---
 title: "Deposit funds"
-description: "Fund your TrueCurrent account with USDC using a direct Injective transfer, the in-app CCTP bridge, or a QR-code bridge deposit."
+description: "Fund your TrueCurrent account with USDC using a direct Injective transfer, the in-app CCTP bridge from Ethereum, or a QR-code bridge deposit."
 updatedAt: "2026-05-05"
 ---
 

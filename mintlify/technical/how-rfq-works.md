@@ -1,6 +1,6 @@
 ---
 title: "How RFQ works"
-description: "Technical reference for TrueCurrent's RFQ protocol: the request-quote-accept lifecycle, the on-chain settlement path via the Injective exchange module, signature verification, and the validation checks the contract enforces on every fill."
+description: "Technical reference for TrueCurrent's RFQ protocol: the request-quote-accept lifecycle, onchain settlement via Injective's exchange module, and validation."
 updatedAt: "2026-05-05"
 ---
 

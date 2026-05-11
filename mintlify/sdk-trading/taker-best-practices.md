@@ -1,6 +1,6 @@
 ---
 title: "Taker best practices"
-description: "Production guidance for programmatic RFQ takers on TrueCurrent, covering slippage and worst_price strategy, quote expiry races, subaccount balance requirements, idempotency, reconnection, error handling, and safe testnet-to-mainnet progression."
+description: "Production guidance for programmatic RFQ takers on TrueCurrent: worst_price strategy, quote expiry, balances, idempotency, reconnection, and error handling."
 updatedAt: "2026-05-06"
 ---
 

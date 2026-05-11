@@ -1,6 +1,6 @@
 ---
 title: "Testnet configuration"
-description: "Testnet configuration reference for TrueCurrent SDK integrations: chain settings, RFQ indexer endpoints, contract address, faucet, markets, and environment variables."
+description: "Testnet configuration reference for TrueCurrent SDK integrations: chain settings, indexer endpoints, contract address, faucet, markets, and env variables."
 updatedAt: "2026-05-06"
 ---
 

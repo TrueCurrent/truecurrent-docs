@@ -1,6 +1,6 @@
 ---
 title: "Connect your wallet"
-description: "Connect a supported wallet to TrueCurrent and complete the one-time authorization required for non-custodial trading."
+description: "Connect a supported Injective wallet to TrueCurrent and complete the one-time authz authorization required for non-custodial perpetuals trading."
 updatedAt: "2026-05-05"
 ---
 

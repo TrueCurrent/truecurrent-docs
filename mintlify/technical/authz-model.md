@@ -1,6 +1,6 @@
 ---
 title: "Authorization model"
-description: "Detailed explanation of Injective's authz authorization model enabling TrueCurrent's smart contract to execute atomic settlements with granular message-type permissions and revocable grants."
+description: "How Injective's authz model lets the TrueCurrent smart contract execute atomic settlements with granular message-type permissions and user-revocable grants."
 updatedAt: "2026-05-05"
 ---
 

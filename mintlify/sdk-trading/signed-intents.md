@@ -1,6 +1,6 @@
 ---
 title: "Signed taker intents (TP/SL)"
-description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a reduce-only exit in advance, gated by mark-price trigger conditions and signed with the EIP-712 v2 schema."
+description: "Pre-signed conditional orders on TrueCurrent: a signed taker intent authorizes a reduce-only exit in advance, gated by mark-price triggers and EIP-712 v2."
 updatedAt: "2026-05-01"
 ---
 
