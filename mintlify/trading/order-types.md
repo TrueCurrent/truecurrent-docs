@@ -66,7 +66,9 @@ A stop loss order closes your position automatically when the price moves agains
 **When to use:** to cap downside automatically; essential protection for leveraged positions held overnight or during high-volatility periods.
 
 <Warning>
-  Setting a stop loss very close to your entry price at high leverage risks being stopped out by normal market noise. Give your position room to breathe while still protecting against a meaningful adverse move. See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
+  At high leverage, a stop loss set too close to your entry can be triggered by normal price movement.
+  Leave enough room for routine volatility while still limiting meaningful downside.
+  See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
 </Warning>
 
 See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. For programmatic use, see [Taker SDK trading](/sdk-trading/takers).

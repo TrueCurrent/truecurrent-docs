@@ -52,7 +52,7 @@ The indexer is TrueCurrent's off-chain coordination layer. It:
 - Collects and forwards quotes back to traders
 - Selects the best quote for presentation
 
-The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and makers. Even if the indexer were to behave maliciously, it could not forge a maker's signature or alter the terms of a quote.
+The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and makers. Even if the indexer were to behave maliciously, it could not forge a maker's signature or change the terms of a quote.
 
 ### TrueCurrent smart contract (onchain)
 
@@ -128,7 +128,7 @@ For the conditional / TP-SL variant, substitute steps 1–5 with the signed-inte
 
 - **The TrueCurrent smart contract** – open source, onchain, deterministic. Verifiable by anyone.
 - **Injective chain and validators** – for block finality and execution of the exchange module.
-- **The RFQ indexer** – only for routing. It cannot steal funds or alter prices. At worst, a malicious indexer could drop requests (degraded service), but couldn't cause unauthorized trades.
+- **The RFQ indexer** – only for routing. It cannot steal funds or change prices. At worst, a malicious indexer could drop requests (degraded service), but couldn't cause unauthorized trades.
 
 **What you do not need to trust:**
 

@@ -12,7 +12,8 @@ When you place a trade on TrueCurrent, you set a **maximum slippage** – from w
 
 Before confirming a trade, you'll see an **estimated price** based on current market conditions. You also set a **worst price**: the highest price you will pay when going long, or the lowest price you will receive when going short.
 
-TrueCurrent then automatically finds the best available price from liquidity providers. If no provider can beat your worst price, the trade doesn't go through. Your margin is returned and you can try again.
+TrueCurrent automatically looks for the best available price from liquidity providers.
+If none can meet your worst price, the trade is rejected, your margin is returned, and you can try again.
 
 - For a **long** position: your worst price is the highest you're willing to pay
 - For a **short** position: your worst price is the lowest you're willing to receive
