@@ -326,7 +326,7 @@ You end up with a single taker position for 100 INJ at a blended entry. Each mak
 "unfilled_action": null
 ```
 
-The current TrueCurrent product is RFQ-only. If your submitted quotes don't cover the full `quantity`, the transaction still settles the portion that was filled — the remainder is simply not traded. If zero quotes fill (e.g. all were rejected by signature or expiry), the transaction fails.
+The current TrueCurrent product is RFQ-only. If your submitted quotes don't cover the full `quantity`, the quote still settles the portion that was filled — the remainder is simply not traded. If zero quotes fill (e.g. all were rejected by signature or expiry), the quote fails.
 
 Pass `null` for `unfilled_action` on every call. The contract field exists for future use; non-null values are not exposed in the public product today.
 
@@ -349,17 +349,17 @@ For each quote in the submitted array, the contract performs the following check
 
 After the loop, the contract checks:
 
-- **At least some fills happened** – if `filled_quantity == 0`, the whole transaction fails with `all quotes rejected`. If at least one quote filled, the transaction settles the filled quantity and the remainder is simply not traded.
+- **At least some fills happened** – if `filled_quantity == 0`, the whole quote fails with `all quotes rejected`. If at least one quote filled, the quote settles the filled quantity and the remainder is simply not traded.
 - **Taker has enough balance** for the aggregate margin used across all filled quotes.
 - **`quotes.len() <= config.max_quotes`** – checked at the top of the handler before any iteration.
 
-The full list of per-quote failures is available in the emitted settlement event under `quote_results`, keyed by maker address. Inspect it in a failed transaction to diagnose exactly which quote was rejected and why.
+The full list of per-quote failures is available in the emitted settlement event under `quote_results`, keyed by maker address. Inspect this list in a failed quote to diagnose exactly which quote was rejected and why.
 
 ---
 
 ## Post-settlement
 
-After a successful transaction:
+After a successful quote:
 
 - **You have a new position** in your Injective exchange subaccount. Query it via the standard exchange module APIs – there is no RFQ-specific position state onchain.
 - **The settlement event** contains the filled quantity, the per-quote `quote_results`, the taker's aggregate entry price, and the `cid` you passed (useful for matching events to your trade log).
