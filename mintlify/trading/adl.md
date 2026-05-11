@@ -1,7 +1,6 @@
 ---
 title: "Auto-deleveraging (ADL)"
-description: "Understand when ADL activates, how positions are ranked, what exit price is used, and how to reduce ADL exposure.
-"
+description: "Understand when ADL activates, how positions are ranked, what exit price is used, and how to reduce ADL exposure."
 updatedAt: "2026-04-30"
 ---
 

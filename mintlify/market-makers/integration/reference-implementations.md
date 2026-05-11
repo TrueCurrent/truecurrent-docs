@@ -14,14 +14,14 @@ The `injective-rfq-toolkit` repo contains all reference implementations. Both Py
 | Signing | ✅ Correct | `keccak256 → secp256k1` with correct field order, `evmChainId` field #1. |
 | Auth handshake | ✅ Implemented | `MakerStreamClient` handles `MakerChallenge` automatically when configured with `auth_private_key`, `auth_evm_chain_id`, `auth_contract_address`. |
 | Ping/pong | ✅ Implemented | ~1s interval. |
-| Entry points | `examples/python-mm/main.py` (WebSocket maker reference), `examples/test_settlement.py` (full E2E) |
+| Entry points | `examples/python-mm/main.py` (WebSocket maker reference), `examples/test_settlement.py` (full E2E) |  |
 
 ### Python (native gRPC)
 
 | Aspect | Status | Notes |
 |---|---|---|
 | Transport | Native gRPC | ✅ Alternative transport using `testnet.rfq.grpc.injective.network:443`. |
-| Entry points | `examples/python-mm/main-grpc.py` (maker reference), `examples/test_settlement_grpc.py` (full E2E) |
+| Entry points | `examples/python-mm/main-grpc.py` (maker reference), `examples/test_settlement_grpc.py` (full E2E) |  |
 
 ### TypeScript (native gRPC)
 
@@ -29,14 +29,14 @@ The `injective-rfq-toolkit` repo contains all reference implementations. Both Py
 |---|---|---|
 | Transport | Native gRPC | ✅ Production-compatible via `ts-mm/main-grpc.ts`. |
 | Signing | ✅ Correct | Full `signQuoteV2` and `signMakerChallengeV2` implementations using `ethers`. |
-| Entry point | `examples/ts-mm/main-grpc.ts` |
+| Entry point | `examples/ts-mm/main-grpc.ts` |  |
 
 ### Go (native gRPC)
 
 | Aspect | Status | Notes |
 |---|---|---|
 | Transport | Native gRPC | ✅ Reference available. |
-| Entry point | `examples/go-mm/main-grpc/main.go` |
+| Entry point | `examples/go-mm/main-grpc/main.go` |  |
 
 ---
 
