@@ -84,6 +84,6 @@ Funding is automatically deducted from (or added to) your margin each hour. If y
 
 ## Strategic implications
 
-Funding rates carry information about market sentiment. A persistently high positive rate suggests the market is heavily long and traders are paying a meaningful premium to hold long positions — historically a sign of elevated speculative interest that sometimes precedes reversals.
+Funding rates carry information about market sentiment. A persistently high positive rate suggests the market is heavily long and traders are paying a meaningful premium to hold long positions. Historically, this signals elevated speculative interest that sometimes precedes reversals.
 
 If you are paying significant funding on a position, factor that into your holding cost. For long-duration positions, funding can become a meaningful drag.

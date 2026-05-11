@@ -4,7 +4,7 @@ description: "Overview of TrueCurrent's maker program including RFQ liquidity pr
 updatedAt: "2026-05-01"
 ---
 
-TrueCurrent's liquidity is powered by institutional liquidity providers. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
+Institutional liquidity providers power TrueCurrent's liquidity. Makers receive real-time trade requests from users and respond with competitive signed quotes. The best quote wins the trade – keeping spreads tight and prices competitive for everyone.
 
 ---
 

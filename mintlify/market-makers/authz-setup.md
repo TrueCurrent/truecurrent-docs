@@ -118,6 +118,6 @@ Revoking grants does not close any open positions. Your existing positions remai
 
 ## Security model
 
-Grants are scoped to specific message types and a specific grantee address (the TrueCurrent contract); they are revocable at any time, and the contract's own onchain checks (signature verification, whitelist check, balance check) are the actual security boundary regardless of what authz allows. For the full security analysis and trust-model walkthrough, see [Authorization model](/technical/authz-model#why-not-just-use-allowances-or-signatures-per-trade).
+Grants are scoped to specific message types and a specific grantee address (the TrueCurrent contract), and you can revoke them at any time. The contract's own onchain checks — signature verification, whitelist check, balance check — are the actual security boundary, regardless of what authz allows. For the full security analysis and trust-model walkthrough, see [Authorization model](/technical/authz-model#why-not-just-use-allowances-or-signatures-per-trade).
 
 For production, use a dedicated maker wallet separate from your personal or treasury wallet.

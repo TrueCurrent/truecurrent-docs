@@ -114,7 +114,7 @@ Common hedging approaches:
 
 ## Tracking the mark price
 
-To minimise adverse selection and avoid rejected quotes, makers should price around the same reference the contract validates against: the current onchain mark price.
+To minimize adverse selection and avoid rejected quotes, makers should price around the same reference the contract validates against: the current onchain mark price.
 
 TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, P&L, and liquidation checks.
 

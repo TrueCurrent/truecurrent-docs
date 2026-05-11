@@ -10,7 +10,7 @@ TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the *
 
 ## TakerStream
 
-The TakerStream is used by traders (or applications acting on their behalf) to submit RFQ requests and receive quotes.
+Traders (or applications acting on their behalf) use the TakerStream to submit RFQ requests and receive quotes.
 
 ### Connection
 
@@ -37,7 +37,7 @@ Authentication: Connect with the taker's Injective address as an identifier. The
 }
 ```
 
-`request_address` is required as TakerStream connection metadata, not as a request-body field. With `injective-rfq-toolkit`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
+`request_address` is required as TakerStream connection metadata, not as a request-body field. With `injective-rfq-toolkit`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. The indexer assigns `rfq_id`. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
 
 ### Receiving quotes
 

@@ -12,7 +12,7 @@ TrueCurrent offers perpetual futures – leveraged positions on asset prices wit
 
 A perpetual futures contract lets you gain leveraged exposure to an asset's price without owning the asset itself. Unlike traditional futures (which expire on a fixed date), perpetuals can be held indefinitely.
 
-Your profit or loss is determined by the difference between your entry price and the current price, multiplied by your position size.
+The difference between your entry price and the current price (multiplied by your position size) determines your profit or loss.
 
 **Going long:** You profit when the price rises. A 10% price increase on a 2x leveraged position = ~20% return on your margin.
 

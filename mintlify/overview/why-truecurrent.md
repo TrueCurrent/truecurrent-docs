@@ -41,7 +41,7 @@ See [Deposit funds](/getting-started/deposit-funds) for all three paths.
 
 ---
 
-## Fee Comparison
+## Fee comparison
 
 |  | AMM DEX | Order Book DEX | **TrueCurrent** |
 | --- | --- | --- | --- |

@@ -104,4 +104,4 @@ GET /cosmos/authz/v1beta1/grants?granter={your_address}&grantee={contract_addres
 
 Alternative designs exist – for example, requiring the trader to sign each `AcceptQuote` transaction manually. TrueCurrent uses `authz` instead for UX reasons: waiting for a second user signature during the 30-second quote expiry window introduces friction and increases the chance the quote expires before settlement. The `authz` model allows instant, one-click settlement.
 
-The security tradeoff is the pre-granted permission. TrueCurrent mitigates this by keeping grants narrow (specific message types only) and building the onchain contract checks (worst price, quote signature, expiry) as the actual security layer – the contract enforces your trading parameters regardless of its grant.
+The security tradeoff is the pre-granted permission. TrueCurrent mitigates this by keeping grants narrow (specific message types only) and building the onchain contract checks (worst price, quote signature, expiry) as the actual security layer. The contract enforces your trading parameters regardless of its grant.

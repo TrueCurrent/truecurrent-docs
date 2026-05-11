@@ -22,7 +22,7 @@ updatedAt: "2026-05-05"
 
   <Accordion title="Can I quote a different quantity than requested?">
     Yes.
-    Partial fills are supported by setting `maker_quantity` / `maker_margin` to your intended amounts.
+    Set `maker_quantity` / `maker_margin` to your intended amounts to support partial fills.
 
     Any quantity not covered by the chosen quotes is simply not traded — the taker receives a partial fill or a no-fill, and their margin for the unfilled portion is released.
   </Accordion>
