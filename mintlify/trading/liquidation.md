@@ -60,15 +60,31 @@ $P_{liq}^{short} = P_{entry} \times \frac{1 + \frac{1}{L}}{1 + MMR}$
 
 ---
 
-## Worked examples
+## Worked example - single leverage
 
-### Single leverage – basic example
+**Parameters:**
 
-Suppose you open a **long** on an asset at \$100 with 10x leverage and MMR = 2.5%, with a liquidation price of \$92.31.
+- Entry price: $$P_{entry} = \$100$$
+- Leverage: $$L = 10$$
+- Maintenance margin rate: $MMR= 2.5\%$
 
-If the mark price drops to \$92.31, your position is liquidated.
+**Long liquidation price**
 
-For the equivalent **short** at the same parameters, if the mark price rises to \$107.32, the short is liquidated.
+Substitute into
+$$P_{liq}^{long} = P_{entry} \times \dfrac{1 - \frac{1}{L}}{1 - MMR}$$ :
+
+$$P_{liq}^{long} = 100 \times \frac{1 - \frac{1}{10}}{1 - 0.025} = 100 \times \frac{0.9}{0.975} \approx \$92.31$$
+
+If the mark price drops to \$92.31, your long is liquidated.
+
+**Short liquidation price**
+
+Substitute into
+$$P_{liq}^{short} = P_{entry} \times \dfrac{1 + \frac{1}{L}}{1 + MMR}$$ :
+
+$$P_{liq}^{short} = 100 \times \frac{1 + \frac{1}{10}}{1 + 0.025} = 100 \times \frac{1.1}{1.025} \approx \$107.32$$
+
+If the mark price rises to \$107.32, the short is liquidated.
 
 ---
 
