@@ -17,14 +17,9 @@ Margin trading lets you control a position larger than your deposited collateral
 | --- | --- |
 | **Margin (M)** | The USDC collateral you deposit to back a position |
 | **Leverage (L)** | The multiplier applied to your margin to determine position size |
-| **Notional value (N)** | The total USD value of your position at current mark price |
+| **Notional value (N)** | The total underlying value of a financial position at current mark price. Currently denominated in USD. |
 | **IMR** | Initial Margin Rate – minimum margin required to _open_ a position |
 | **MMR** | Maintenance Margin Rate – minimum margin required to _keep_ a position open |
-| **Mark price** | The fair-value price used for all P&L and margin calculations |
+| **RMR** | Reduce Margin Rate – minimum margin required _after reducing_ a position margin. |
+| **Mark price** | The fair-value price used for all P &amp; L + margin calculations, as well as the reference price for funding |
 | **uPnL** | Unrealized profit or loss on an open position |
-
----
-
-## Notional value
-
-The notional value of your position is the total exposure at the current mark price

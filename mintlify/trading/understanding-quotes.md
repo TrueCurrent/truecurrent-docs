@@ -14,13 +14,13 @@ Every quote from a liquidity provider includes:
 
 **Price.** The exact price the maker is willing to trade at. This becomes your fill price if the quote is selected and settled before expiry.
 
-**Quantity.** The size the maker is willing to fill at this price. In most cases this will match your requested quantity. If a maker can only partially fill your order, TrueCurrent selects the maker who offers the best combination of price and quantity. TrueCurrent also supports partial fills from one or more makers.
+**Quantity.** The amount available at this price, usually matching your request. If only a partial fill is available, TrueCurrent chooses the best price/quantity offer and may fill across one or more makers.
 
-**Expiry.** A timestamp indicating how long the quote is valid. Live quotes expire quickly, typically after about 2 seconds. If the selected quote expires before settlement, the trade is rejected and a fresh quote must be requested. Short expiry windows protect makers from stale prices in fast-moving markets. Without them, makers would need to quote wider spreads to compensate for the risk of being held to an old price.
+**Expiry.** How long the quote remains valid, usually about 2 seconds. If it expires before settlement, the trade is rejected and you’ll need a fresh quote; short expiries help makers avoid stale prices and keep spreads tighter.
 
 **Maker address.** The Injective wallet address of the maker offering the quote. This is visible onchain after settlement.
 
-**Signature.** A cryptographic signature from the maker's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot repudiate or alter their quoted terms.
+**Signature.** A cryptographic signature from the maker's private key covering all the above fields. The smart contract verifies this signature as part of settlement, ensuring the maker cannot deny or change their quoted terms.
 
 ---
 

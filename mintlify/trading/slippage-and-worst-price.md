@@ -12,10 +12,37 @@ When you place a trade on TrueCurrent, you set a **maximum slippage** – from w
 
 Before confirming a trade, you'll see an **estimated price** based on current market conditions. You also set a **worst price**: the highest price you will pay when going long, or the lowest price you will receive when going short.
 
-TrueCurrent then automatically finds the best available price from liquidity providers. If no provider can beat your worst price, the trade doesn't go through. Your margin is returned and you can try again.
+TrueCurrent automatically looks for the best available price from liquidity providers.
+If none can meet your worst price, the trade is rejected, your margin is returned, and you can try again.
 
 - For a **long** position: your worst price is the highest you're willing to pay
 - For a **short** position: your worst price is the lowest you're willing to receive
+
+---
+
+## How to use it
+
+Price tolerance controls how far from the quoted price your trade can fill.
+You set it each time you open or close a position.
+It then acts as a hard, on-chain enforced limit.
+
+- **Default**:
+  0.5% is applied automatically when you open the trade form.
+- **Normal conditions**:
+  0.5% is appropriate for most markets and sizes.
+  It gives enough room for minor price movement between quote and execution
+  without exposing you to large adverse fills.
+- **Volatile markets**:
+  Widen to 1-2% if prices are moving fast and you are getting non-fills.
+  A wider tolerance improves your chance of filling
+  but raises the worst-case price you could receive.
+- **Where to set it**:
+  In the trade form, adjust the slippage field before clicking on *trade*.
+
+<Info>
+See [Price tolerance](/trading/how-to-trade)
+for where it appears in the full trading workflow.
+</Info>
 
 ---
 

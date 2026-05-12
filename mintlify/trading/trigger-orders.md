@@ -30,7 +30,14 @@ A stop loss order closes your position when the price moves against you to a lev
 - **Long SL**: Triggers when the mark price falls to or below your stop price
 - **Short SL**: Triggers when the mark price rises to or above your stop price
 
-Stop losses help limit downside, but they are not guaranteed fills. When the trigger fires, the close still needs a valid quote that satisfies your `worst_price`.
+<Warning>
+Stop losses help limit downside, but they are **not** guaranteed fills.
+When the trigger fires, the close still needs a valid quote that satisfies your `worst_price`.
+
+If the market moves too fast,
+or your `worst_price` cannot be satisfied at execution time,
+the close may fail.
+</Warning>
 
 **Example:** You open a long at \$100 and set a SL at \$90. If the mark price drops to \$90, TrueCurrent attempts to close the position as long as the quoted exit can satisfy your limit.
 
