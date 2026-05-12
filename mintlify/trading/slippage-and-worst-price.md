@@ -20,6 +20,32 @@ If none can meet your worst price, the trade is rejected, your margin is returne
 
 ---
 
+## How to use it
+
+Price tolerance controls how far from the quoted price your trade can fill.
+You set it each time you open or close a position.
+It then acts as a hard, on-chain enforced limit.
+
+- **Default**:
+  0.5% is applied automatically when you open the trade form.
+- **Normal conditions**:
+  0.5% is appropriate for most markets and sizes.
+  It gives enough room for minor price movement between quote and execution
+  without exposing you to large adverse fills.
+- **Volatile markets**:
+  Widen to 1-2% if prices are moving fast and you are getting non-fills.
+  A wider tolerance improves your chance of filling
+  but raises the worst-case price you could receive.
+- **Where to set it**:
+  In the trade form, adjust the slippage field before clicking on *trade*.
+
+<Info>
+See [Price tolerance](/trading/how-to-trade)
+for where it appears in the full trading workflow.
+</Info>
+
+---
+
 ## What happens if your order can't fill?
 
 If no liquidity provider can beat your worst price, the order is cancelled and your margin is returned. Prices update continuously – you can re-submit immediately.

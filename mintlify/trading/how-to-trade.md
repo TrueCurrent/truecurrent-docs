@@ -36,9 +36,12 @@ A \$100 margin at 5x leverage = \$500 position. Every 1% price move = 5% change 
 
 ### 4. Set your price tolerance
 
-Your **slippage** determines how far from the current price you're willing to fill. A higher slippage means a higher chance of filling; a tighter tolerance gives you more control.
+Your **slippage** determines how far from the current price you're willing to fill.
+A higher slippage means a higher chance of filling;
+a tighter tolerance gives you more control.
 
-For most market conditions, 0.5% works well. In volatile markets, you may wish to set it slightly wider.
+For most market conditions, 0.5% works well.
+In volatile markets, you may wish to set it slightly wider.
 
 ### 5. Confirm
 
