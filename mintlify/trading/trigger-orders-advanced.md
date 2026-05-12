@@ -81,7 +81,7 @@ This means:
 - A take profit that fails due to quote expiry will not try again with fresh quotes.
 - You must monitor your intent status and manually re-create failed orders.
 
-SDK users should poll for intent status updates via the indexer's WebSocket stream and have logic to detect and re-create failed triggers.
+If you use the SDK, poll for intent status updates via the indexer's WebSocket stream and add logic to detect and re-create failed triggers.
 
 ---
 
@@ -92,7 +92,7 @@ The signed intent mechanism does not enforce that you have an open position at c
 - The **indexer accepts** the intent and stores it.
 - The **contract rejects** at execution time, because the settlement tries to close a position that doesn't exist.
 
-The frontend hides this path — the UI only offers TP/SL controls on open positions. But SDK and API users can construct intents freely, and the indexer won't block them. The failure only surfaces when the relayer tries to settle.
+The frontend hides this path — the UI only offers TP/SL controls on open positions. But if you use the SDK or API, you can construct intents freely, and the indexer won't block you. The failure only surfaces when the relayer tries to settle.
 
 <Tip>
 **Always verify you have an open position** in the target market and subaccount before creating a TP/SL intent. Query your position state from the chain or the indexer before signing.

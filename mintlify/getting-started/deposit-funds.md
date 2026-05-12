@@ -22,7 +22,7 @@ If your USDC is on Ethereum, Arbitrum, Base, Optimism, or another supported EVM 
 
 1. Go to [`tc.xyz`](https://tc.xyz) and connect the wallet that holds the source USDC
 2. Click **Deposit** in the portfolio panel
-3. Choose **Bridge** in the modal
+3. Click **Bridge** in the modal
 4. Select the source chain
 5. Enter the amount and confirm the transaction in your wallet
 
@@ -34,7 +34,7 @@ CCTP burns the USDC on the source chain and mints native USDC on Injective. Your
 
 ## Option B: QR-code deposit from any chain
 
-Use the QR-code deposit flow when your USDC is somewhere you cannot connect directly to TrueCurrent, such as a centralized exchange withdrawal page or a wallet you do not want to connect to a dapp.
+Use the QR-code deposit flow when your USDC is somewhere you cannot connect directly to TrueCurrent. Examples include a centralized exchange withdrawal page or a wallet you do not want to connect to a dapp.
 
 <Frame>
   ![Clean Shot 2026 05 05 At 23 10 32@2x](/images/CleanShot-2026-05-05-at-23.10.32@2x.png)
@@ -42,7 +42,7 @@ Use the QR-code deposit flow when your USDC is somewhere you cannot connect dire
 
 How it works:
 
-1. In the Deposit panel, choose **Transfer** and select the source network (e.g. Ethereum, Arbitrum, Base, Optimism)
+1. In the Deposit panel, click **Transfer** and select the source network (e.g. Ethereum, Arbitrum, Base, Optimism)
 2. TrueCurrent generates a source-network deposit address for your TrueCurrent account
 3. Send USDC to that address from the source venue or wallet
 4. Account abstraction handles the bridging behind the scenes; your USDC arrives in your TrueCurrent account in a few minutes

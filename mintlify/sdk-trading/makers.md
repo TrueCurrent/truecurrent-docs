@@ -29,7 +29,7 @@ Makers must be approved before their quotes are routed to takers.
 
 ### 1. Get approved
 
-TrueCurrent uses a maker whitelist. Before your SDK system can quote, your maker wallet must be registered by the TrueCurrent team.
+TrueCurrent uses a maker whitelist. Before your SDK system can quote, the TrueCurrent team must register your maker wallet.
 
 You should be ready to provide:
 
