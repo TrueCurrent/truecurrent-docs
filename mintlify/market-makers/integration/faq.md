@@ -1,6 +1,6 @@
 ---
 title: "FAQ & troubleshooting"
-description: "Frequently asked questions and troubleshooting guide for TrueCurrent maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
+description: "Legacy FAQ and troubleshooting for TrueCurrent maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
 updatedAt: "2026-05-05"
 ---
 

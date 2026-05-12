@@ -1,6 +1,6 @@
 ---
 title: "Building & signing quotes"
-description: "Complete guide to constructing and signing RFQ quotes with the EIP-712 v2 quote scheme used by the live testnet contract."
+description: "Complete guide to constructing and signing TrueCurrent RFQ maker quotes with the EIP-712 v2 quote scheme used by the live testnet smart contract."
 updatedAt: "2026-05-05"
 ---
 

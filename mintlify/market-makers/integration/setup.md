@@ -1,6 +1,6 @@
 ---
 title: "One-time setup"
-description: "One-time onboarding steps for makers: generate an Injective wallet, get whitelisted, grant authz permissions to the RFQ contract, and fund your exchange subaccount."
+description: "Legacy one-time onboarding for TrueCurrent makers: generate an Injective wallet, get whitelisted, grant authz, and fund your exchange subaccount."
 updatedAt: "2026-05-05"
 ---
 

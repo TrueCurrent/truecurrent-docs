@@ -1,6 +1,6 @@
 ---
 title: "Authorization setup (taker)"
-description: "Recipe: the three authz grants a programmatic taker wallet must give the TrueCurrent contract before any trade can settle. Python and TypeScript code samples, verification, and revocation."
+description: "The three Injective authz grants a programmatic taker wallet must give TrueCurrent, with Python and TypeScript samples, verification, and revocation steps."
 updatedAt: "2026-05-05"
 ---
 

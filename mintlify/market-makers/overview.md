@@ -1,6 +1,6 @@
 ---
 title: "Makers: overview"
-description: "Overview of TrueCurrent's maker program including RFQ liquidity provision, MakerStream integration, quote signing requirements, fee structure, and whitelist application process for professional liquidity providers on Injective."
+description: "Legacy overview of TrueCurrent's maker program: RFQ liquidity provision, MakerStream, quote signing, fee structure, and whitelist application on Injective."
 updatedAt: "2026-05-01"
 ---
 

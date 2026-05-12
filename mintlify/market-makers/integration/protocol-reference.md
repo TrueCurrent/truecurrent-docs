@@ -1,6 +1,6 @@
 ---
-title: "Protocol reference"
-description: "Full protocol reference for TrueCurrent's RFQ system: sequence diagrams for the standard AcceptQuote flow and the TP/SL AcceptSignedIntent path, plus supported testnet markets."
+title: "Protocol reference (legacy)"
+description: "Legacy protocol reference for TrueCurrent RFQ: sequence diagrams for the standard AcceptQuote flow, the TP/SL AcceptSignedIntent path, and testnet markets."
 updatedAt: "2026-05-05"
 ---
 

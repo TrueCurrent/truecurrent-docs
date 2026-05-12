@@ -1,6 +1,6 @@
 ---
 title: "Funding rates"
-description: "Learn how funding rates work on TrueCurrent, when payments happen, and how funding affects your position margin. "
+description: "Learn how funding rates work on TrueCurrent perpetuals, when funding payments are exchanged between longs and shorts, and how funding affects position margin."
 updatedAt: "2026-05-05"
 ---
 

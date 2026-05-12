@@ -1,6 +1,6 @@
 ---
 title: "Understanding quotes"
-description: "Understand what TrueCurrent RFQ quotes contain, how signed quotes expire, and how the best executable quote is selected. "
+description: "Understand what TrueCurrent RFQ quotes contain, how maker-signed quotes expire, and how the best executable quote is selected when you click trade."
 updatedAt: "2026-05-01"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Order types"
-description: "Learn the order types TrueCurrent supports, including RFQ fills, take profit, stop loss, and signed intents."
+description: "Learn the order types TrueCurrent supports, including RFQ fills, take-profit, stop-loss, and signed taker intents for pre-authorized conditional exits."
 updatedAt: "2026-05-06"
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: "Overview"
-description: "Programmatic trading guide for TrueCurrent takers including the RFQ lifecycle, use cases for bots and integrators, comparison with orderbook trading, and pointers to quickstart, authz setup, and the AcceptQuote reference."
+title: "Programmatic taker trading on TrueCurrent"
+description: "Programmatic trading guide for TrueCurrent takers: the RFQ lifecycle, bot and integrator use cases, comparison with orderbook trading, and links to quickstart."
 updatedAt: "2026-04-08"
 ---
 

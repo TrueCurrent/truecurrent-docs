@@ -1,5 +1,5 @@
 ---
-title: "Quickstart"
+title: "Taker SDK quickstart"
 description: "Run a complete taker-side RFQ flow on testnet: submit a request, collect quotes, choose the best price, and settle with AcceptQuote."
 updatedAt: "2026-05-06"
 ---

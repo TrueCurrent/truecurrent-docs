@@ -1,6 +1,6 @@
 ---
 title: "Fees"
-description: "Understand TrueCurrent’s fee model, including zero taker fees, subsidized Injective gas, funding payments, and maker-side fees. "
+description: "Understand TrueCurrent's fee model for perpetuals trading: zero taker fees, subsidized Injective gas, funding rate payments, and maker-side fee rebates."
 updatedAt: "2026-04-30"
 ---
 

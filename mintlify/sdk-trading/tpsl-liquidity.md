@@ -1,6 +1,6 @@
 ---
 title: "TP/SL liquidity"
-description: "How makers participate in TrueCurrent take-profit and stop-loss execution using the same EIP-712 v2 quote flow as live RFQ requests."
+description: "How TrueCurrent makers quote against pre-signed take-profit and stop-loss taker intents, using the same EIP-712 v2 quote flow as live RFQ requests."
 updatedAt: "2026-05-06"
 ---
 

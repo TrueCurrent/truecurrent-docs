@@ -1,6 +1,6 @@
 ---
 title: "Price tolerance"
-description: "Set the worst price you are willing to accept and understand how price tolerance protects execution on TrueCurrent."
+description: "Set the worst price you are willing to accept on TrueCurrent and learn how the price tolerance setting protects RFQ execution from slippage and bad fills."
 updatedAt: "2026-05-06"
 ---
 

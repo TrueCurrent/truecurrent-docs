@@ -1,6 +1,6 @@
 ---
 title: "Sending quotes"
-description: "Wire format and field reference for sending signed quotes over MakerStream, including quote ACK and error response handling."
+description: "Wire format and field reference for sending EIP-712 signed maker quotes over TrueCurrent's MakerStream WebSocket, including quote ACK and error responses."
 updatedAt: "2026-05-05"
 ---
 

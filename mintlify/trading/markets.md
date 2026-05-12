@@ -1,6 +1,6 @@
 ---
 title: "Available markets"
-description: "How perpetual futures markets are listed on TrueCurrent and how to find the live list of supported markets and their parameters."
+description: "How perpetual futures markets are listed on TrueCurrent through Injective governance, and where to find the live list of supported markets and parameters."
 updatedAt: "2026-05-06"
 ---
 

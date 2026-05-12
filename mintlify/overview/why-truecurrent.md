@@ -1,6 +1,6 @@
 ---
 title: "Why TrueCurrent"
-description: "See how TrueCurrent compares with AMMs and order books across fees, execution quality, custody, and MEV resistance."
+description: "Compare TrueCurrent against AMMs and order books across trading fees, execution quality, self-custody, MEV resistance, and onchain perpetuals settlement."
 updatedAt: "2026-05-06"
 ---
 

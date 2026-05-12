@@ -1,6 +1,6 @@
 ---
-title: "MakerStream"
-description: "Pointer page: the canonical MakerStream documentation lives in the integration guide. Connect, auth handshake, request schema, quote schema, and reconnection patterns are all there."
+title: "MakerStream (legacy pointer)"
+description: "Legacy pointer; the canonical TrueCurrent MakerStream WebSocket reference, including connection, auth handshake, and reconnection, now lives in SDK trading."
 updatedAt: "2026-05-05"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "SDK architecture"
-description: "How TrueCurrent's RFQ system connects takers, the RFQ indexer, makers, and the Injective chain for atomic onchain settlement."
+description: "How TrueCurrent's SDK and RFQ system connect takers, the RFQ indexer, makers, and the Injective chain for atomic onchain perpetuals settlement."
 updatedAt: "2026-05-06"
 ---
 

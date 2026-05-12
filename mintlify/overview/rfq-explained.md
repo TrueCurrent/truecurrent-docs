@@ -1,6 +1,6 @@
 ---
 title: "RFQ explained"
-description: "Learn how RFQ trading works on TrueCurrent, how liquidity providers price quotes, and how RFQ differs from AMMs and order books."
+description: "Learn how request-for-quote (RFQ) trading works on TrueCurrent, how liquidity providers price competing quotes, and how RFQ differs from AMMs and order books."
 updatedAt: "2026-05-05"
 ---
 

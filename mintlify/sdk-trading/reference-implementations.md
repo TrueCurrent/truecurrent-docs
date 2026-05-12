@@ -1,6 +1,6 @@
 ---
 title: "Reference implementations"
-description: "Overview of the Python, TypeScript, and Go reference implementations for TrueCurrent taker and maker SDK integrations."
+description: "Overview and production-readiness of the Python, TypeScript, and Go reference implementations for TrueCurrent taker and maker SDK integrations on Injective."
 updatedAt: "2026-05-06"
 ---
 

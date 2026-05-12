@@ -1,6 +1,6 @@
 ---
 title: "Taker SDK trading"
-description: "High-level guide for traders and integrators using the TrueCurrent SDK as takers: setup, RFQ request flow, quote selection, settlement, TP/SL intents, and operational requirements."
+description: "Guide for traders and integrators using the TrueCurrent SDK as takers: setup, RFQ request flow, quote selection, settlement, and TP/SL signed intents."
 updatedAt: "2026-05-06"
 ---
 

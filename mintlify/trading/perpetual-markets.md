@@ -1,6 +1,6 @@
 ---
 title: "Perpetual markets"
-description: "Learn the core mechanics of perpetual futures on TrueCurrent, including leverage, margin, funding, mark price, and liquidation."
+description: "Learn the core mechanics of perpetual futures contracts on TrueCurrent, including leverage, margin, funding rates, mark price, and liquidation triggers."
 updatedAt: "2026-05-06"
 ---
 

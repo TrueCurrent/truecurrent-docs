@@ -1,6 +1,6 @@
 ---
 title: "Trigger orders (TP/SL)"
-description: "Set take profit and stop loss orders that trigger from mark price and close through TrueCurrent’s RFQ quote flow. "
+description: "Set take-profit and stop-loss trigger orders on TrueCurrent that fire from mark price and close your perpetuals position through the standard RFQ quote flow."
 updatedAt: "2026-05-04"
 ---
 

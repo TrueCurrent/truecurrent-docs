@@ -1,6 +1,6 @@
 ---
 title: "Getting whitelisted"
-description: "Requirements and application process for joining TrueCurrent's maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
+description: "Legacy guide: requirements and application process for joining the TrueCurrent maker whitelist as an RFQ liquidity provider, with capital and technical needs."
 updatedAt: "2026-05-05"
 ---
 

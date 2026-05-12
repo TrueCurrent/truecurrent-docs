@@ -1,6 +1,6 @@
 ---
 title: "Receiving RFQ requests"
-description: "Structure and field reference for RFQ request messages received by makers over MakerStream, including field types, meanings, and how to interpret taker intent."
+description: "Legacy reference for RFQ request messages received by TrueCurrent makers over MakerStream: field types, meanings, and how to interpret taker intent."
 updatedAt: "2026-05-05"
 ---
 

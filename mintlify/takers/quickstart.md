@@ -1,5 +1,6 @@
 ---
-title: "Quickstart"
+title: "Taker quickstart"
+description: "Run a complete taker-side RFQ flow on TrueCurrent testnet: submit a request, collect signed quotes, choose the best price, and settle onchain with AcceptQuote."
 updatedAt: "2026-05-01"
 ---
 

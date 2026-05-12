@@ -1,6 +1,6 @@
 ---
 title: "Liquidation"
-description: "Learn when liquidation happens, how liquidation price is calculated, and how the insurance fund and ADL protect the system."
+description: "Learn when liquidation happens on TrueCurrent perpetuals, how the liquidation price is calculated, and how the insurance fund and ADL protect solvency."
 updatedAt: "2026-04-30"
 ---
 

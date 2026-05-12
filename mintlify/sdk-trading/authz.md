@@ -1,6 +1,6 @@
 ---
 title: "Authorization setup"
-description: "Grant the TrueCurrent RFQ contract the narrow Injective authz permissions required for taker and maker SDK settlement."
+description: "Grant the TrueCurrent RFQ contract the narrow Injective authz permissions required for taker and maker SDK settlement, with code samples and revocation steps."
 updatedAt: "2026-05-06"
 ---
 

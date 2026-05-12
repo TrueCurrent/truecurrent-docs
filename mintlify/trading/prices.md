@@ -1,6 +1,6 @@
 ---
 title: "Mark and quoted prices"
-description: "Understand the difference between mark price, quoted price, estimated price, and worst price on TrueCurrent."
+description: "Understand the difference between mark price, quoted price, estimated price, and worst price on TrueCurrent and when each value is used in trading."
 updatedAt: "2026-05-06"
 ---
 
