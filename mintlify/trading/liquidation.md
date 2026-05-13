@@ -73,7 +73,7 @@ $P_{liq}^{short} = P_{entry} \times \frac{1 + \frac{1}{L}}{1 + MMR}$
 
 Substitute into $P_{liq}^{long} = P_{entry} \times \dfrac{1 - IMR}{1 - MMR}$ :
 
-$P_{liq}^{long} = 100 \times \frac{1 - 0.0833}{1 - 0.05} = 100 \times \frac{0.9167}{0.95} \approx \$96.49$
+$$P_{liq}^{long} = 100 \times \frac{1 - 0.0833}{1 - 0.05} = 100 \times \frac{0.9167}{0.95} \approx \$96.49$$
 
 If the mark price drops to \$96.49, your long is liquidated.
 
@@ -81,7 +81,7 @@ If the mark price drops to \$96.49, your long is liquidated.
 
 Substitute into $P_{liq}^{short} = P_{entry} \times \dfrac{1 + IMR}{1 + MMR}$ :
 
-$P_{liq}^{short} = 100 \times \frac{1 + 0.0833}{1 + 0.05} = 100 \times \frac{1.0833}{1.05} \approx \$103.17$
+$$P_{liq}^{short} = 100 \times \frac{1 + 0.0833}{1 + 0.05} = 100 \times \frac{1.0833}{1.05} \approx \$103.17$$
 
 If the mark price rises to \$103.17, the short is liquidated.
 
