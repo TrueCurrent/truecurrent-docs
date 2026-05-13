@@ -14,17 +14,17 @@ Liquidation is triggered when your margin ratio falls at or below the maintenanc
 
 $MR = \frac{M + uPnL}{Q \times P_{mark}} \leq MMR$
 
-As the mark price moves against your position, $uPnL$ decreases, which decreases $MR$. When $MR$ hits $MMR$, your position is liquidated.
+As the mark price moves against your position, uPNL decreases, which decreases MR. When MR hits MMR, your position is liquidated.
 
 ---
 
 ## Liquidation price
 
-The liquidation price is the mark price at which your margin ratio exactly equals MMR. To find it, substitute the liquidation condition $MR = MMR$ and solve for $P_{mark}$.
+The liquidation price is the mark price at which your margin ratio exactly equals MMR. To find it, substitute the liquidation condition MR = MMR and solve for $P_{mark}$
 
 ### Long position
 
-For a long, $uPnL = (P_{mark} - P_{entry}) \times Q$. Setting $MR = MMR$:
+For a long, $uPnL = (P_{mark} - P_{entry}) \times Q$. Setting MR = MMR:
 
 $\frac{M + (P_{liq} - P_{entry}) \times Q}{Q \times P_{liq}} = MMR$
 
@@ -42,7 +42,7 @@ $P_{liq}^{long} = P_{entry} \times \frac{1 - \frac{1}{L}}{1 - MMR}$
 
 ### Short position
 
-For a short, $uPnL = (P_{entry} - P_{mark}) \times Q$. Setting $MR = MMR$:
+For a short, $uPnL = (P_{entry} - P_{mark}) \times Q$. Setting MR = MMR:
 
 $\frac{M + (P_{entry} - P_{liq}) \times Q}{Q \times P_{liq}} = MMR$
 
@@ -64,27 +64,26 @@ $P_{liq}^{short} = P_{entry} \times \frac{1 + \frac{1}{L}}{1 + MMR}$
 
 **Parameters:**
 
-- Entry price: $$P_{entry} = \$100$$
-- Leverage: $$L = 10$$
-- Maintenance margin rate: $MMR= 2.5\%$
+- Entry price: $P_{entry}$
+- Max leverage selected: L = 10
+- Initial margin ratio: IMR = 8.33%
+- Maintenance margin ratio: MMR = 5%
 
 **Long liquidation price**
 
-Substitute into
-$$P_{liq}^{long} = P_{entry} \times \dfrac{1 - \frac{1}{L}}{1 - MMR}$$ :
+Substitute into $P_{liq}^{long} = P_{entry} \times \dfrac{1 - IMR}{1 - MMR}$ :
 
-$$P_{liq}^{long} = 100 \times \frac{1 - \frac{1}{10}}{1 - 0.025} = 100 \times \frac{0.9}{0.975} \approx \$92.31$$
+$P_{liq}^{long} = 100 \times \frac{1 - 0.0833}{1 - 0.05} = 100 \times \frac{0.9167}{0.95} \approx \$96.49$
 
-If the mark price drops to \$92.31, your long is liquidated.
+If the mark price drops to \$96.49, your long is liquidated.
 
 **Short liquidation price**
 
-Substitute into
-$$P_{liq}^{short} = P_{entry} \times \dfrac{1 + \frac{1}{L}}{1 + MMR}$$ :
+Substitute into $P_{liq}^{short} = P_{entry} \times \dfrac{1 + IMR}{1 + MMR}$ :
 
-$$P_{liq}^{short} = 100 \times \frac{1 + \frac{1}{10}}{1 + 0.025} = 100 \times \frac{1.1}{1.025} \approx \$107.32$$
+$P_{liq}^{short} = 100 \times \frac{1 + 0.0833}{1 + 0.05} = 100 \times \frac{1.0833}{1.05} \approx \$103.17$
 
-If the mark price rises to \$107.32, the short is liquidated.
+If the mark price rises to \$103.17, the short is liquidated.
 
 ---
 

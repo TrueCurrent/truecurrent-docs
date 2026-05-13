@@ -66,9 +66,7 @@ A stop loss order closes your position automatically when the price moves agains
 **When to use:** to cap downside automatically; essential protection for leveraged positions held overnight or during high-volatility periods.
 
 <Warning>
-  At high leverage, a stop loss set too close to your entry can be triggered by normal price movement.
-  Leave enough room for routine volatility while still limiting meaningful downside.
-  See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
+  At high leverage, a stop loss set too close to your entry can be triggered by normal price movement. Leave enough room for routine volatility while still limiting meaningful downside. See [Managing risk with TP/SL](/trading/trigger-orders#managing-risk-with-tpsl).
 </Warning>
 
 See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. For programmatic use, see [Taker SDK trading](/sdk-trading/takers).
@@ -103,7 +101,7 @@ See [Taker SDK trading](/sdk-trading/takers) for the SDK-level signed-intent flo
 
 | Order type | Status | Note |
 | --- | --- | --- |
-| Resting limit orders | **Not available** | TC has no public order book; every fill is an RFQ |
+| Resting limit orders | **Available** | TC has a collapsible order book for users that wish to place limit orders |
 | Order book market / limit fallback | **Not available** | Every trade is RFQ-only; partial-fill quantity is simply not traded |
 | TWAP (time-weighted average price) | **Not available** | TC has no native TWAP execution; replicate externally by splitting trades over time via the API |
 | Scale / ladder orders | **Not available** | No built-in order scaling; implement by submitting multiple individual trades |
