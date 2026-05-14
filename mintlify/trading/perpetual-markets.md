@@ -14,11 +14,11 @@ A perpetual futures contract lets you gain leveraged exposure to an asset’s pr
 
 Your profit or loss is determined by the difference between your entry price and the current mark price, multiplied by your position size.
 
-**Going long:** You profit when the price rises. A 10% price increase on a 2x leveraged position results in approximately a 20% return on your margin.
+**Going long:** You profit when the price rises. A 10% price increase on a 2x leveraged position results in an approximate 20% return on your margin.
 
-**Going short:** You profit when the price falls. A 10% price decline on a 2x leveraged position results in approximately a 20% return on your margin.
+**Going short:** You profit when the price falls. A 10% price decline on a 2x leveraged position results in an approximate 20% return on your margin.
 
-Leverage amplifies both gains and losses. Higher leverage means a smaller adverse price move can put your position at risk of liquidation.
+**Leverage amplifies both gains and losses.** At 10x leverage, an approximate 10% adverse move wipes out your margin entirely.
 
 {/* SCREENSHOT SLOT: pnl-explainer — annotated diagram showing how a 10% price move translates to P&L at different leverage levels (1x, 5x, 10x, 20x). */}
 
