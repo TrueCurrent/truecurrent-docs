@@ -31,7 +31,11 @@ TrueCurrent evaluates all quotes received during the 2-second collection window 
 - For **long** positions: the quote with the **lowest price** (you're buying, so lower is better)
 - For **short** positions: the quote with the **highest price** (you're selling, so higher is better)
 
-If multiple quotes tie on price, the one with the earlier expiry timestamp (i.e. the quote that arrived first) is selected.
+If multiple quotes tie on price but have different quantities,
+the the quote with the larger quantity gets filled first.
+
+If multiple quotes tie on both price and quantity,
+which quote gets filled first is indeterminate.
 
 ---
 
