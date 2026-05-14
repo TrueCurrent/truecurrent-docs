@@ -1,7 +1,7 @@
 ---
 title: "Testnet configuration"
 description: "Complete testnet configuration reference for TrueCurrent maker integration: chain settings, RFQ indexer endpoints, contract address, faucet, and environment variables."
-updatedAt: "2026-05-05"
+updatedAt: "2026-05-14"
 ---
 
 ```yaml
@@ -11,12 +11,10 @@ grpc_endpoint: "testnet-grpc.injective.dev:443"
 lcd_endpoint:  "https://testnet.sentry.lcd.injective.network"
 ```
 
-```yaml
-# RFQ Indexer
-ws_endpoint:       "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream"
-grpc_web_endpoint: "https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream"
-#                  /MakerStream is for marker makers, replace with /TakerStream for takers
-```
+<Info>
+See [connecting](/technical/connecting)
+for all RFQ endpoints exposed by the indexer.
+</Info>
 
 ```yaml
 # RFQ Contract

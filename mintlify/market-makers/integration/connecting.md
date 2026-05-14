@@ -26,16 +26,13 @@ Canonical public path per `injective-rfq-toolkit/configs/testnet.yaml` (ground t
 
 | Environment | MakerStream URL |
 |---|---|
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
+| Testnet | `wss://rfq.ws.testnet.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
 | Mainnet | Published here on launch |
 
-Additional endpoints exposed by the indexer:
-
-| Transport | URL |
-|---|---|
-| gRPC | `testnet.rfq.grpc.injective.network:443` |
-| gRPC-web | `https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| HTTP/REST | `https://testnet.rfq.injective.network` |
+<Info>
+See [connecting](/technical/connecting)
+for additional endpoints exposed by the indexer.
+</Info>
 
 <Info>
 **Service naming**:

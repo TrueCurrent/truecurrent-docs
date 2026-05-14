@@ -1,7 +1,7 @@
 ---
 title: "MakerStream"
 description: "Technical details for connecting to TrueCurrent's MakerStream WebSocket: protocol, endpoints, message framing, protobuf definitions, and connection flow including keep-alive pings."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-14"
 ---
 
 ### Protocol details
@@ -24,18 +24,10 @@ Canonical public path per `injective-rfq-toolkit/configs/testnet.yaml` (ground t
 - Makers subscribe via `MakerStream`
 - Takers subscribe via `TakerStream`
 
-| Environment | MakerStream URL |
-| --- | --- |
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream` |
-| Mainnet | Contact TrueCurrent for the current production endpoint |
-
-Additional endpoints exposed by the indexer:
-
-| Transport | URL |
-| --- | --- |
-| gRPC | `testnet.rfq.grpc.injective.network:443` |
-| gRPC-web | `https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| HTTP/REST | `https://testnet.rfq.injective.network` |
+<Info>
+See [connecting](/technical/connecting)
+for all RFQ endpoints exposed by the indexer.
+</Info>
 
 <Info>
   **Service naming**:

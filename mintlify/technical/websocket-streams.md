@@ -1,7 +1,7 @@
 ---
 title: "WebSocket streams"
 description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs with connection details, message formats, authentication, and reconnection handling for real-time RFQ trading."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-14"
 ---
 
 TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for makers.
@@ -159,12 +159,12 @@ await mm_ws.send_quote(quote_data)
 
 ## Endpoints by environment
 
-| Environment | Indexer WebSocket |
-|-------------|-------------------|
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| Mainnet | Contact TrueCurrent for the current production endpoint |
-
 Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `injective-rfq-toolkit` client libraries handle the framing.
+
+<Info>
+See [connecting](/technical/connecting)
+for all endpoints exposed by the indexer.
+</Info>
 
 See [Taker SDK trading](/sdk-trading/takers) and [Maker SDK trading](/sdk-trading/makers) for the high-level SDK integration paths.
 
