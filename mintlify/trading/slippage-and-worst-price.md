@@ -25,7 +25,7 @@ Slippage tolerance controls how far from the quoted price your trade can fill. Y
 
 - **Default**: 0.5% is applied automatically when you open the trade form.
 - **Normal conditions**: 0.5% is appropriate for most markets and sizes. It gives enough room for minor price movement between quote and execution without exposing you to large adverse fills.
-- **Volatile markets**: Widen to 1-2% if prices are moving fast and your orders are failing. A wider tolerance improves your chance of filling but raises the worst-case price you could receive.
+- **Volatile markets**: You may widen slightly if prices are moving fast and your orders are failing. A wider tolerance improves your chance of filling but raises the worst-case price you could receive.
 - **Where to set it**: In the trade form, adjust the slippage tolerance field before clicking  _trade_.
 
 <Info>
