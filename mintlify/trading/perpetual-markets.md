@@ -1,7 +1,7 @@
 ---
 title: "Perpetual markets"
 description: "Learn the core mechanics of perpetual futures on TrueCurrent, including leverage, margin, funding, mark price, and liquidation."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-14"
 ---
 
 TrueCurrent offers perpetual futures – leveraged positions on asset prices with no expiration date.

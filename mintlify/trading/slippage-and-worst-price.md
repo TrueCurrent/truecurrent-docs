@@ -1,7 +1,7 @@
 ---
 title: "Price tolerance"
 description: "Set the worst price you are willing to accept and understand how price tolerance protects execution on TrueCurrent."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-14"
 ---
 
 When you place a trade on TrueCurrent, you set a maximum **slippage tolerance** – from which a worst-case price you're willing to accept is derived. TrueCurrent will never execute your trade at a price less favorable than this limit.

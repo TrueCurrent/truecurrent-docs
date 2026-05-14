@@ -1,6 +1,6 @@
 ---
 title: "Margin trading"
-updatedAt: "2026-04-30"
+updatedAt: "2026-05-14"
 ---
 
 Understand margin, leverage, account equity, margin ratio, available margin, and how they affect liquidation risk.

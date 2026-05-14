@@ -1,7 +1,7 @@
 ---
 title: "Order types"
 description: "Learn the order types TrueCurrent supports, including RFQ fills, take profit, stop loss, and signed intents."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-14"
 ---
 
 TrueCurrent's execution model is RFQ-only. On every trade, the system solicits competitive signed quotes from professional liquidity providers and fills at the best available price – with zero taker fees. Conditional trigger orders (TP/SL) automate exits using the same RFQ quote path. This page documents every order type, what guarantee it carries, and when to reach for it.

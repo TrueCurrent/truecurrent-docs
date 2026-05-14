@@ -1,7 +1,7 @@
 ---
 title: "Liquidation"
 description: "Learn when liquidation happens, how liquidation price is calculated, and how the insurance fund and ADL protect the system."
-updatedAt: "2026-04-30"
+updatedAt: "2026-05-14"
 ---
 
 Liquidation happens when your account equity falls below the maintenance margin required for an open position. This page explains the trigger, liquidation price, bankruptcy price, insurance fund, and ways to reduce liquidation risk.
