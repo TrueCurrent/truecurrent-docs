@@ -1,7 +1,7 @@
 ---
 title: "Signed taker intents (TP/SL)"
 description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a reduce-only exit in advance, gated by mark-price trigger conditions and signed with the EIP-712 v2 schema."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-18"
 ---
 
 A **signed taker intent** is a pre-authorized conditional order. You sign the exit parameters ahead of time, submit them to the indexer, and the relayer settles the trade when the mark-price trigger is satisfied.
@@ -66,6 +66,7 @@ These fields are sent to the indexer and contract. The v2 signature covers the `
 | `taker` | `string` | Taker `inj1...` address. |
 | `epoch` | `uint64` | Current taker epoch. Incremented by global intent cancellation. |
 | `rfq_id` | `uint64` | Unique order ID. Use a fresh timestamp or generated ID. |
+| `taker_nonce_time_window_ms` | `uint64` | Controls the freshness window used when executing signed intents with taker specific quote or `quote_rfq_id`. Default is `60000`. |
 | `market_id` | `string` | Injective derivative market ID. |
 | `subaccount_nonce` | `uint32` | Subaccount index, usually `0`. |
 | `lane_version` | `uint64` | Current `(taker, market, subaccount)` lane version. Incremented by lane cancellation and successful settlement. |
