@@ -1,7 +1,7 @@
 ---
 title: "Testnet configuration"
 description: "Testnet configuration reference for TrueCurrent SDK integrations: chain settings, RFQ indexer endpoints, contract address, faucet, markets, and environment variables."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-14"
 ---
 
 ```yaml
@@ -11,13 +11,10 @@ grpc_endpoint: "testnet-grpc.injective.dev:443"
 lcd_endpoint:  "https://testnet.sentry.lcd.injective.network"
 ```
 
-```yaml
-# RFQ Indexer
-ws_endpoint:       "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC"
-grpc_web_endpoint: "https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC"
-http_endpoint:     "https://testnet.rfq.injective.network"
-grpc_endpoint:     "testnet.rfq.grpc.injective.network:443"
-```
+<Info>
+See [connecting](/technical/connecting)
+for all endpoints exposed by the indexer.
+</Info>
 
 ```yaml
 # RFQ Contract

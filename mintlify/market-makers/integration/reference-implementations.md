@@ -1,7 +1,7 @@
 ---
 title: "Reference implementations"
 description: "Overview and production-readiness assessment of the Python and TypeScript reference implementations for TrueCurrent maker integration."
-updatedAt: "2026-05-05"
+updatedAt: "2026-05-14"
 ---
 
 The `injective-rfq-toolkit` repo contains all reference implementations. Both Python and TypeScript are production-compatible against the live indexer.
@@ -10,7 +10,7 @@ The `injective-rfq-toolkit` repo contains all reference implementations. Both Py
 
 | Aspect | Status | Notes |
 |---|---|---|
-| Transport | gRPC-web over WebSocket | ✅ Production-compatible — `wss://testnet.rfq.ws.injective.network/…` with protobuf framing. |
+| Transport | gRPC-web over WebSocket | ✅ Production-compatible using WebSockets with protobuf framing. |
 | Signing | ✅ Correct | `keccak256 → secp256k1` with correct field order, `evmChainId` field #1. |
 | Auth handshake | ✅ Implemented | `MakerStreamClient` handles `MakerChallenge` automatically when configured with `auth_private_key`, `auth_evm_chain_id`, `auth_contract_address`. |
 | Ping/pong | ✅ Implemented | ~1s interval. |
@@ -20,7 +20,7 @@ The `injective-rfq-toolkit` repo contains all reference implementations. Both Py
 
 | Aspect | Status | Notes |
 |---|---|---|
-| Transport | Native gRPC | ✅ Alternative transport using `testnet.rfq.grpc.injective.network:443`. |
+| Transport | Native gRPC | ✅ Alternative transport using gRPC. |
 | Entry points | `examples/python-mm/main-grpc.py` (maker reference), `examples/test_settlement_grpc.py` (full E2E) |
 
 ### TypeScript (native gRPC)
@@ -37,6 +37,11 @@ The `injective-rfq-toolkit` repo contains all reference implementations. Both Py
 |---|---|---|
 | Transport | Native gRPC | ✅ Reference available. |
 | Entry point | `examples/go-mm/main-grpc/main.go` |
+
+<Info>
+See [connecting](/technical/connecting)
+for Additional endpoints exposed by the indexer.
+</Info>
 
 ---
 

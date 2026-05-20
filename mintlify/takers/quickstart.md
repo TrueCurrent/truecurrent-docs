@@ -1,6 +1,6 @@
 ---
 title: "Quickstart"
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-14"
 ---
 
 This page walks you through the full lifecycle of a single RFQ trade as a programmatic taker. By the end, you will have submitted a request, received signed quotes, and settled onchain on Injective testnet.
@@ -18,8 +18,7 @@ Working code lives in [`InjectiveLabs/injective-rfq-toolkit`](https://github.com
 - An Injective wallet (a 32-byte secp256k1 private key)
 - A small amount of **INJ** for gas on `injective-888` (testnet) – [testnet faucet](https://testnet-faucet.injective.dev)
 - **USDC** in the wallet's exchange subaccount to cover your margin
-- Network connectivity to `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream`
-
+- Network connectivity to WebSockets endpoint
 - Python 3.11+ or Node.js 18+
 
 ---
@@ -54,22 +53,17 @@ RFQ_ENV=testnet
 TESTNET_RETAIL_PRIVATE_KEY=0x...   # your taker wallet private key
 ```
 
-The testnet config (`configs/testnet.yaml`) already points at:
+The testnet config (`configs/testnet.yaml`) already comes preconfigured
+with connection details.
 
-| Setting | Value |
-|---|---|
-| Indexer WebSocket (TakerStream) | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
-| Indexer HTTP | `https://testnet.rfq.injective.network` |
-| Chain gRPC | `testnet-grpc.injective.dev:443` |
-| Chain LCD | `https://testnet.sentry.lcd.injective.network` |
-| RFQ contract | `inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk` |
-| Cosmos chain ID | `injective-888` |
-| EIP-712 chain ID | `1439` |
-| INJ/USDC PERP | `0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e` |
+See: [`https://github.com/InjectiveLabs/injective-rfq-toolkit/blob/main/configs/testnet.yaml`](https://github.com/InjectiveLabs/injective-rfq-toolkit/blob/main/configs/testnet.yaml)
 
+<Info>
+See [connecting](/technical/connecting)
+for all endpoints exposed by the indexer.
+</Info>
 
 Anybody can access the public RFQ streams. The reference scripts in `injective-rfq-toolkit` connect without additional stream authentication.
-
 
 ---
 
@@ -160,7 +154,7 @@ Always use the ACK's `rfq_id` for quote collection and settlement. The request u
 import WebSocket from "ws";
 
 const ws = new WebSocket(
-  "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream",
+  "wss://rfq.ws.testnet.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream",
 );
 const clientId = crypto.randomUUID();
 const expiry = Date.now() + 5 * 60 * 1000;

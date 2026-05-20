@@ -1,7 +1,7 @@
 ---
 title: "TakerStream"
 description: "Reference for TrueCurrent's TakerStream WebSocket API including connection setup, gRPC-web framing, request message schema, quote subscription, collection windows, filtering, and reconnection patterns for programmatic takers."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-14"
 ---
 
 The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ requests and receive quotes. It is the offchain half of the RFQ flow – once you've picked a quote, everything after is onchain.
@@ -10,12 +10,12 @@ The **TakerStream** is the WebSocket endpoint you use as a taker to submit RFQ r
 
 ## Connection
 
-| Environment | WebSocket URL |
-|---|---|
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream` |
-| Mainnet | Published here on launch |
-
 The connection is **gRPC-web over WebSocket**. The URL is `<host>/<service>/<method>` where the service is `injective_rfq_rpc.InjectiveRfqRPC` and the method for takers is `TakerStream` (makers use `MakerStream`). Messages are framed with gRPC-web length prefixes and use protobuf payloads. The `injective-rfq-toolkit` Python library and `rfq-ts-example` TypeScript example handle this framing for you – if you're building from scratch, see `src/rfq_test/clients/websocket.py` for the implementation.
+
+<Info>
+See [connecting](/technical/connecting)
+for all endpoints exposed by the indexer.
+</Info>
 
 ---
 
