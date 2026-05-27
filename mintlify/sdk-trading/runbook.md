@@ -1,18 +1,42 @@
 ---
 title: "Testnet runbook"
-description: "Operational testnet checklist for SDK traders: environment setup, wallet config, balances, authz, smoke tests, E2E AcceptQuote settlement, and TP/SL signed-intent validation."
-updatedAt: "2026-05-06"
+description: "Procedural testnet checklist for validating TrueCurrent RFQ taker, maker, settlement, and TP/SL signed-intent integrations."
+updatedAt: "2026-05-27"
 ---
 
-Use this runbook when validating a taker or maker SDK integration on testnet. It is intentionally procedural: complete the steps in order, fix failures before moving on, then run the full settlement flow.
+Use this runbook when you need to prove an RFQ integration works end to end on testnet. Complete the checks in order. Do not continue past a failed check; downstream failures usually become noisier versions of the same setup issue.
 
-This page is adapted from the RFQ onboarding runbook and assumes you are using the [`injective-rfq-toolkit` reference client](https://github.com/InjectiveLabs/injective-rfq-toolkit).
+The commands assume the [`injective-rfq-toolkit`](https://github.com/InjectiveLabs/injective-rfq-toolkit) reference client. That repo is the ground truth for the Python examples used by these docs.
+
+---
+
+## 0. Before you start
+
+<Warning>
+This flow is EIP-712 v2 only. Quotes must carry `sign_mode="v2"` and `evm_chain_id=1439` on testnet. TakerStream conditional orders must carry `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id=1439`. The Cosmos `chain_id` remains `injective-888`; do not put `1439` in `quote.chain_id`.
+</Warning>
+
+<Info>
+MakerStream requires an auth challenge response before RFQ requests are forwarded. Configure `MakerStreamClient` with `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address`. If the stream connects and pongs but never receives requests, debug the auth challenge first.
+</Info>
+
+You need:
+
+| Requirement | Details |
+| --- | --- |
+| Python | 3.11 or newer |
+| Wallets | One maker wallet and one taker wallet; TP/SL tests may also use a relayer wallet |
+| Gas | Testnet INJ in every wallet that broadcasts transactions |
+| Margin | Testnet USDC in the relevant exchange subaccounts |
+| Maker status | Maker address whitelisted on the RFQ contract |
+| Authz | Maker and taker grants to the current RFQ contract |
 
 ---
 
 ## 1. Install the reference client
 
 ```bash
+git clone https://github.com/InjectiveLabs/injective-rfq-toolkit.git
 cd injective-rfq-toolkit
 python3 -m venv .venv
 source .venv/bin/activate
@@ -20,22 +44,24 @@ pip install -U pip
 pip install -e ".[dev]"
 ```
 
+If you already have the repo locally, pull the latest main branch before testing.
+
 ---
 
-## 2. Configure environment
+## 2. Configure `.env`
 
-Create `.env` with the role keys you need.
+Create `injective-rfq-toolkit/.env`:
 
 ```bash
 RFQ_ENV=testnet
 
 TESTNET_MM_PRIVATE_KEY=<hex>
 TESTNET_RETAIL_PRIVATE_KEY=<hex>
-# TESTNET_ADMIN_PRIVATE_KEY=<hex>   # only for register_maker
-# TESTNET_RELAYER_PRIVATE_KEY=<hex> # only for AcceptSignedIntent
+# TESTNET_RELAYER_PRIVATE_KEY=<hex> # only for signed-intent relay tests
+# TESTNET_ADMIN_PRIVATE_KEY=<hex>   # only for register_maker admin flows
 ```
 
-Pre-source `.env` before running standalone snippets:
+Load `.env` before running standalone scripts:
 
 ```bash
 set -a
@@ -43,25 +69,45 @@ set -a
 set +a
 ```
 
+Derive an Injective address from a hex private key:
+
+```python
+from rfq_test.crypto.wallet import Wallet
+
+print(Wallet.from_private_key("<hex>").inj_address)
+```
+
 ---
 
-## 3. Verify balances
+## 3. Verify wallet and subaccount balances
 
-Each active wallet needs INJ for gas and USDC margin in the relevant exchange subaccount.
+Each active wallet needs:
+
+- INJ for gas in the bank balance.
+- USDC margin in the exchange subaccount used by RFQ settlement.
+
+Bank balance query:
 
 ```bash
 curl -s \
-  "https://testnet.sentry.lcd.injective.network/cosmos/bank/v1beta1/balances/<address>" \
+  "https://testnet.sentry.lcd.injective.network/cosmos/bank/v1beta1/balances/<inj_address>" \
   | python3 -m json.tool
 ```
 
-For exchange subaccount balances, query the Injective exchange module or use the balance helpers in `injective-rfq-toolkit`.
+Look for:
+
+- `inj`
+- `erc20:0x0C382e685bbeeFE5d3d9C29e29E341fEE8E84C5d` for testnet USDC
+
+For exchange subaccount balances, use the balance helpers in `injective-rfq-toolkit` or query the Injective exchange module directly. The maker subaccount must match the registered `maker_subaccount_nonce`; if `list_makers` returns `null`, fund and quote with nonce `0`.
 
 ---
 
 ## 4. Verify maker whitelist
 
-Makers must be registered before MakerStream routes requests to them and before their quotes can settle.
+Makers must be registered before MakerStream routes RFQ requests to them and before quotes can settle.
+
+The raw contract query checks only the first page:
 
 ```bash
 curl -s \
@@ -69,31 +115,64 @@ curl -s \
   | python3 -m json.tool
 ```
 
-Use the contract client's `list_makers` helper when available; it avoids hand-building the encoded smart query.
+<Warning>
+`list_makers` is paginated. The first page can omit a registered maker if the address sorts after the first 20 results. Prefer the toolkit helper below when checking your own address.
+</Warning>
+
+```python
+import asyncio
+import os
+
+os.environ["RFQ_ENV"] = "testnet"
+
+from rfq_test.config import get_environment_config
+from rfq_test.clients.contract import ContractClient
+
+async def check():
+    env = get_environment_config()
+    contract = ContractClient(env.contract, env.chain)
+    ok = await contract.is_maker_registered("<MM_ADDR>")
+    print("whitelisted" if ok else "NOT whitelisted")
+
+asyncio.run(check())
+```
+
+If the maker is not registered, follow [Maker whitelist](/sdk-trading/maker-whitelist).
 
 ---
 
-## 5. Grant authz
+## 5. Verify and grant authz
 
-If grant queries return an empty list, run the setup from [Authorization setup](/sdk-trading/authz).
+Check maker grants:
 
 ```bash
-# Maker grants
 curl -s \
   "https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants?granter=<MM_ADDR>&grantee=inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk" \
   | python3 -m json.tool
+```
 
-# Taker grants
+Check taker grants:
+
+```bash
 curl -s \
   "https://testnet.sentry.lcd.injective.network/cosmos/authz/v1beta1/grants?granter=<TAKER_ADDR>&grantee=inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk" \
   | python3 -m json.tool
 ```
 
+Expected grants:
+
+| Role | Required message types |
+| --- | --- |
+| Maker | `MsgPrivilegedExecuteContract`, `MsgSend` |
+| Taker | `MsgPrivilegedExecuteContract`, `MsgBatchUpdateOrders`, `MsgSend` |
+
+If either response is empty or missing a required grant, run the script in [Authorization setup](/sdk-trading/authz). Submit grants sequentially and wait between transactions; parallel grant broadcasts commonly fail with account sequence errors.
+
 ---
 
-## 6. Smoke test
+## 6. Run smoke checks
 
-This confirms config loading, MakerStream reachability, chain reachability, and EIP-712 v2 signing. It does not prove the MakerStream auth handshake is fully exercised; the full E2E flow does that.
+This smoke verifies config loading, indexer reachability, chain reachability, and EIP-712 v2 quote signing. It does not fully prove the MakerStream challenge flow; the full E2E test does that.
 
 ```python
 import asyncio
@@ -131,8 +210,8 @@ async def chain_check():
 
 asyncio.run(chain_check())
 
-maker = Wallet.from_private_key(os.getenv("TESTNET_MM_PRIVATE_KEY"))
-taker = Wallet.from_private_key(os.getenv("TESTNET_RETAIL_PRIVATE_KEY"))
+maker = Wallet.from_private_key(os.environ["TESTNET_MM_PRIVATE_KEY"])
+taker = Wallet.from_private_key(os.environ["TESTNET_RETAIL_PRIVATE_KEY"])
 
 sig = sign_quote_v2(
     private_key=maker.private_key,
@@ -155,21 +234,13 @@ sig = sign_quote_v2(
 print(f"[4/4] sign_quote_v2 returns signature len={len(sig)}")
 ```
 
+If WebSocket connectivity works here but the maker receives no requests in the full test, the likely failure is the MakerStream auth challenge, not basic networking.
+
 ---
 
-## 7. Full E2E settlement
+## 7. Run live `AcceptQuote` settlement
 
-The full testnet cycle is:
-
-1. Taker connects to TakerStream.
-2. Maker connects to MakerStream and answers `MakerChallenge`.
-3. Taker sends RFQ request and receives the indexer-assigned `rfq_id`.
-4. Maker waits for that `rfq_id`, signs a quote with EIP-712 v2, and sends it.
-5. Taker collects matching quotes.
-6. Taker submits `AcceptQuote` onchain.
-7. Maker receives quote and settlement updates.
-
-Use `examples/test_settlement.py` in `injective-rfq-toolkit` as the canonical executable script.
+Use the reference script first:
 
 ```bash
 set -a
@@ -179,7 +250,25 @@ set +a
 python examples/test_settlement.py
 ```
 
-The MakerStream client must be constructed with auth fields so it can answer the inbound challenge:
+Native gRPC variant:
+
+```bash
+python examples/test_settlement_grpc.py
+```
+
+A successful run proves the full path:
+
+1. Taker connects to TakerStream.
+2. Maker connects to MakerStream and answers `MakerChallenge`.
+3. Taker sends an RFQ request and receives the indexer-assigned `rfq_id`.
+4. Maker waits for that same `rfq_id`, signs a quote with EIP-712 v2, and sends it with `sign_mode="v2"`.
+5. Taker collects matching quotes.
+6. Taker submits `AcceptQuote`.
+7. Maker receives quote or settlement updates.
+
+Success should end with a transaction hash. Open it in [testnet explorer](https://testnet.explorer.injective.network) and confirm both parties' derivative positions changed on the selected market.
+
+The maker client must include auth fields:
 
 ```python
 mm_client = MakerStreamClient(
@@ -194,13 +283,26 @@ mm_client = MakerStreamClient(
 )
 ```
 
-If the maker connects but never receives `request` events, check the auth challenge first.
+Operational notes:
+
+- `client_id` should be a UUID. The indexer assigns the real `rfq_id` in the ACK.
+- MakerStream can broadcast other takers' RFQs. Filter by the ACK-returned `rfq_id`.
+- `quote_ack` means "accepted by the indexer", not "filled by the taker".
+- Live quote expiry is intentionally short; avoid slow calls after receiving the RFQ.
 
 ---
 
-## 8. TP/SL signed-intent test
+## 8. Run TP/SL signed-intent validation
 
-TP/SL exits are taker-signed conditional orders. The taker signs a `SignedTakerIntent`, submits it through TakerStream, and a relayer executes `AcceptSignedIntent` when mark price crosses the trigger.
+TP/SL exits are taker-signed conditional orders. The taker signs a `SignedTakerIntent`, submits it through TakerStream, and a relayer executes `AcceptSignedIntent` when the trigger condition is satisfied.
+
+Before testing:
+
+- The taker has an open position to close.
+- The relayer has INJ for gas if you are testing relay submission.
+- A maker can provide closing liquidity through live MakerStream response or an eligible blind quote.
+
+Minimum signing and submission shape:
 
 ```python
 import os
@@ -272,7 +374,7 @@ async with TakerStreamClient(
 print(f"Signed intent ACK: rfq_id={ack['rfq_id']} status={ack['status']}")
 ```
 
-Conditional-order payloads must carry `sign_mode="v2"` and `evm_chain_id`. TakerStream may name these fields `conditional_order_sign_mode` and `conditional_order_evm_chain_id` internally; the reference client sets them when you pass `sign_mode` and `evm_chain_id`.
+The helper sets TakerStream wire fields `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id` when `sign_mode` and `evm_chain_id` are passed.
 
 ---
 
@@ -293,7 +395,7 @@ tx_hash = await contract.cancel_intent_lane(
 print(f"Cancelled lane: {tx_hash}")
 ```
 
-Use `CancelAllIntents` only when you need to invalidate every lane for the taker.
+Use `CancelAllIntents` only when you need to invalidate every lane for the taker. Future intents must use the incremented `epoch` or `lane_version`.
 
 ---
 
@@ -301,11 +403,12 @@ Use `CancelAllIntents` only when you need to invalidate every lane for the taker
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| Maker stream connects but receives no requests | Maker did not answer `MakerChallenge` | Configure `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address` |
-| `authorization not found` | Missing or expired authz grant | Re-run [Authorization setup](/sdk-trading/authz) |
-| Quote rejected for signature | Decimal string changed after signing, wrong EVM chain ID, or wrong contract domain | Quantize before signing and send the exact signed strings |
-| No quotes collected | Maker not whitelisted, offline, or filtering the wrong `rfq_id` | Verify whitelist and correlate from ACK-returned `rfq_id` |
-| `all quotes rejected` | Expired quote, failed `worst_price`, mark-band rejection, or maker balance issue | Inspect quote results and maker balances |
-| Conditional order accepted but never fires | Trigger not reached, relayer unavailable, expired intent, or no executable maker quote | List intent status and recreate if needed |
+| Maker stream connects but receives no requests | Maker did not answer `MakerChallenge`, or answered with the wrong domain | Configure `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address`; verify challenge signing against `StreamAuthChallenge` |
+| `authorization not found` or `unauthorized` | Missing or expired authz grant | Re-run [Authorization setup](/sdk-trading/authz) and re-query grants |
+| Quote rejected for signature | Signed decimal strings differ from sent strings, wrong EVM chain ID, wrong contract domain, or wrong field order | Quantize before signing and send the exact signed values |
+| No quotes collected by taker | Maker not whitelisted, offline, filtering wrong `rfq_id`, or request was not ACKed | Verify whitelist and correlate from the ACK-returned `rfq_id` |
+| `No quote was filled` | Expired quote, failed `worst_price`, mark-band rejection, wrong maker subaccount nonce, or margin issue | Inspect quote results, `list_makers`, and subaccount balances |
+| Conditional order accepted but never fires | Trigger not reached, expired intent, relayer unavailable, or no executable maker quote | Check intent status, trigger price, deadline, and relay logs |
+| `quote_rfq_id mismatch` | Relayer paired a signed intent with a quote for another RFQ | Re-query liquidity for the exact signed-intent `rfq_id` |
 
-For the full protocol details, see [Protocol reference](/sdk-trading/protocol-reference) and [Troubleshooting](/sdk-trading/troubleshooting).
+For field-level details, see [Protocol reference](/sdk-trading/protocol-reference) and [Troubleshooting](/sdk-trading/troubleshooting).
