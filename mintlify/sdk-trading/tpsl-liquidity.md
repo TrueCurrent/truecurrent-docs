@@ -1,77 +1,106 @@
 ---
 title: "TP/SL liquidity"
-description: "How makers participate in TrueCurrent take-profit and stop-loss execution using the same EIP-712 v2 quote flow as live RFQ requests."
-updatedAt: "2026-05-06"
+description: "How makers participate in TrueCurrent take-profit and stop-loss execution through signed taker intents, live exit RFQs, and blind quotes."
+updatedAt: "2026-05-27"
 ---
 
-Take-profit and stop-loss orders are submitted as signed taker intents. When a mark-price trigger fires, the relayer sources maker liquidity and settles the close through the same RFQ quote path used for regular trades.
+Take-profit and stop-loss orders are submitted as signed taker intents. The taker pre-signs a reduce-only exit, the indexer monitors the mark-price trigger, and a relayer submits `AcceptSignedIntent` when the trigger is satisfied.
+
+Makers provide the closing liquidity through the same signed quote primitive used by live RFQs.
 
 ---
 
-## Participation mode
+## Settlement path
 
-### Live RFQ response
+```mermaid
+sequenceDiagram
+    participant Taker
+    participant IDX as Indexer / Relayer
+    participant MM as Maker
+    participant Contract as RFQ Contract
 
-Stay connected to MakerStream.
-When a trigger fires, you receive a standard exit RFQ request.
-Price it like any other request.
-Respond with a signed quote using `sign_quote_v2` and `sign_mode: "v2"`.
+    Taker->>IDX: SignedTakerIntent
+    IDX->>IDX: Persist + monitor trigger
+    IDX->>MM: Exit RFQ request or select blind quote
+    MM->>IDX: EIP-712 v2 signed quote
+    IDX->>Contract: AcceptSignedIntent
+    Contract->>Contract: Verify taker intent, mark trigger, maker quote
+    Contract-->>IDX: Settlement result
+```
 
-From your quoting system's perspective,
-a trigger-driven exit uses the same quote schema as a user-initiated request.
-The taker direction is still the direction being traded by the taker,
-and your maker-side exposure is the opposite side.
+The contract re-checks the trigger at execution time. If mark price moves back before the relayer transaction lands, settlement can fail with `trigger_not_satisfied`.
 
-### Blind quote response
+---
 
-Blind quotes are pre-posted, nonce-based maker quotes that are not bound to a specific taker `rfq_id`. They let a relayer source liquidity for TP/SL execution without waiting for the maker to be online at the exact trigger moment.
+## Three maker participation modes
 
-Use blind quotes only after the live RFQ path is working. The signing primitive is still EIP-712 v2, but the binding changes:
+### 1. Live response on trigger
+
+Stay connected to MakerStream. When a trigger fires, the relayer sends a standard exit RFQ request. You price it, sign it with `sign_quote_v2`, and send it with `sign_mode: "v2"` and `evm_chain_id`.
+
+From the maker's perspective, this is the same as a normal live RFQ. The taker direction is still the direction being traded by the taker, and your exposure is the opposite side.
+
+### 2. Pre-posted blind quotes
+
+Blind quotes are nonce-based maker quotes that are not bound to a specific live taker request. They let a relayer source liquidity for TP/SL execution without waiting for the maker to be online at the exact trigger moment.
 
 | Field | Live taker-bound quote | Blind quote |
-|---|---|---|
-| `taker` | Taker `inj1...` address | Empty / unset, depending on helper path |
-| `rfq_id` | Indexer-assigned request ID | Nonce-controlled quote identifier |
+| --- | --- | --- |
+| `taker` | Taker `inj1...` address | Empty / unset or zero-address helper path |
+| `rfq_id` | Indexer-assigned request ID | Maker-controlled quote nonce / matching identifier |
 | `bindingKind` in digest | `1` | `0` |
-| Typical expiry | Very short, around live quote expiry | Longer, sized to the TP/SL liquidity window |
+| Expiry | Very short | Longer, maker-controlled |
+| Operational burden | Stream uptime | Nonce, inventory, expiry, and cancel management |
 
-Track blind quote nonces carefully. A nonce that has already settled cannot be reused, and a blind quote whose price is no longer safe should be cancelled or allowed to expire.
+Use blind quotes only after the live RFQ path works. A nonce that has settled cannot be reused, and stale blind quotes should be cancelled or allowed to expire.
 
-<Info>
-Most makers should start with live RFQ response for TP/SL. Blind quotes are useful for deeper automation, but they require stricter inventory, expiry, and nonce management.
-</Info>
+### 3. Do nothing
+
+TP/SL participation is optional. If another maker has acceptable blind-quote coverage, or if the relayer sources liquidity elsewhere, the protocol can settle without your system. Not responding to a TP/SL event carries no direct reputational cost.
 
 ---
 
-## Signed-intent failure modes
+## Current scope
 
-If you do participate in the TP/SL path,
-these are the protocol-level errors specific to signed intents (distinct from normal quote errors):
+Current TP/SL signed intents are protective close-position orders:
+
+- `margin` should be `"0"` for reduce-only settlement.
+- `unfilled_action` is reserved and should be `null`.
+- The relayer submits only when the mark-price trigger is satisfied.
+- The maker quote still uses EIP-712 v2 `SignQuote`.
+
+General blind-book market making is a separate future workflow.
+
+---
+
+## Failure modes
 
 | Error | Meaning |
-|---|---|
-| `invalid_intent_signature` / `stale epoch` / `stale lane` | Signature failed verification, or the `epoch` / `lane_version` counter has been incremented since signing (intent was cancelled). |
-| `trigger_not_satisfied` | The relayer submitted `AcceptSignedIntent` before the mark price crossed the trigger. The contract re-reads the mark at execution time — relayer-side clock skew or mid-block price reversion both produce this. The intent itself is still valid; the relayer must wait and retry. |
-| `quote_rfq_id mismatch` | The maker quote's `rfq_id` does not match the `rfq_id` in the taker's signed intent. |
+| --- | --- |
+| `invalid_intent_signature` | The taker signed a different intent body, chain domain, contract, decimal string, epoch, or lane version |
+| `stale epoch` | `CancelAllIntents` invalidated the taker's outstanding intents |
+| `stale lane` | `CancelIntentLane` or successful settlement advanced the `(taker, market, subaccount)` lane |
+| `trigger_not_satisfied` | The relayer submitted before the mark-price condition was true at execution time |
+| `quote_rfq_id mismatch` | The maker quote does not match the `rfq_id` embedded in the signed intent |
+| Quote skipped | Same causes as live RFQ: expiry, signature mismatch, `worst_price`, mark-band validation, margin, or min-fill constraints |
+
+These errors are protocol-level. Retrying without refreshing state often repeats the same failure.
 
 ---
 
 ## Cancelling signed intents
 
-Two onchain cancel paths exist,
-both of which bump a counter that invalidates any intent signed with the older value:
+Two onchain cancel paths bump counters that invalidate older signatures:
 
-- `CancelIntentLane`: Invalidates everything for one `(taker, market_id, subaccount_nonce)` lane.
-  After this, increment `lane_version` in future intents.
-- `CancelAllIntents`: Invalidates every intent for this taker.
-  After this, increment `epoch` in future intents.
+- `CancelIntentLane`: Invalidates intents for one `(taker, market_id, subaccount_nonce)` lane. Future intents must use the next `lane_version`.
+- `CancelAllIntents`: Invalidates all intents for the taker. Future intents must use the next `epoch`.
+
+Makers do not cancel taker intents. Makers cancel or expire their own blind quotes when their price, inventory, or risk assumptions change.
 
 ---
 
-## Reduce-only quotes
+## Read next
 
-To submit a reduce-only quote (one that can only close or shrink an existing position),
-pass `margin: "0"` on the quote.
-With no capital committed, the protocol cannot open new size.
-The only valid fill is one that closes or shrinks existing exposure.
-No separate flag is needed.
+- [Signed taker intents](/sdk-trading/signed-intents) for taker-side signing and submission.
+- [Building & signing quotes](/sdk-trading/signing-quotes) for the maker quote digest.
+- [Testnet runbook](/sdk-trading/runbook) for an executable signed-intent test.

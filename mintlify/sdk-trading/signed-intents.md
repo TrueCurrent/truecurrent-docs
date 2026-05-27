@@ -1,7 +1,7 @@
 ---
 title: "Signed taker intents (TP/SL)"
 description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a reduce-only exit in advance, gated by mark-price trigger conditions and signed with the EIP-712 v2 schema."
-updatedAt: "2026-05-18"
+updatedAt: "2026-05-27"
 ---
 
 A **signed taker intent** is a pre-authorized conditional order. You sign the exit parameters ahead of time, submit them to the indexer, and the relayer settles the trade when the mark-price trigger is satisfied.
@@ -9,7 +9,7 @@ A **signed taker intent** is a pre-authorized conditional order. You sign the ex
 This is how **take-profit / stop-loss** orders work on TrueCurrent. You can create the signed exit when opening a position or later, while the position is already open.
 
 <Warning>
-Current trigger orders are reduce-only close-position orders. Set `margin` to `"0"` and use `sign_mode: "v2"` on the wire. Do not use JSON-string signing for conditional orders.
+Current trigger orders are reduce-only close-position orders. Set `margin` to `"0"` and use the EIP-712 v2 path only. TakerStream conditional orders must carry `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id`; the SDK helper sets those when you pass `sign_mode="v2"` and `evm_chain_id`.
 </Warning>
 
 ---
@@ -158,7 +158,7 @@ async with TakerStreamClient(
 print(f"SI ACK: rfq_id={ack['rfq_id']} status={ack['status']}")
 ```
 
-The signed values you pass to `sign_conditional_order_v2` and the values in the `order_body` you submit must match exactly. Any drift (different price string, different `lane_version`) will fail signature recovery at the indexer or contract.
+The signed values you pass to `sign_conditional_order_v2` and the values in the `order_body` you submit must match exactly. Any drift (different price string, different `lane_version`, different `evm_chain_id`) will fail signature recovery at the indexer or contract.
 
 For REST submissions, include the same signing mode explicitly:
 
@@ -228,6 +228,7 @@ tx = await contract.cancel_all_intents(private_key=RETAIL_PK)
 | Invalid signature | Check EVM `chainId`, verifying contract, exact decimal strings, trigger fields, `epoch`, and `lane_version`. |
 | Trigger not satisfied | The mark price moved back before settlement. The relayer should retry when the trigger is satisfied again. |
 | Stale lane or epoch | Refresh state from the contract and sign a new intent. |
+| Quote RFQ ID mismatch | Ensure the maker quote used for settlement is bound to the same `rfq_id` embedded in the signed intent. |
 
 ---
 
