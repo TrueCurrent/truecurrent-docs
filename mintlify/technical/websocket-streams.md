@@ -1,10 +1,15 @@
 ---
 title: "WebSocket streams"
-description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs with connection details, message formats, authentication, and reconnection handling for real-time RFQ trading."
+description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs, including RFQ IDs, MakerStream authentication, quote payloads, and reconnect behavior."
 updatedAt: "2026-05-27"
 ---
 
-TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for makers.
+TrueCurrent's offchain coordination uses two bidirectional streams:
+
+- **TakerStream** for takers to request quotes and receive maker responses.
+- **MakerStream** for whitelisted makers to receive RFQs and submit signed quotes.
+
+For a runnable maker/taker validation path, use the [Testnet runbook](/sdk-trading/runbook).
 
 ---
 
@@ -14,61 +19,47 @@ For market-data consumers, `indexPrice` is streamed with the same cadence and fr
 
 ---
 
+## Endpoints
+
+| Environment | WebSocket base | MakerStream | TakerStream |
+| --- | --- | --- | --- |
+| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` | append `/MakerStream` | append `/TakerStream` |
+| Mainnet | Contact TrueCurrent | append `/MakerStream` | append `/TakerStream` |
+
+The public service alias is `injective_rfq_rpc.InjectiveRfqRPC`. Do not replace it with an internal proto package name. The `injective-rfq-toolkit` clients store the base URL and append the stream path internally.
+
+---
+
 ## TakerStream
 
-The TakerStream is used by traders (or applications acting on their behalf) to submit RFQ requests and receive quotes.
+TakerStream is used by traders or applications acting on their behalf.
 
-### Connection
+Connection path:
 
+```text
+wss://<base>/TakerStream
 ```
-wss://[indexer-endpoint]/injective_rfq_rpc.InjectiveRfqRPC/TakerStream
-```
 
-Authentication: Connect with the taker's Injective address as an identifier. The stream is scoped so that quotes are only returned to the address that submitted the corresponding request.
+Connect with the taker's Injective address as stream metadata. In the Python toolkit, pass it as `request_address` when constructing `TakerStreamClient`.
 
-### Submitting a request
-
-**Message format:**
+### Request
 
 ```json
 {
-  "type": "rfq_request",
   "client_id": "8f1c4b6e-0d7f-44ed-9f86-3fdfd381ba48",
-  "market_id": "0xabc123...",
+  "market_id": "0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e",
   "direction": "long",
   "margin": "200",
   "quantity": "100",
-  "worst_price": "4.7",
-  "expiry": 1708000800000
+  "worst_price": "4.70"
 }
 ```
 
-`request_address` is required as TakerStream connection metadata, not as a request-body field. With `injective-rfq-toolkit`, pass it when constructing `TakerStreamClient`; the client sends it as stream metadata. `rfq_id` is assigned by the indexer. Use the request ACK's `rfq_id` when collecting quotes and accepting a quote.
-
-### Receiving quotes
-
-Quotes arrive as WebSocket messages on the TakerStream:
-
-```json
-{
-  "type": "rfq_quote",
-  "rfq_id": 1708000700000,
-  "price": "4.45",
-  "quantity": "100",
-  "maker": "inj1makerwallet...",
-  "expiry": 1708000830000,
-  "signature": "0x...",
-  "sign_mode": "v2"
-}
-```
-
-Use a short collection window to gather quotes before selecting the best one. Programmatic takers commonly start around 500 ms and tune from real latency data; waiting near the full quote expiry window leaves little time for onchain settlement.
-
-**Python example:**
+`client_id` is your correlation key. The indexer assigns the settlement `rfq_id` and returns it in the request ACK. Use that ACK-returned `rfq_id` for quote collection and settlement.
 
 ```python
 taker_ws = TakerStreamClient(
-    endpoint=env_config.indexer.ws_endpoint,
+    env.indexer.ws_endpoint,
     request_address=taker_wallet.inj_address,
     timeout=15.0,
 )
@@ -86,109 +77,125 @@ quotes = await taker_ws.collect_quotes(
     timeout=0.5,
     min_quotes=1,
 )
-
-best = min(quotes, key=lambda q: float(q.get("price", "999")))
 ```
+
+### Quote delivery
+
+Quotes delivered to TakerStream are signed maker quotes:
+
+```json
+{
+  "rfq_id": 1770848375348,
+  "price": "4.45",
+  "quantity": "100",
+  "maker": "inj1maker...",
+  "maker_subaccount_nonce": 0,
+  "expiry": 1770848377348,
+  "signature": "0x...",
+  "sign_mode": "v2",
+  "evm_chain_id": 1439
+}
+```
+
+Collect for a short window, select one or more quotes, then submit `AcceptQuote`. Waiting near the full quote expiry leaves little time for transaction inclusion.
 
 ---
 
 ## MakerStream
 
-The MakerStream is used exclusively by whitelisted makers to receive trade requests and submit quotes.
+MakerStream is used by whitelisted makers. A maker must be registered, funded, and authorized before quotes can settle.
 
-### Connection
+Connection path:
 
+```text
+wss://<base>/MakerStream
 ```
-wss://[indexer-endpoint]/injective_rfq_rpc.InjectiveRfqRPC/MakerStream
+
+### Authentication challenge
+
+After connection, the indexer sends a one-shot `MakerChallenge`. The maker signs a `StreamAuthChallenge` EIP-712 v2 message and replies with `MakerAuth`.
+
+Until auth succeeds, the stream may remain open but no RFQ `request` messages are forwarded.
+
+Using the reference client:
+
+```python
+mm_ws = MakerStreamClient(
+    env.indexer.ws_endpoint,
+    maker_address=maker_wallet.inj_address,
+    subscribe_to_quotes_updates=True,
+    subscribe_to_settlement_updates=True,
+    auth_private_key=mm_private_key,
+    auth_evm_chain_id=1439,
+    auth_contract_address=contract_address,
+    timeout=15.0,
+)
+await mm_ws.connect()
 ```
 
-Only whitelisted maker addresses can successfully subscribe to the MakerStream. Unauthorized connections will be rejected.
+### Incoming messages
 
-### Receiving requests
+| Message | Meaning |
+| --- | --- |
+| `challenge` | Auth challenge that must be signed before requests arrive |
+| `request` | RFQ from a taker, with indexer-assigned `rfq_id` |
+| `quote_ack` | Indexer accepted or rejected a submitted quote |
+| `quote_update` | Quote lifecycle update |
+| `settlement_update` | Onchain settlement result for a quote |
+| `ping` / `pong` | Stream liveness |
 
-RFQ requests arrive as WebSocket messages:
-
-```json
-{
-  "type": "rfq_request",
-  "rfq_id": 1708000700000,
-  "market_id": "0xabc123...",
-  "direction": "long",
-  "margin": "200",
-  "quantity": "100",
-  "worst_price": "4.7",
-  "request_address": "inj1takerwallet..."
-}
-```
+MakerStream can broadcast requests unrelated to the taker you are testing. Always filter by `rfq_id`, market, and taker before signing.
 
 ### Submitting quotes
 
 ```json
 {
-  "rfq_id": 1708000700000,
-  "market_id": "0xabc123...",
+  "rfq_id": 1770848375348,
+  "market_id": "0xdc70164d7120529c3cd84278c98df4151210c0447a65a2aab03459cf328de41e",
   "taker_direction": "long",
   "margin": "200",
   "quantity": "100",
   "price": "4.45",
-  "expiry": 1708000830000,
-  "maker": "inj1makerwallet...",
-  "taker": "inj1takerwallet...",
+  "expiry": 1770848377348,
+  "maker": "inj1maker...",
+  "maker_subaccount_nonce": 0,
+  "taker": "inj1taker...",
   "signature": "0x...",
   "sign_mode": "v2",
-  "maker_subaccount_nonce": 0,
+  "evm_chain_id": 1439,
   "chain_id": "injective-888",
   "contract_address": "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"
 }
 ```
 
-**Python example:**
+`sign_mode="v2"` and `evm_chain_id` are mandatory for the current signing path. `chain_id` is the Cosmos chain ID; keep it as `injective-888` on testnet.
 
-```python
-mm_ws = MakerStreamClient(
-    endpoint=env_config.indexer.ws_endpoint,
-    timeout=15.0,
-)
-await mm_ws.connect()
-
-request = await mm_ws.wait_for_request(timeout=30.0)
-# ... price and sign your quote ...
-await mm_ws.send_quote(quote_data)
-```
+`quote_ack.status="success"` means the indexer accepted and routed the quote. It does not mean the taker accepted or filled it. Use `settlement_update` or onchain transaction state for fill confirmation.
 
 ---
 
-## Endpoints by environment
+## Reconnection
 
-| Environment | Indexer WebSocket |
-|-------------|-------------------|
-| Testnet | `wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC` |
-| Mainnet | Contact TrueCurrent for the current production endpoint |
-
-Clients append `/TakerStream` or `/MakerStream` to the base URL. Both are bidirectional streams on the `injective_rfq_rpc.InjectiveRfqRPC` gRPC service. The connection is gRPC-web framed over WebSocket – the `injective-rfq-toolkit` client libraries handle the framing.
-
-See [Taker SDK trading](/sdk-trading/takers) and [Maker SDK trading](/sdk-trading/makers) for the high-level SDK integration paths.
-
----
-
-## Reliability and reconnection
-
-Both streams should implement automatic reconnection. The indexer may close connections for maintenance or due to network issues. A robust client retries with exponential backoff:
+Both streams should reconnect with exponential backoff. During downtime, missed RFQs are not replayed; request a new quote as taker, or resume normal quoting as maker.
 
 ```python
 import asyncio
 
-MAX_RETRIES = 10
-BASE_DELAY = 1.0
-
-for attempt in range(MAX_RETRIES):
+for attempt in range(10):
     try:
         await ws.connect()
-        await ws.run()           # your main loop
-    except ConnectionError as e:
-        delay = BASE_DELAY * (2 ** attempt)
-        print(f"Disconnected: {e}. Retrying in {delay}s...")
+        await ws.run()
+    except ConnectionError as exc:
+        delay = min(30.0, 1.0 * (2 ** attempt))
+        print(f"Disconnected: {exc}. Retrying in {delay}s")
         await asyncio.sleep(delay)
 ```
 
-Note that during a disconnection, any requests broadcast to other makers will still be serviced by them – you only miss the requests during your specific downtime window.
+---
+
+## Related pages
+
+- [TakerStream](/sdk-trading/taker-stream)
+- [MakerStream](/sdk-trading/maker-stream)
+- [Building and signing quotes](/sdk-trading/signing-quotes)
+- [Troubleshooting](/sdk-trading/troubleshooting)

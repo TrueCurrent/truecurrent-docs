@@ -1,139 +1,150 @@
 ---
 title: "Error reference"
-description: "Troubleshooting guide for common TrueCurrent integration errors including signature verification failures, quote expiry, authz grants, insufficient margin, and WebSocket connection issues."
-updatedAt: "2026-05-01"
+description: "Common TrueCurrent RFQ errors and fixes for signatures, quote expiry, stream auth, authz, margin, and signed-intent settlement."
+updatedAt: "2026-05-27"
 ---
 
-This page lists common errors you may encounter when integrating with TrueCurrent, along with their causes and resolutions.
+Use this page as a compact error index. For step-by-step triage, see [Troubleshooting](/sdk-trading/troubleshooting).
 
 ---
 
-## Smart contract errors
+## Quote and settlement errors
 
-### `signature verification failed`
+### `signature verification failed` / `invalid_signature`
 
-**Cause:** The maker's signature on the quote does not match the parameters in the `AcceptQuote` transaction.
+The maker signature does not recover against the submitted quote fields.
 
-**Common causes:**
-- Using the old JSON-signing path instead of `rfq_test.crypto.eip712.sign_quote_v2`
-- Price decimal format mismatch (for example, signing `4.45` but sending `4.450`)
-- Wrong EVM chain ID in the EIP-712 domain (`1439` on testnet, `1776` on mainnet)
-- Wrong RFQ contract address in the EIP-712 domain
+Common causes:
 
-**Resolution:** Review the [Maker SDK trading](/sdk-trading/makers) signing requirements carefully. Test on testnet and compare your signed message construction against the reference implementation.
+- Signed decimal string differs from the sent decimal string.
+- EVM chain ID in the EIP-712 domain is wrong (`1439` testnet, `1776` mainnet).
+- `quote.chain_id` was set to the EVM chain ID instead of the Cosmos chain ID.
+- RFQ contract address in the EIP-712 domain is stale.
+- Field order differs from the v2 `SignQuote` schema.
+
+Fix: compare the exact typed-data message to the exact wire payload. Use [Building and signing quotes](/sdk-trading/signing-quotes) as the field-order reference.
 
 ---
 
 ### `quote expired`
 
-**Cause:** The quote's `expiry` timestamp is in the past at the time of onchain settlement.
+The quote's `expiry` timestamp was not greater than block time when settlement executed.
 
-**Common causes:**
-- Quote `expiry` was set too short (less than the time needed for the taker to accept + block confirmation)
-- System clock skew on the maker's server
-- Network delay between quote submission and onchain settlement
-
-**Resolution:** Set quote expiry to `now + 2_000` ms (2 seconds) for live RFQ quotes — that is the canonical window every maker reference implementation uses. Ensure your server uses NTP time synchronization. If your settlement chain RTT routinely chews through that budget, co-locate closer to the chain gRPC endpoint rather than extending the expiry — wider expiries widen your exposure to stale-price losses.
+Fix: keep clocks synced and avoid slow work after receiving an RFQ. Live maker quotes commonly use `now_ms + 2_000`; extending expiry may reduce rejects but increases stale-price risk.
 
 ---
 
-### `price exceeds worst_price`
+### `price exceeds worst_price` / `worst price exceeds limit`
 
-**Cause:** The quoted price is worse than the taker's `worst_price` parameter.
+The maker quote is worse than the taker's signed limit.
 
-**For longs:** `quote.price > worst_price`
-**For shorts:** `quote.price < worst_price`
+- Long taker: quote price must be less than or equal to `worst_price`.
+- Short taker: quote price must be greater than or equal to `worst_price`.
 
-**Resolution (traders):** Widen your `worst_price` setting or wait for better market conditions. See [Slippage and worst price](/trading/slippage-and-worst-price).
-
-**Resolution (makers):** Ensure your quoted price respects the taker's `worst_price` constraint. Although the contract will catch this, submitting out-of-range quotes wastes your quoting resources and impacts your response metrics.
+Fix: makers should read the taker's `worst_price`, price within that bound, and use human-scale mark prices from v2 endpoints. Do not apply 1e18 scaling to mark or quote prices.
 
 ---
 
-### `unauthorized` / `authz grant not found`
+### `No quote was filled`
 
-**Cause:** The required `authz` grant from the taker or maker to the contract is missing or expired.
+The transaction reached settlement, but every submitted quote was skipped or no submitted quote satisfied the taker's fill constraints.
 
-**Resolution:** Re-run the required authz setup. See [Maker SDK trading](/sdk-trading/makers) for maker setup or [Taker SDK trading](/sdk-trading/takers) for taker setup.
+Common causes:
+
+- Quote expired.
+- Quote signature failed.
+- Maker subaccount nonce does not match `list_makers`.
+- Maker or taker margin is insufficient.
+- Quote violated `worst_price` or mark-band checks.
+- `min_fill_quantity` or unfilled-action rules could not be satisfied.
+
+Fix: inspect per-quote settlement results, then verify maker registration, subaccount nonce, balances, and exact signed fields.
+
+---
+
+### `unauthorized` / `authorization not found`
+
+The required authz grant from taker or maker to the RFQ contract is missing, expired, or granted to the wrong contract address.
+
+Fix: re-run [Authorization setup](/sdk-trading/authz), then query grants for both wallets.
 
 ---
 
 ### `insufficient funds` / `insufficient margin`
 
-**Cause:** The taker's or maker's subaccount doesn't have enough quote-asset margin to cover the trade. On the current testnet RFQ market, the quote asset is USDC.
+The wallet or exchange subaccount lacks INJ for gas or USDC margin.
 
-**Resolution (traders):** Deposit more funds or reduce position size. See [Deposit funds](/getting-started/deposit-funds).
-
-**Resolution (makers):** Replenish your subaccount balance. Consider implementing balance monitoring that alerts when margin drops below a threshold and reduces quoting activity accordingly.
+Fix: fund the bank balance for gas and the correct exchange subaccount for margin. Maker margin must be in the registered `maker_subaccount_nonce`; if registration returns `null`, use nonce `0`.
 
 ---
 
-### `maker not whitelisted`
+### `maker not whitelisted` / `not_whitelisted`
 
-**Cause:** The maker address in the quote is not on the TrueCurrent approved maker whitelist.
+The maker address is not registered on the RFQ contract, or a first-page `list_makers` query missed it.
 
-**Resolution:** Apply for whitelist approval. See [Maker SDK trading](/sdk-trading/makers).
-
----
-
-## Signed-intent errors
-
-These apply specifically to TP/SL settlement via `AcceptSignedIntent`.
-
-### `invalid_intent_signature` / `stale epoch` / `stale lane`
-
-**Cause:** Either the v2 EIP-712 signature failed recovery, or the `epoch` / `lane_version` counter has been incremented since the intent was signed (i.e. the intent has been cancelled or superseded).
-
-**Resolution:** Re-read the current `epoch` and `lane_version` from the contract before signing a new intent. See [Taker SDK trading](/sdk-trading/takers).
+Fix: use a paginated helper such as `ContractClient.is_maker_registered()`. If still absent, complete [Maker whitelist](/sdk-trading/maker-whitelist).
 
 ---
 
-### `trigger_not_satisfied`
+## Stream errors
 
-**Cause:** The relayer submitted `AcceptSignedIntent` before the mark price actually crossed the trigger. The contract re-reads mark at execution time, so relayer-side clock skew or a mid-block price reversion both produce this. The intent itself is still valid.
+### Maker stream connects but receives no RFQs
 
-**Resolution:** No action needed from the taker — the relayer should wait and retry once the trigger is satisfied again. If it never re-fires, the intent expires at its `deadline_ms` and you can re-sign.
+The MakerStream auth challenge was not answered or was answered with an invalid signature.
 
----
-
-### `quote_rfq_id mismatch`
-
-**Cause:** A maker quote's `rfq_id` does not match the `rfq_id` in the taker's signed intent. Most often hit when a relayer reuses a quote from a different RFQ to settle a triggered intent.
-
-**Resolution:** The relayer must pair each signed intent with quotes that target that intent's `rfq_id` only. As a maker, ensure your TP/SL participation logic signs against the exit RFQ's `rfq_id`, not a stale or unrelated one. As a taker, no action — this is a relayer-side bug surface.
+Fix: configure the maker client with `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address`. If implementing manually, sign `StreamAuthChallenge` with the same EIP-712 domain used for quotes.
 
 ---
 
-## WebSocket / stream errors
+### Taker receives no quotes
 
-### No quotes received
+Common causes:
 
-**Symptom:** The taker's `collect_quotes()` returns an empty list after the collection window.
+- Taker collects quotes for a locally generated ID instead of the ACK-returned `rfq_id`.
+- Maker quote was rejected before routing.
+- Maker is disconnected, not whitelisted, or not quoting that market.
+- Taker connected with the wrong `request_address`.
 
-**Common causes:**
-- No makers are currently active for the requested market
-- The requesting taker address is not recognized by the indexer (connection issue)
-- The market ID in the request is incorrect
-- Makers are whitelisted but their MakerStream is disconnected
-
-**Resolution:** Check that your market ID is correct. Verify MakerStream connections are active. On testnet, confirm the MM wallet is whitelisted. If routing to the order book as fallback, this is expected behavior and not an error.
-
----
-
-### Connection dropped / timeout
-
-**Symptom:** WebSocket connection closes unexpectedly or `wait_for_request` times out.
-
-**Resolution:** Implement reconnection logic with exponential backoff. See [WebSocket streams](/technical/websocket-streams) for a reconnection example.
+Fix: log the request ACK, collect quotes for `ack["rfq_id"]`, and check maker-side `quote_ack` / quote error logs.
 
 ---
 
 ### `rfq_id` mismatch
 
-**Symptom:** Quotes arrive with a different `rfq_id` than expected, or no quotes arrive for the submitted `rfq_id`.
+Quotes arrive for a different request than the one your client expects.
 
-**Common causes:**
-- Multiple concurrent requests from the same address with different ACK-assigned IDs
-- Client code is collecting quotes using a locally generated ID instead of the indexer's ACK-returned `rfq_id`
+Fix: treat `client_id` as client correlation only. The indexer assigns `rfq_id`; use the ACK-returned value for maker filtering, taker quote collection, and settlement.
 
-**Resolution:** Send a unique `client_id`, wait for the request ACK, and use `ack["rfq_id"]` for quote collection and settlement.
+---
+
+## Signed-intent errors
+
+### `invalid_intent_signature`
+
+The signed taker intent fields differ from the submitted fields, or the EIP-712 domain is wrong.
+
+Fix: keep `deadline_ms`, `worst_price`, `trigger_type`, `trigger_price`, `epoch`, `lane_version`, `rfq_id`, and `market_id` identical between signing and submission. Send v2 fields on the TakerStream payload.
+
+---
+
+### `trigger_not_satisfied`
+
+The relayer submitted `AcceptSignedIntent`, but the contract re-read mark price and the trigger condition was no longer true.
+
+Fix: the relayer should retry when the condition is true again, as long as the intent has not expired or been cancelled.
+
+---
+
+### `quote_rfq_id mismatch`
+
+The maker quote's `rfq_id` does not match the `rfq_id` embedded in the signed taker intent.
+
+Fix: the relayer must pair each signed intent with quotes bound to that exact `rfq_id`.
+
+---
+
+### `stale epoch` / `stale lane`
+
+The taker cancelled all intents or cancelled the market lane after signing this intent.
+
+Fix: read current `epoch` and `lane_version` before signing a replacement intent.
