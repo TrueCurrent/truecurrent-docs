@@ -90,7 +90,7 @@ The contract processes submitted quotes and skips quotes that fail quote-level v
 | --- | --- |
 | Maker signature verifies against the exact submitted fields | Quote skipped |
 | Quote `sign_mode` is `v2` and `evm_chain_id` matches the EIP-712 domain | Quote skipped |
-| Quote `rfq_id` matches the request or signed intent | Quote skipped or `quote_rfq_id mismatch` |
+| Quote `rfq_id` matches the request or signed intent | Quote skipped or `rfq_id mismatch` |
 | Quote has not expired at settlement block time | Quote skipped |
 | Maker is whitelisted and uses the registered `maker_subaccount_nonce` | Quote skipped or no fill |
 | Maker and taker authz grants exist for the RFQ contract | Transaction fails with authorization error |

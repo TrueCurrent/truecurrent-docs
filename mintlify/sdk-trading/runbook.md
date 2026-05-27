@@ -409,6 +409,6 @@ Use `CancelAllIntents` only when you need to invalidate every lane for the taker
 | No quotes collected by taker | Maker not whitelisted, offline, filtering wrong `rfq_id`, or request was not ACKed | Verify whitelist and correlate from the ACK-returned `rfq_id` |
 | `No quote was filled` | Expired quote, failed `worst_price`, mark-band rejection, wrong maker subaccount nonce, or margin issue | Inspect quote results, `list_makers`, and subaccount balances |
 | Conditional order accepted but never fires | Trigger not reached, expired intent, executor unavailable, or no executable RFQ quote | Check intent status, trigger price, deadline, and executor logs |
-| `quote_rfq_id mismatch` | Executor paired a signed intent with a quote for another RFQ | Re-request RFQ liquidity for the exact signed-intent `rfq_id` |
+| `rfq_id mismatch` | Executor paired a signed intent with a quote for another RFQ | Re-request RFQ liquidity for the exact signed-intent `rfq_id` |
 
 For field-level details, see [Protocol reference](/sdk-trading/protocol-reference) and [Troubleshooting](/sdk-trading/troubleshooting).

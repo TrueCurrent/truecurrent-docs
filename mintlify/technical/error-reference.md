@@ -135,7 +135,7 @@ Fix: the executor should retry according to its trigger-order policy when the co
 
 ---
 
-### `quote_rfq_id mismatch`
+### `rfq_id mismatch`
 
 The maker quote's `rfq_id` does not match the `rfq_id` embedded in the signed taker intent.
 
