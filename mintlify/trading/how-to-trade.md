@@ -1,7 +1,7 @@
 ---
 title: "How to trade"
 description: "This is the full trading workflow for opening, managing, and closing positions after your wallet is connected and funded."
-updatedAt: "2026-05-04"
+updatedAt: "2026-05-27"
 ---
 
 ## Opening a position
@@ -55,7 +55,7 @@ Your positions appear in the **Positions** panel.
 For each position you can see:
 
 - **Entry price** – the price you traded at
-- **Mark price** – the current fair value price (used for P&L and liquidation)
+- **Index Price** – the current streamed position reference used for P&L
 - **Unrealized P&L** – your current profit or loss
 - **Margin** and **available margin**
 - **Liquidation price** – the price at which your position is automatically closed
@@ -65,7 +65,7 @@ Margin is collateral for derivatives trades.
 Available margin is the unused collateral left to open trades or cover losses.
 </Info>
 
-{/* SCREENSHOT SLOT: position-details — Positions panel zoomed-in row showing entry, mark, uPNL, margin, available margin, and liquidation price. */}
+{/* SCREENSHOT SLOT: position-details — Positions panel zoomed-in row showing entry, Index Price, uPNL, margin, available margin, and liquidation price. */}
 
 ### Adding margin
 
@@ -94,13 +94,13 @@ Your unrealized P&L is calculated as:
 **For longs:**
 
 ```text
-P&L = (Mark price − Entry price) × Position size
+P&L = (Index price − Entry price) × Position size
 ```
 
 **For shorts:**
 
 ```text
-P&L = (Entry price − Mark price) × Position size
+P&L = (Entry price − Index price) × Position size
 ```
 
 When you close, P&L is realized and added to (or subtracted from) your subaccount balance.

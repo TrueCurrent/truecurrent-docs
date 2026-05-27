@@ -1,7 +1,7 @@
 ---
 title: "Your first trade"
 description: "Open your first TrueCurrent perpetuals position: choose a market, set margin and leverage, review your worst price, and monitor liquidation risk."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 This walkthrough shows the basic flow for opening a first position on TrueCurrent. Start with a small size and low leverage while you learn how margin, price tolerance, funding, and liquidation behave.
@@ -70,11 +70,11 @@ Click **Trade**. TrueCurrent automatically collects prices from institutional li
 
 Your open position appears in the **Positions** panel below the chart. You'll see:
 
-- Entry price and current mark price
+- Entry price and current **Index Price**
 - Unrealized P&L
 - Your **liquidation price** – if the mark price reaches this level, your position can be forcibly closed
 
-{/* SCREENSHOT SLOT: positions-panel — Positions panel with at least one open position; entry, mark, uPNL, margin, and liquidation columns clearly readable. */}
+{/* SCREENSHOT SLOT: positions-panel — Positions panel with at least one open position; entry, Index Price, uPNL, margin, and liquidation columns clearly readable. */}
 
 ---
 

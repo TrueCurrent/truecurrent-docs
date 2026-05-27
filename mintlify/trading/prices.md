@@ -1,26 +1,39 @@
 ---
-title: "Mark and quoted prices"
-description: "Understand the difference between mark price, quoted price, estimated price, and worst price on TrueCurrent."
-updatedAt: "2026-05-06"
+title: "Index, mark, and quoted prices"
+description: "Understand the difference between index price, mark price, quoted price, estimated price, and worst price on TrueCurrent."
+updatedAt: "2026-05-27"
 ---
 
-TrueCurrent uses **mark price** as the market reference price and **quoted price** as the execution price. Mark price determines risk and trigger conditions. Quoted price determines what you actually trade at.
+TrueCurrent uses **index price** as the primary displayed position reference and unrealized P&L source, **mark price** as the protocol risk reference, and **quoted price** as the execution price. The Positions panel displays **Index Price** where this streamed position reference is shown.
+
+---
+
+## Index price
+
+The **index price** is the streamed market reference used to value open positions in the TrueCurrent UI. It is exposed as `indexPrice` and updates the same way as `markPrice`.
+
+Index price is used for:
+
+- **Index Price display** — the current position reference shown in the Positions panel
+- **Unrealized P&L** — how your open position is valued before you close it
+- **Position monitoring** — the primary UI reference for open-position performance
+
+Index price is **not** your execution price. You do not buy or sell at index price unless a maker's quote happens to match it.
 
 ---
 
 ## Mark price
 
-The **mark price** is the reference price for a TrueCurrent perpetual market. It is the price used by the protocol and UI to value open positions and evaluate risk.
+The **mark price** is the onchain reference price for a TrueCurrent perpetual market. It is exposed as `mark_price` onchain and `markPrice` in streamed market data.
 
 Mark price is used for:
 
-- **Unrealized P&L** — how your open position is valued before you close it
 - **Margin ratio** — how close your position is to liquidation
 - **Liquidation** — liquidation checks are evaluated against mark price
 - **Trigger orders** — take profit and stop loss triggers fire when mark price crosses your trigger level
 - **Price validation** — `worst_price` and maker quotes must stay within the allowed band around mark price
 
-Mark price is **not** your execution price. You do not buy or sell at mark price unless a maker's quote happens to match it.
+Mark price is **not** your execution price. It remains the contract-facing reference for risk and validation.
 
 ---
 
@@ -39,7 +52,7 @@ Your quoted price is used for:
 - **Realized P&L** — the price used when your position closes
 - **Trade history** — the fill price shown for settled trades
 
-Quoted price can differ from mark price. That difference is the effective spread you receive from the RFQ maker.
+Quoted price can differ from index price and mark price. That difference is the effective spread you receive from the RFQ maker.
 
 ---
 
@@ -80,7 +93,8 @@ This means a trigger can fire without guaranteeing a fill. If the market moves b
 
 | Price | What it is | Used for |
 |-------|------------|----------|
-| **Mark price** | Market reference price | P&L, margin ratio, liquidation, TP/SL triggers, price validation |
+| **Index price** | Streamed position reference | Displayed Index Price, unrealized P&L, position monitoring |
+| **Mark price** | Onchain risk reference price | Margin ratio, liquidation, TP/SL triggers, price validation |
 | **Quoted price** | Signed maker quote price | Trade fills, realized P&L, trade history |
 | **Estimated price** | Pre-trade UI preview | Showing an approximate expected fill before quotes are collected |
 | **Worst price** | Your execution limit | Preventing settlement at a worse price than you accepted |

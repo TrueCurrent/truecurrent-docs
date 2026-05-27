@@ -1,10 +1,10 @@
 ---
 title: "Available markets"
 description: "How perpetual futures markets are listed on TrueCurrent and how to find the live list of supported markets and their parameters."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
-TrueCurrent offers perpetual futures markets on Injective. Each market is collateralized in USDC and has an onchain mark price used for P&L, liquidations, funding, and trigger-order evaluation.
+TrueCurrent offers perpetual futures markets on Injective. Each market is collateralized in USDC, has an onchain mark price used for liquidations, funding, and trigger-order evaluation, and exposes a streamed `indexPrice` used as the primary UI P&L reference.
 
 The live list of supported markets, current parameters (tick size, max leverage, funding cadence), and 24h volume is shown in the trading interface. For programmatic access, query the Injective exchange module's `DerivativeMarket` endpoint — that is the onchain source of truth.
 
@@ -23,8 +23,10 @@ If you are a maker interested in supporting a new market, see [Maker SDK trading
 
 ---
 
-## Mark price
+## Market reference prices
 
-Each market exposes an onchain `mark_price` through Injective. TrueCurrent uses that mark price for unrealized P&L, liquidations, funding-rate calculations, TP/SL trigger evaluation, and quote validation. It is public and verifiable onchain.
+Each market exposes an onchain `mark_price` through Injective. TrueCurrent uses that mark price for liquidations, funding-rate calculations, TP/SL trigger evaluation, margin checks, and quote validation. It is public and verifiable onchain.
 
-For the full mark and quoted-price model, see [Mark and quoted prices](/trading/prices).
+The indexer streams `indexPrice` alongside `markPrice`. TrueCurrent uses `indexPrice` as the primary source for displayed **Index Price** and unrealized P&L.
+
+For the full index, mark, and quoted-price model, see [Index, mark, and quoted prices](/trading/prices).

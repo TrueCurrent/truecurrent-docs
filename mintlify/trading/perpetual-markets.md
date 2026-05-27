@@ -1,7 +1,7 @@
 ---
 title: "Perpetual markets"
-description: "Learn the core mechanics of perpetual futures on TrueCurrent, including leverage, margin, funding, mark price, and liquidation."
-updatedAt: "2026-05-14"
+description: "Learn the core mechanics of perpetual futures on TrueCurrent, including leverage, margin, funding, index price, mark price, and liquidation."
+updatedAt: "2026-05-27"
 ---
 
 TrueCurrent offers perpetual futures – leveraged positions on asset prices with no expiration date.
@@ -12,7 +12,7 @@ TrueCurrent offers perpetual futures – leveraged positions on asset prices wit
 
 A perpetual futures contract lets you gain leveraged exposure to an asset’s price without owning the asset itself. Unlike traditional futures, which expire on a fixed date, perpetuals can be held indefinitely as long as the position continues to meet margin requirements.
 
-Your profit or loss is determined by the difference between your entry price and the current mark price, multiplied by your position size.
+Your unrealized profit or loss is determined by the difference between your entry price and the current index price, multiplied by your position size.
 
 **Going long:** You profit when the price rises. A 10% price increase on a 2x leveraged position results in an approximate 20% return on your margin.
 
@@ -24,13 +24,15 @@ Your profit or loss is determined by the difference between your entry price and
 
 ---
 
-## Mark price vs. last traded price
+## Index price, mark price, and last traded price
 
-**Mark price** is the fair-value price used for unrealized P&L, margin checks, liquidations, funding, and TP/SL trigger evaluation. It is derived from external oracle sources.
+**Index price** is the streamed position reference used as the primary source for unrealized P&L in the TrueCurrent UI. The Positions panel labels this value **Index Price**.
+
+**Mark price** is the onchain risk reference used for margin checks, liquidations, funding, TP/SL trigger evaluation, and quote validation. It is derived from external oracle sources.
 
 **Last traded price** is the most recent fill price on TrueCurrent. It can differ from mark price because RFQ fills execute against quoted prices from liquidity providers.
 
-Your unrealized P&L and liquidation risk are based on **mark price**, not last traded price.
+Your unrealized P&L is based primarily on **index price**. Liquidation risk remains based on **mark price**. Neither value is the same as last traded price.
 
 ---
 
@@ -49,7 +51,7 @@ Leverage = Notional / Margin
 
 Liquidation trigger is when your margin falls below maintenance margin due to adverse price movement. This is when your position is liquidated.
 
-As the mark price moves, your unrealized P&L changes the equity of your position. If the position moves against you and your remaining equity falls below the maintenance margin requirement, the position becomes eligible for liquidation.
+As the index price moves, your displayed unrealized P&L changes. Separately, the protocol monitors mark-price-based risk: if the position moves against you and remaining equity falls below the maintenance margin requirement, the position becomes eligible for liquidation.
 
 ---
 
@@ -140,6 +142,8 @@ You can be liquidated on one isolated position even if another position is profi
 
 ---
 
-## Mark price source
+## Price sources
 
-Every market has an onchain mark price. The source may vary by market, but the resulting mark price is publicly visible and used for P&L, liquidation checks, funding, and trigger-order evaluation.
+Every market has an onchain mark price. The source may vary by market, but the resulting mark price is publicly visible and used for liquidation checks, funding, trigger-order evaluation, margin checks, and quote validation.
+
+The indexer also streams `indexPrice` alongside `markPrice`. TrueCurrent uses `indexPrice` as the primary source for position valuation and unrealized P&L display.

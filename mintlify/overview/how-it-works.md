@@ -1,7 +1,7 @@
 ---
 title: "How TrueCurrent works"
 description: "Learn how TrueCurrent's RFQ flow connects traders with competing liquidity providers for zero-fee, non-custodial perpetuals execution."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 When you place a trade on TrueCurrent, institutional liquidity providers compete to fill it at the best available price. TrueCurrent handles quote selection and execution automatically, so you get RFQ pricing without manually reviewing and accepting individual quotes.
@@ -27,7 +27,7 @@ The trade will never execute at a less favorable price than your limit.
 
 ### Your position is live
 
-{/* SCREENSHOT SLOT: position-open — Positions panel showing one freshly opened long, with entry/mark/uPNL/liq columns visible. */}
+{/* SCREENSHOT SLOT: position-open — Positions panel showing one freshly opened long, with entry/Index Price/uPNL/liq columns visible. */}
 
 ---
 

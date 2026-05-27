@@ -1,10 +1,16 @@
 ---
 title: "WebSocket streams"
 description: "Integration guide for TrueCurrent's TakerStream and MakerStream WebSocket APIs with connection details, message formats, authentication, and reconnection handling for real-time RFQ trading."
-updatedAt: "2026-05-01"
+updatedAt: "2026-05-27"
 ---
 
 TrueCurrent's off-chain coordination uses two real-time WebSocket streams: the **TakerStream** for traders and the **MakerStream** for makers.
+
+---
+
+## Market price updates
+
+For market-data consumers, `indexPrice` is streamed with the same cadence and freshness expectations as `markPrice`. Use `indexPrice` as the primary source for displayed **Index Price** and unrealized P&L. Continue to use `markPrice` or onchain `mark_price` for contract-facing quote validation, trigger evaluation, liquidation risk, and funding logic.
 
 ---
 

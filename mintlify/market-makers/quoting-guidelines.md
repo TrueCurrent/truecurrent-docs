@@ -1,7 +1,7 @@
 ---
 title: "Quoting guidelines"
 description: "Best practices for TrueCurrent makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 This page covers best practices for makers on TrueCurrent.
@@ -116,7 +116,7 @@ Common hedging approaches:
 
 To minimise adverse selection and avoid rejected quotes, makers should price around the same reference the contract validates against: the current onchain mark price.
 
-TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, P&L, and liquidation checks.
+TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, and liquidation checks. Position P&L display uses the streamed `indexPrice`, so do not use UI P&L or index price as the source for contract-facing quote bands.
 
 **To track it:**
 

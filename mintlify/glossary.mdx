@@ -1,7 +1,7 @@
 ---
 title: "Glossary"
 description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and maker operations used throughout this documentation."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 ## A
@@ -86,6 +86,10 @@ The wire protocol used by TrueCurrent's WebSocket streams. Messages are length-p
 
 The minimum collateral required to open a new position, expressed as a fraction of notional value. Equal to `1 / leverage`. For example, 10x leverage requires an IMR of 10%.
 
+**index price**:
+
+The streamed market reference exposed as `indexPrice`. TrueCurrent uses index price as the primary source for open-position valuation and unrealized P&L display. It is streamed alongside `markPrice`.
+
 **insurance fund**:
 
 A protocol reserve that covers shortfalls when a liquidated position is closed below its bankruptcy price. The fund is replenished from a portion of liquidation proceeds, preventing losses from being socialized across other users.
@@ -136,7 +140,7 @@ Account equity divided by position notional value. Liquidation triggers when thi
 
 **mark price**:
 
-The market reference price of a perpetual. Mark price is published onchain and used for P&L calculations, margin ratio checks, liquidation triggers, trigger-order evaluation, and quote validation. It is not the execution price.
+The onchain risk reference price of a perpetual. Mark price is published onchain and used for margin ratio checks, liquidation triggers, trigger-order evaluation, funding, and quote validation. It is not the execution price or the UI's primary P&L source.
 
 **maker**:
 
@@ -242,7 +246,7 @@ A reserved field on `AcceptQuote` and `AcceptSignedIntent`. The current TrueCurr
 
 **unrealized P&L (uPnL)**:
 
-Profit or loss on an open position based on the current mark price, updated continuously. Unrealized P&L is added to your margin when calculating account equity and margin ratio.
+Profit or loss on an open position based primarily on the current index price, updated continuously. Unrealized P&L is added to your margin when calculating account equity and margin ratio.
 
 ## W
 

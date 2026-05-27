@@ -1,7 +1,7 @@
 ---
 title: "Taker SDK trading"
 description: "High-level guide for traders and integrators using the TrueCurrent SDK as takers: setup, RFQ request flow, quote selection, settlement, TP/SL intents, and operational requirements."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 A taker is the trader requesting liquidity. With the SDK, a taker system can open and close TrueCurrent perpetual positions without using the web app.
@@ -93,12 +93,13 @@ The contract re-checks every submitted quote. It verifies the maker signature, q
 After settlement, the position lives in Injective's exchange module. Monitor:
 
 - Entry price
-- Mark price
+- Index price and unrealized P&L
+- Mark price for risk and liquidation monitoring
 - Margin ratio
 - Liquidation price
 - Funding payments
 - Open quantity
-- Realized and unrealized P&L
+- Realized P&L
 
 ---
 
