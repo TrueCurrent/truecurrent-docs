@@ -9,7 +9,7 @@ TrueCurrent's offchain coordination uses two bidirectional streams:
 - **TakerStream** for takers to request quotes and receive maker responses.
 - **MakerStream** for whitelisted makers to receive RFQs and submit signed quotes.
 
-For a runnable maker/taker validation path, use the [Testnet runbook](/sdk-trading/runbook).
+For a runnable maker/taker validation path, use the [Runbook](/sdk-trading/runbook).
 
 ---
 

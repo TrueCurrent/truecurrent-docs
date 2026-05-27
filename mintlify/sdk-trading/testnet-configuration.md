@@ -4,7 +4,7 @@ description: "Endpoint, contract, token, EIP-712, and market configuration refer
 updatedAt: "2026-05-27"
 ---
 
-Use this page to configure clients and sanity-check `.env` values. Use the [Testnet runbook](/sdk-trading/runbook) for procedural validation.
+Use this page to configure clients and sanity-check `.env` values. Use the [Runbook](/sdk-trading/runbook) for procedural validation.
 
 ---
 

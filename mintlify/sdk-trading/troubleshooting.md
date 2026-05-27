@@ -12,7 +12,7 @@ Debug RFQ issues in this order:
 4. Signing: exact field order and exact decimal strings.
 5. Settlement: expiry, `worst_price`, margin, authz, market rules.
 
-The [Testnet runbook](/sdk-trading/runbook) walks through the same order with commands.
+The [Runbook](/sdk-trading/runbook) walks through the same order with commands.
 
 ---
 

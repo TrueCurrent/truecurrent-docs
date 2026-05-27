@@ -117,4 +117,4 @@ Before mainnet, prove the full ceremony on testnet:
 8. Taker collects the quote and submits `AcceptQuote`.
 9. Settlement creates the expected derivative positions.
 
-Use [Testnet runbook](/sdk-trading/runbook) as the operational checklist.
+Use the [Runbook](/sdk-trading/runbook) as the operational checklist.

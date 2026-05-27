@@ -6,7 +6,7 @@ updatedAt: "2026-05-27"
 
 This page is the compact protocol reference. Read it when you need to debug a message flow, map SDK fields to onchain settlement, or confirm which identifier belongs in which part of the RFQ stack.
 
-For conceptual background, start with [SDK architecture](/sdk-trading/architecture). For runnable commands, use the [Testnet runbook](/sdk-trading/runbook).
+For conceptual background, start with [SDK architecture](/sdk-trading/architecture). For runnable commands, use the [Runbook](/sdk-trading/runbook).
 
 ---
 

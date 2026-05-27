@@ -88,4 +88,4 @@ Before asking to move beyond testnet, confirm:
 - The E2E settlement script lands a transaction.
 - You can stop quoting quickly if price feeds, balances, or hedging fail.
 
-See [Testnet runbook](/sdk-trading/runbook) for the command sequence.
+See [Runbook](/sdk-trading/runbook) for the command sequence.

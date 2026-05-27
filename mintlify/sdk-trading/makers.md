@@ -118,4 +118,4 @@ If the taker accepts and settlement is attempted, monitor settlement updates and
 4. [RFQ requests](/sdk-trading/rfq-requests)
 5. [Building & signing quotes](/sdk-trading/signing-quotes)
 6. [Sending quotes](/sdk-trading/sending-quotes)
-7. [Testnet runbook](/sdk-trading/runbook)
+7. [Runbook](/sdk-trading/runbook)

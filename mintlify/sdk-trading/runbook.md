@@ -1,5 +1,5 @@
 ---
-title: "Testnet runbook"
+title: "Runbook"
 description: "Procedural testnet checklist for validating TrueCurrent RFQ taker, maker, settlement, and TP/SL signed-intent integrations."
 updatedAt: "2026-05-27"
 ---

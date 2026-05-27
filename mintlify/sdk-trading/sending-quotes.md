@@ -152,4 +152,4 @@ After a settlement attempt, reconcile:
 | Quote ACK succeeds but no fill happens | Taker did not accept before expiry, another quote won, or settlement skipped this quote |
 | Settlement skips maker quote | Expired quote, mark-band rejection, `worst_price` failure, insufficient maker margin, or `min_fill_quantity` mismatch |
 
-Next: [Testnet runbook](/sdk-trading/runbook).
+Next: [Runbook](/sdk-trading/runbook).

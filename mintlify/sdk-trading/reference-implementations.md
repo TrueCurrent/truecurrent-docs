@@ -104,4 +104,4 @@ Copy patterns, not test constants:
 - Filter maker requests and taker quote collection by the ACK-returned `rfq_id`.
 - Log `rfq_id`, `client_id`, quote expiry, maker subaccount nonce, quote ACKs, and settlement updates.
 
-For endpoint values, see [Testnet configuration](/sdk-trading/testnet-configuration). For operational validation, see [Testnet runbook](/sdk-trading/runbook).
+For endpoint values, see [Testnet configuration](/sdk-trading/testnet-configuration). For operational validation, see [Runbook](/sdk-trading/runbook).
