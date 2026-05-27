@@ -35,7 +35,7 @@ flowchart LR
     class Contract,Exchange onchain
 ```
 
-**Reading the diagram.** Steps 1–4 happen off-chain over WebSocket inside a single quote window — typically sub-second. Step 5 is one on-chain transaction that atomically opens both the taker's and the maker's positions.
+**Reading the diagram.** Steps 1-4 happen off-chain over WebSocket inside a single quote window. TrueCurrent currently uses 500 ms; the value can vary by frontend and protocol configuration, and API takers can tune their own timeout. Step 5 is one on-chain transaction that atomically opens both the taker's and the maker's positions.
 
 ---
 
@@ -111,7 +111,7 @@ Step-by-step:
 
 1. **Trader → Indexer (TakerStream):** Trader sends an RFQ request over WebSocket
 2. **Indexer → All MMs (MakerStream):** Request is broadcast to all active makers simultaneously
-3. **MMs → Indexer (MakerStream):** Each maker responds with a signed quote within 2 seconds
+3. **MMs -> Indexer (MakerStream):** Each maker responds with a signed quote inside the collection window
 4. **Indexer → Trader (TakerStream):** Best quote is returned to the trader
 5. **Trader → Chain (AcceptQuote):** Trader submits the `AcceptQuote` transaction with the quote and their parameters
 6. **Contract verification:** Onchain contract verifies signature, price, expiry, and margin

@@ -142,7 +142,7 @@ Because quotes arrive asynchronously, the standard pattern is:
 
 1. Submit the request
 2. Collect incoming messages into a list, filtering by `rfq_id`
-3. After a short fixed window (a few hundred milliseconds is typical – quotes expire quickly, so you can't wait long), stop collecting and pick the best quote(s)
+3. After the collection window, stop collecting and pick the best quote(s)
 4. Proceed to settlement immediately
 
 
@@ -151,7 +151,7 @@ Because quotes arrive asynchronously, the standard pattern is:
 ```python
 quotes = await taker_ws.collect_quotes(
     rfq_id=rfq_id,
-    timeout=0.5,         # collect for ~500ms, then proceed – tune against real benchmarks
+    timeout=0.5,         # TrueCurrent uses 500ms; API takers may tune this
     min_quotes=1,
 )
 
@@ -174,7 +174,7 @@ ws.on("message", (raw: Buffer) => {
   }
 });
 
-await new Promise((r) => setTimeout(r, 500));   // tune against real benchmarks
+await new Promise((r) => setTimeout(r, 500));   // TrueCurrent default; tune for API use
 
 if (quotes.length === 0) {
   throw new Error("No quotes received");
@@ -187,9 +187,9 @@ const best = quotes
 
 **Choosing the window size:**
 
-The hard ceiling is the quote's `expiry`. By the time you've accounted for a few hundred milliseconds of MM response latency, Injective block time (~600ms), and your own broadcast path, there is very little room.
+The TrueCurrent frontend currently uses a 500 ms quote collection window. This can vary by frontend and protocol configuration, and API takers can set their own collection timeout. The hard ceiling is the quote's `expiry`. By the time you've accounted for maker response latency, Injective block time, and your own broadcast path, there is very little room.
 
-- **A few hundred milliseconds** is a reasonable default – long enough to receive quotes from warm makers, short enough to leave settlement headroom.
+- **500 ms** is the current TrueCurrent default - long enough to receive quotes from warm makers, short enough to leave settlement headroom.
 - **Too short** (&lt;100ms): you'll miss slower makers and reduce competition.
 - **Too long** (&gt;1s): quote expiry becomes a race you will lose.
 

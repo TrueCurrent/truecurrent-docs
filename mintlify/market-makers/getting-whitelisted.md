@@ -12,7 +12,7 @@ TrueCurrent uses an approved maker whitelist. Only whitelisted addresses can sub
 
 The whitelist ensures that every maker on TrueCurrent is:
 
-- Technically integrated and able to respond reliably within the 2-second window
+- Technically integrated and able to respond reliably inside the active collection window
 - Capitalized sufficiently to back their quotes
 - Committed to quoting in good faith (avoiding quote manipulation or gaming)
 
@@ -74,7 +74,7 @@ or use `ContractClient.is_maker_registered()` which handles pagination automatic
 
 Your maker status depends on maintaining reliable, competitive quoting behavior. TrueCurrent monitors maker performance and may remove makers from the whitelist if:
 
-- Response rate falls below an acceptable threshold (consistently failing to quote within 2 seconds)
+- Response rate falls below an acceptable threshold (consistently failing to quote inside the active collection window)
 - Quotes are systematically off-market (quoting prices that never win and appear designed to game metrics)
 - Settlements consistently fail due to insufficient margin
 - Any behavior that degrades the experience for traders

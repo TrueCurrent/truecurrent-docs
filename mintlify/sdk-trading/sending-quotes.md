@@ -71,13 +71,13 @@ The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain
 
 ## Expiry
 
-Live quotes should be short-lived. A typical live expiry is:
+Live quotes should be short-lived, but they must give the taker enough time to collect, select, and settle. Submit live quotes with at least 1500 ms of validity. A common live expiry is:
 
 ```python
 expiry = int(time.time() * 1000) + 2_000
 ```
 
-The contract checks expiry at settlement block time. Taker quote collection and transaction inclusion both consume the expiry window, so do not set live expiries too tight and do not do slow work after receiving an RFQ.
+The contract checks expiry at settlement block time. Taker quote collection and transaction inclusion both consume the expiry window, so do not set live expiries too tight and do not do slow work after receiving an RFQ. A longer expiry increases the chance that your quote can be matched and settled, but it also increases stale-price exposure.
 
 TP/SL-triggered requests still use the normal live RFQ quote path from the maker's perspective.
 

@@ -16,7 +16,7 @@ Every quote from a liquidity provider includes:
 
 **Quantity.** The amount available at this price, usually matching your request. If only a partial fill is available, TrueCurrent chooses the best price/quantity offer and may fill across one or more makers.
 
-**Expiry.** How long the quote remains valid, usually about 2 seconds. If it expires before settlement, the trade is rejected and you’ll need a fresh quote; short expiries help makers avoid stale prices and keep spreads tighter.
+**Expiry.** How long the quote remains valid. Makers must submit quotes with at least 1500 ms of validity; many use longer expiries to increase the chance their quote can be selected and settled. If a quote expires before settlement, it is skipped; short expiries help makers avoid stale prices and keep spreads tighter.
 
 **Maker address.** The Injective wallet address of the maker offering the quote. This is visible onchain after settlement.
 
@@ -26,7 +26,7 @@ Every quote from a liquidity provider includes:
 
 ## How the best quote is selected
 
-TrueCurrent evaluates all quotes received during the 2-second collection window and selects the best one automatically:
+TrueCurrent currently evaluates quotes received during a 500 ms collection window and selects the best executable quote automatically. This window can vary by frontend and protocol configuration; API takers can configure their own collection timeout.
 
 - For **long** positions: the quote with the **lowest price** (you're buying, so lower is better)
 - For **short** positions: the quote with the **highest price** (you're selling, so higher is better)

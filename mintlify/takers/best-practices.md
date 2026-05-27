@@ -49,9 +49,9 @@ The quote lifetime is short. By the time you've waited for makers to respond and
 **Mitigations:**
 
 - **Submit immediately after the collection window closes.** Don't batch or wait.
-- **Use a ~2 second collection window.**
-  This matches the live quote expiry window;
-  waiting longer eats into the confirmation budget.
+- **Use a short collection window.**
+  TrueCurrent currently uses 500 ms. The value can vary by frontend and protocol configuration, and API takers can tune the collection timeout.
+  Waiting near the full live quote expiry window leaves little time for block inclusion.
 - **Co-locate** near `testnet-grpc.injective.dev` / `sentry.tm.injective.network` to minimize RTT.
 
 - **Don't retry failed broadcasts** on an expiry error – the quote is dead, get a new one.

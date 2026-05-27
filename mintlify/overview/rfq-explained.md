@@ -79,7 +79,7 @@ The maker can decline by not quoting. If no maker returns an acceptable quote, n
 
 ## Quote expiry
 
-Live quotes are intentionally short-lived, commonly around two seconds. That protects makers from stale-price exposure and keeps spreads tighter for traders.
+Live quotes are intentionally short-lived. Makers must submit quotes with at least 1500 ms of validity, and many use longer expiries to increase the chance their quote can be selected and settled. Short expiries protect makers from stale-price exposure and keep spreads tighter for traders.
 
 The contract checks expiry at settlement time. If a quote expires before the transaction lands, that quote is skipped. If every submitted quote is skipped or invalid, settlement fails with no fill.
 

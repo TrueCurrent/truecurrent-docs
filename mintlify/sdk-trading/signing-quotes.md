@@ -138,7 +138,7 @@ Use `sign_quote_v2` from `injective-rfq-toolkit`.
 import time
 from rfq_test.crypto.eip712 import sign_quote_v2
 
-expiry_ms = int(time.time() * 1000) + 2_000
+expiry_ms = int(time.time() * 1000) + 2_000  # must be at least now + 1500ms
 
 sig = sign_quote_v2(
     private_key=MM_PRIVATE_KEY,

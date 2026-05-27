@@ -142,7 +142,7 @@ Your application still owns strategy, sizing, risk checks, and position monitori
 
 Use a dedicated trading wallet. Keep only the capital needed for the strategy in that wallet.
 
-Treat quote expiry as a hard latency budget. Collect quotes briefly, choose, and settle immediately.
+Treat quote expiry as a hard latency budget. TrueCurrent currently collects quotes for 500 ms; the value can vary by frontend and protocol configuration, and API takers can tune their own timeout. Collect briefly, choose, and settle immediately.
 
 Always calculate `worst_price` from current mark price and your own risk tolerance. Do not accept arbitrary UI estimates or stale cached prices.
 

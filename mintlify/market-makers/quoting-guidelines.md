@@ -83,8 +83,8 @@ minus \$5.00 fee = **\$7.50 net spread income**, before hedging costs.
 
 ## Response rate
 
-**Always try to quote within 2 seconds.**
-A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none get their order cancelled — a worse experience for them and lost flow for the maker pool.
+**Always try to quote inside the collection window.**
+TrueCurrent currently uses 500 ms. A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none get their order cancelled - a worse experience for them and lost flow for the maker pool.
 
 **Fail gracefully.**
 If you genuinely can't price a request
@@ -93,9 +93,9 @@ it's better to not submit a quote than to submit a random price.
 The system handles no-quote correctly: the request expires and the taker is told to retry.
 
 **Monitor latency.**
-The 2-second window includes network round-trip time.
+The collection window includes network round-trip time.
 If your system is co-located far from the indexer, account for that latency.
-A quote that arrives after the window is ignored.
+A quote that arrives after the active window is ignored.
 
 ---
 

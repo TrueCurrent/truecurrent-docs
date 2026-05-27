@@ -49,7 +49,7 @@ TrueCurrent uses a whitelist of approved makers. To apply, see [Getting whitelis
 
 - An Injective wallet with sufficient USDC margin for the current RFQ market
 - WebSocket connectivity to TrueCurrent's MakerStream
-- An automated quoting system that responds within 2 seconds
+- An automated quoting system that responds inside the active collection window
 - Implementation of TrueCurrent's quote signing specification
 - `authz` grants from your wallet to the TrueCurrent contract
 

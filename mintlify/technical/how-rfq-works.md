@@ -50,10 +50,12 @@ The first part is offchain and latency-sensitive. The final settlement is one on
 | --- | --- |
 | Taker request ACK | one stream round trip |
 | Maker pricing and signing | a few hundred milliseconds |
-| Taker quote collection | usually sub-second, bounded by quote expiry |
+| Taker quote collection | 500 ms on TrueCurrent; configurable by protocol, frontend, or API taker |
 | `AcceptQuote` broadcast and inclusion | Injective block timing |
 
-Live maker quotes commonly use `expiry = now_ms + 2_000`. Taker collection and chain inclusion both consume that window, so makers should avoid slow network calls after receiving a request and should keep host clocks synchronized.
+The TrueCurrent frontend currently uses a 500 ms quote collection window. The value can vary by frontend and protocol configuration, and API takers can tune their own `collect_quotes` timeout. Longer collection windows may receive more quotes, but they leave less of each quote's expiry budget for transaction inclusion.
+
+Maker quotes must have at least 1500 ms of validity when submitted. A common live quote expiry is `expiry = now_ms + 2_000`; longer expiries give a quote more time to be selected and settled, but increase stale-price exposure for the maker. Taker collection and chain inclusion both consume that window, so makers should avoid slow network calls after receiving a request and should keep host clocks synchronized.
 
 ---
 

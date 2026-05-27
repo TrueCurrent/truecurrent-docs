@@ -192,7 +192,7 @@ The actual execution price at which a trade fills, taken from a maker's signed q
 
 **RFQ** (Request for Quote):
 
-TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
+TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted makers respond with signed, firm price commitments inside a short collection window. TrueCurrent currently uses 500 ms, though frontend/protocol configuration and API takers can vary that timeout. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
 
 **rfq_id**:
 

@@ -30,7 +30,7 @@ Fix: compare the exact typed-data message to the exact wire payload. On testnet,
 
 The quote's `expiry` timestamp was not greater than block time when settlement executed.
 
-Fix: keep clocks synced and avoid slow work after receiving an RFQ. Live maker quotes commonly use `now_ms + 2_000`; extending expiry may reduce rejects but increases stale-price risk.
+Fix: keep clocks synced and avoid slow work after receiving an RFQ. Live maker quotes must be at least `now_ms + 1_500`; extending expiry may reduce rejects and improve match odds, but increases stale-price risk.
 
 ---
 

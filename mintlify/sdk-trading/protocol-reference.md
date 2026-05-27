@@ -111,7 +111,7 @@ The contract processes submitted quotes and skips quotes that fail quote-level v
 | `evm_chain_id` | Environment config | EIP-712 domain and v2 wire fields | `1439` on testnet, `1776` on mainnet. Do not put this value in `quote.chain_id`. |
 | `contract_address` | Environment config | Quote wire payload and EIP-712 domain | Bech32 RFQ contract address on the wire; converted to EVM address inside the typed-data domain. |
 | `maker_subaccount_nonce` | Maker registration | Quote signature and settlement | If `list_makers` returns `null`, quote with nonce `0`. |
-| `expiry` | Maker | Quote signature and settlement | Milliseconds. Live quotes usually use `now_ms + 2_000`. |
+| `expiry` | Maker | Quote signature and settlement | Milliseconds. Live quotes must be at least `now_ms + 1_500`; `now_ms + 2_000` or longer improves match odds but increases stale-price exposure. |
 | `epoch` | Contract state | Signed intents | Bumped by `CancelAllIntents`; invalidates all older taker intents. |
 | `lane_version` | Contract state | Signed intents | Bumped by `CancelIntentLane`; invalidates one `(taker, market_id, subaccount_nonce)` lane. |
 

@@ -50,7 +50,7 @@ The [Runbook](/sdk-trading/runbook) walks through the same order with commands.
 | `quote.chain_id` is `1439` or `1776` | `chainId` from the EIP-712 domain was copied into the quote wire field | Put the numeric ID in `quote.evm_chain_id`; put `injective-888` or `injective-1` in `quote.chain_id`. |
 | Signature works locally but fails at settlement | Wrong contract address in the EIP-712 domain | Use the active RFQ contract address from [Testnet configuration](/sdk-trading/testnet-configuration). |
 | BTC quotes fail tick or signature checks | Integer-tick price sent as `"76462.0"` | Canonicalize integer ticks as `"76462"` before signing and sending. |
-| Quote expires before settlement | Expiry too close, clock drift, or slow post-RFQ work | Use NTP and avoid slow calls after RFQ receipt. Live quotes commonly use `now_ms + 2_000`. |
+| Quote expires before settlement | Expiry too close, clock drift, or slow post-RFQ work | Use NTP and avoid slow calls after RFQ receipt. Live quotes must be at least `now_ms + 1_500`; longer expiries improve match odds but increase stale-price risk. |
 | `worst price exceeds limit` | Price or mark/index value read with the wrong scale | Use human-scale prices returned by v2 endpoints; do not apply 1e18 scaling. |
 | Retail collects zero quotes | Maker quote was rejected, expired, or for a different `rfq_id` | Check maker logs for `quote_ack`, quote error responses, and `rfq_id` correlation. |
 

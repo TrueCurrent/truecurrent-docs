@@ -22,7 +22,7 @@ Any field covered by the EIP-712 v2 signature must match exactly, or settlement 
 | `quote.margin` | string | Your margin |
 | `quote.quantity` | string | Your quantity |
 | `quote.price` | string | Your price (tick-quantized, same string you signed) |
-| `quote.expiry` | uint64 | Unix ms. Use `now + 2s` for live MM quotes. Blind/TP-SL quotes may use longer windows. |
+| `quote.expiry` | uint64 | Unix ms. Must be at least `now + 1500ms`; `now + 2000ms` or longer improves match odds but increases stale-price exposure. |
 | `quote.maker` | string | Your `inj1...` |
 | `quote.maker_subaccount_nonce` | uint32 | Subaccount index (default `0`). Must match the value you signed. |
 | `quote.taker` | string | Taker's `inj1...` (from request) |

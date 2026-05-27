@@ -228,7 +228,7 @@ sig = sign_quote_v2(
     maker_margin="1",
     maker_quantity="1",
     price="1",
-    expiry_ms=int(time.time() * 1000) + 2_000,
+    expiry_ms=int(time.time() * 1000) + 2_000,  # must be at least now + 1500ms
     min_fill_quantity=None,
 )
 print(f"[4/4] sign_quote_v2 returns signature len={len(sig)}")
@@ -288,7 +288,7 @@ Operational notes:
 - `client_id` should be a UUID. The indexer assigns the real `rfq_id` in the ACK.
 - MakerStream can broadcast other takers' RFQs. Filter by the ACK-returned `rfq_id`.
 - `quote_ack` means "accepted by the indexer", not "filled by the taker".
-- Live quote expiry is intentionally short; avoid slow calls after receiving the RFQ.
+- Live quote expiry is intentionally short but must be at least 1500 ms. Longer expiries improve match odds, but increase stale-price exposure.
 
 ---
 

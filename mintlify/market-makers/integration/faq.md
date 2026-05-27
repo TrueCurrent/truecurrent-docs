@@ -55,11 +55,12 @@ updatedAt: "2026-05-05"
     4. **Signature verifies?**
        Check `evmChainId` field #1 in `SignQuote`, field order,
        and that `rfq_id` is a JSON number.
-    5. **Quote expired?** Verify `expiry` (`now + 2s` for live quotes) and clock sync.
+    5. **Quote expired?** Verify `expiry` is at least `now + 1500ms` and that your clock is synced.
   </Accordion>
 
   <Accordion title="What is the competition window?">
-    After a request is sent, the indexer collects quotes for ~2 seconds before delivering the best one to the taker.
+    TrueCurrent currently collects quotes for 500 ms before selecting a quote for the taker.
+    This can vary by frontend and protocol configuration, and API takers can configure their own collection timeout.
 
     Best price wins: lowest quoted price for long positions, highest for short positions.
   </Accordion>
@@ -97,4 +98,3 @@ updatedAt: "2026-05-05"
     the protocol enforces that only fills closing or shrinking existing exposure are valid.
   </Accordion>
 </AccordionGroup>
-

@@ -97,7 +97,7 @@ Quotes delivered to TakerStream are signed maker quotes:
 }
 ```
 
-Collect for a short window, select one or more quotes, then submit `AcceptQuote`. Waiting near the full quote expiry leaves little time for transaction inclusion.
+Collect for a short window, select one or more quotes, then submit `AcceptQuote`. TrueCurrent currently uses 500 ms; the value can vary by frontend and protocol configuration, and API takers can tune their own timeout. Waiting near the full quote expiry leaves little time for transaction inclusion.
 
 ---
 
