@@ -21,8 +21,14 @@ Use this page to configure clients and sanity-check `.env` values. Use the [Test
 | Explorer | `https://testnet.explorer.injective.network` |
 
 <Warning>
-`injective-888` and `1439` are both required, but they are not interchangeable. `quote.chain_id` is the Cosmos chain ID. `evm_chain_id` and the EIP-712 domain `chainId` use `1439`.
+`injective-888` and `1439` are both required, but they are not interchangeable. `quote.chain_id` / `quote.chainId` is the Cosmos chain ID and must be `injective-888` on testnet. `quote.evm_chain_id` / `quote.evmChainId` and the EIP-712 domain `chainId` use `1439`. Passing `1439` as `quote.chain_id` is a known integration failure mode.
 </Warning>
+
+| Context | Testnet value |
+| --- | --- |
+| EIP-712 domain `chainId` | `1439` |
+| Quote `evm_chain_id` / `evmChainId` | `1439` |
+| Quote `chain_id` / `chainId` | `injective-888` |
 
 ---
 

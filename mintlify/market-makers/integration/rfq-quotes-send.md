@@ -7,10 +7,14 @@ updatedAt: "2026-05-05"
 Wrap the quote in a `MakerStreamStreamingRequest` with `message_type = "quote"`.
 Any field covered by the EIP-712 v2 signature must match exactly, or settlement rejects it.
 
+<Warning>
+`quote.chain_id` / `quote.chainId` is the Cosmos chain ID, not the EIP-712 numeric chain ID. Use `"injective-888"` on testnet or `"injective-1"` on mainnet. Put `1439` / `1776` only in `quote.evm_chain_id` / `quote.evmChainId` and the EIP-712 domain.
+</Warning>
+
 | Field | Type | Value |
 |---|---|---|
 | `message_type` | string | `"quote"` |
-| `quote.chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet |
+| `quote.chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet. Never send `1439` or `1776` here. |
 | `quote.contract_address` | string | RFQ contract address for indexer compatibility |
 | `quote.rfq_id` | uint64 | From request |
 | `quote.market_id` | string | From request |

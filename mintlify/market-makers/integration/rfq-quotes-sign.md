@@ -53,6 +53,10 @@ The `chainId` here is the EVM chain ID, not the Cosmos chain ID.
 Use `1439` on testnet and `1776` on mainnet;
 do not use `injective-888` or `injective-1` in the EIP-712 domain.
 
+<Warning>
+Do not copy the EIP-712 domain `chainId` into the quote wire field `chain_id`. The quote `chain_id` / `chainId` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet). The numeric EVM ID (`1439` / `1776`) belongs in `evm_chain_id` / `evmChainId`.
+</Warning>
+
 ---
 
 ## 3. Quote shape on the wire
@@ -81,6 +85,7 @@ The indexer quote payload must include `sign_mode: "v2"` and the signature retur
 
 `chain_id` and `contract_address` are wire fields used by the indexer for compatibility.
 The v2 signature binds chain and contract through the EIP-712 domain, not through these payload fields.
+On testnet, `chain_id` must remain `"injective-888"` even though the domain `chainId` and quote `evm_chain_id` are both `1439`.
 
 `bindingKind` is derived inside the v2 digest:
 `1` when `taker` is set and `0` for blind quotes.

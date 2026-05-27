@@ -47,6 +47,7 @@ The [Testnet runbook](/sdk-trading/runbook) walks through the same order with co
 | --- | --- | --- |
 | `invalid_signature` | Signed fields differ from sent fields | Log the typed-data message and wire payload side by side; every signed decimal string must match exactly. |
 | Signature rejected after adding `evm_chain_id` | EVM chain ID placed in `quote.chain_id` or wrong domain | Use `quote.chain_id="injective-888"` on testnet and `evm_chain_id=1439` for EIP-712. |
+| `quote.chain_id` is `1439` or `1776` | `chainId` from the EIP-712 domain was copied into the quote wire field | Put the numeric ID in `quote.evm_chain_id`; put `injective-888` or `injective-1` in `quote.chain_id`. |
 | Signature works locally but fails at settlement | Wrong contract address in the EIP-712 domain | Use the active RFQ contract address from [Testnet configuration](/sdk-trading/testnet-configuration). |
 | BTC quotes fail tick or signature checks | Integer-tick price sent as `"76462.0"` | Canonicalize integer ticks as `"76462"` before signing and sending. |
 | Quote expires before settlement | Expiry too close, clock drift, or slow post-RFQ work | Use NTP and avoid slow calls after RFQ receipt. Live quotes commonly use `now_ms + 2_000`. |
@@ -107,7 +108,7 @@ The [Testnet runbook](/sdk-trading/runbook) walks through the same order with co
 - Confirm maker subaccount nonce and USDC margin.
 - Confirm MakerStream auth challenge is answered before waiting for RFQs.
 - Confirm quotes use `sign_mode="v2"` and `evm_chain_id=1439` on testnet.
-- Confirm `quote.chain_id` remains `injective-888`.
+- Confirm `quote.chain_id` / `quote.chainId` remains `injective-888`, not `1439`.
 - Confirm the taker collects quotes for the ACK-returned `rfq_id`.
 - Confirm quote expiry is still in the future at settlement time.
 - Confirm `worst_price`, tick size, and signed decimal strings all match the selected market.

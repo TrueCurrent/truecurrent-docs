@@ -18,11 +18,11 @@ Common causes:
 
 - Signed decimal string differs from the sent decimal string.
 - EVM chain ID in the EIP-712 domain is wrong (`1439` testnet, `1776` mainnet).
-- `quote.chain_id` was set to the EVM chain ID instead of the Cosmos chain ID.
+- `quote.chain_id` / `quote.chainId` was set to the EVM chain ID instead of the Cosmos chain ID.
 - RFQ contract address in the EIP-712 domain is stale.
 - Field order differs from the v2 `SignQuote` schema.
 
-Fix: compare the exact typed-data message to the exact wire payload. Use [Building and signing quotes](/sdk-trading/signing-quotes) as the field-order reference.
+Fix: compare the exact typed-data message to the exact wire payload. On testnet, EIP-712 domain `chainId` and quote `evm_chain_id` are `1439`, but quote `chain_id` is `injective-888`. Use [Building and signing quotes](/sdk-trading/signing-quotes) as the field-order reference.
 
 ---
 

@@ -10,6 +10,10 @@ Every maker quote is an EIP-712 v2 `secp256k1` signature over the `SignQuote` ty
 This guide is EIP-712 v2 only. Quote payloads must include `sign_mode: "v2"` and `evm_chain_id`. Do not sign JSON strings, `eth_sign` messages, or generic wallet typed-data payloads unless you have reproduced the exact digest used by the protocol.
 </Warning>
 
+<Warning>
+There are two different chain IDs in every v2 quote. EIP-712 uses a field named `chainId`, but that value is the numeric EVM chain ID: `1439` on testnet or `1776` on mainnet. The quote wire field `chain_id` / `chainId` is the Cosmos chain ID: `injective-888` on testnet or `injective-1` on mainnet. Passing `1439` or `1776` as `quote.chain_id` is invalid.
+</Warning>
+
 ---
 
 ## 1. Decide whether to quote
@@ -77,12 +81,13 @@ Quotes use this EIP-712 domain:
 | `chainId` mainnet | `1776` |
 | `verifyingContract` | EVM address derived from the RFQ contract bech32 address |
 
-The domain `chainId` is the EVM chain ID. It is not the Cosmos chain ID.
+The domain `chainId` is the EVM chain ID. It is not the Cosmos chain ID. This is the main naming collision in the RFQ payloads: `chainId` in the EIP-712 domain is not the same field as `quote.chain_id` / `quote.chainId` on the wire.
 
 | Context | Testnet | Mainnet |
 | --- | --- | --- |
-| EIP-712 `chainId` / `evm_chain_id` | `1439` | `1776` |
-| Quote `chain_id` / Cosmos chain ID | `injective-888` | `injective-1` |
+| EIP-712 domain `chainId` | `1439` | `1776` |
+| Quote `evm_chain_id` / `evmChainId` | `1439` | `1776` |
+| Quote `chain_id` / `chainId` | `injective-888` | `injective-1` |
 
 Current testnet RFQ contract:
 
@@ -183,7 +188,7 @@ ack = await mm_ws.send_quote({
 }, wait_for_response=True, response_timeout=5.0)
 ```
 
-`chain_id` is still the Cosmos chain ID. `evm_chain_id` is the EVM chain ID embedded in the EIP-712 domain.
+`chain_id` is still the Cosmos chain ID. `evm_chain_id` is the EVM chain ID embedded in the EIP-712 domain. Do not send `1439` or `1776` in `chain_id`.
 
 ---
 
@@ -192,7 +197,7 @@ ack = await mm_ws.send_quote({
 | Symptom | Fix |
 | --- | --- |
 | `sign_mode required` or empty signing mode | Include `"sign_mode": "v2"` on every quote payload |
-| Wrong chain ID | Use `1439` / `1776` in `evm_chain_id` and the domain; use `injective-888` / `injective-1` in `chain_id` |
+| Wrong chain ID | Use `1439` / `1776` in EIP-712 domain `chainId` and quote `evm_chain_id`; use `injective-888` / `injective-1` in quote `chain_id` |
 | `invalid_signature` | Check field order, EVM-form verifying contract, compact `v=0/1`, exact decimal strings, and `maker_subaccount_nonce` |
 | Non-canonical price | Strip trailing zeros after quantizing; send `"76462"` for integer-tick markets, not `"76462.0"` |
 | Digest mismatch on minimum fill | Use `None` in the helper or `"0"` in the signed field; never `""` |

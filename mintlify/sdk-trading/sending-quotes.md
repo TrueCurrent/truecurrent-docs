@@ -8,6 +8,10 @@ After signing, send the quote over MakerStream as a `MakerStreamStreamingRequest
 
 Any field covered by the EIP-712 v2 signature must match exactly, or settlement will reject the quote even if the indexer accepts the payload.
 
+<Warning>
+Do not confuse `quote.chain_id` with the EIP-712 domain `chainId`. `quote.chain_id` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet). The numeric EVM chain ID (`1439` testnet, `1776` mainnet) belongs in `quote.evm_chain_id` and the EIP-712 domain.
+</Warning>
+
 ---
 
 ## Quote payload
@@ -43,7 +47,7 @@ Any field covered by the EIP-712 v2 signature must match exactly, or settlement 
 | Field | Type | Value |
 | --- | --- | --- |
 | `message_type` | string | `"quote"` |
-| `quote.chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet |
+| `quote.chain_id` | string | Cosmos chain ID for indexer compatibility, for example `"injective-888"` on testnet. Never send `1439` or `1776` here. |
 | `quote.contract_address` | string | RFQ contract bech32 address |
 | `quote.rfq_id` | uint64 | Request `rfq_id` |
 | `quote.market_id` | string | Request market ID |
@@ -61,7 +65,7 @@ Any field covered by the EIP-712 v2 signature must match exactly, or settlement 
 | `quote.min_fill_quantity` | string | Optional in some helper paths. If present, match the signed value. Use `"0"` when absent. |
 | `quote.nonce` | uint64 | Blind quotes only. Do not send for live taker-bound quotes unless the helper path requires it. |
 
-The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). `chain_id` and `contract_address` are still sent for indexer compatibility.
+The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). `chain_id` and `contract_address` are still sent for indexer compatibility. In camelCase SDK objects, this same split is `chainId` for Cosmos and `evmChainId` for EVM.
 
 ---
 
@@ -143,6 +147,7 @@ After a settlement attempt, reconcile:
 | --- | --- |
 | `sign_mode required` | Quote omitted `sign_mode: "v2"` |
 | Wrong chain in signature | EVM chain ID placed in `chain_id` instead of `evm_chain_id`, or Cosmos chain ID used in the EIP-712 domain |
+| `quote.chain_id` is `1439` or `1776` | EVM chain ID was passed as the Cosmos chain ID. Use `injective-888` or `injective-1` in `chain_id`. |
 | Signature verifies locally but fails remotely | Decimal string changed between signing and sending |
 | Quote ACK succeeds but no fill happens | Taker did not accept before expiry, another quote won, or settlement skipped this quote |
 | Settlement skips maker quote | Expired quote, mark-band rejection, `worst_price` failure, insufficient maker margin, or `min_fill_quantity` mismatch |
