@@ -1,48 +1,91 @@
 ---
 title: "Maker whitelist"
-description: "Requirements and application process for joining TrueCurrent's maker whitelist, including testnet integration, capital requirements, technical prerequisites, and performance expectations for RFQ liquidity providers."
-updatedAt: "2026-05-06"
+description: "How TrueCurrent approves and registers makers, what to provide before onboarding, and how to verify maker whitelist status."
+updatedAt: "2026-05-27"
 ---
 
-TrueCurrent uses an approved maker whitelist. Only whitelisted addresses can submit quotes to the MakerStream. This section explains the requirements and process for getting added.
-
----
-
-## Why a whitelist?
-
-The whitelist ensures that every maker on TrueCurrent is:
-
-- Technically integrated and able to respond reliably within the 2-second window
-- Capitalized sufficiently to back their quotes
-- Committed to quoting in good faith (avoiding quote manipulation or gaming)
-
-A reliable maker pool produces better outcomes for traders – consistent fills, tight spreads, and no quote degradation.
+TrueCurrent uses an approved maker whitelist. Only registered maker addresses receive MakerStream RFQ broadcasts and only registered makers can settle quotes.
 
 ---
 
-## Requirements
+## Why there is a whitelist
 
-Before applying, you should have:
+Makers take the opposite side of user trades, so every active maker must be able to quote reliably and settle safely. The whitelist keeps the maker set limited to systems that have demonstrated:
 
-- An Injective wallet with adequate USDC margin for the current testnet market
-- A functional automated quoting system connected to TrueCurrent's MakerStream
-- Implemented the quote signing protocol (see [Signing quotes](/sdk-trading/signing-quotes))
-- Completed the `authz` setup (see [Authorization setup](/sdk-trading/authz))
-- Successfully run the E2E flow on testnet
+- Stable MakerStream connectivity
+- Correct MakerChallenge auth handling
+- EIP-712 v2 quote signing
+- Sufficient USDC margin
+- Reasonable pricing and expiry controls
+- Settlement reconciliation
+- A tested operational runbook
 
 ---
 
-## Testnet testing
+## What to send TrueCurrent
 
-Before going live, test your full integration on TrueCurrent's testnet:
+Before registration, provide:
 
-1. Set `RFQ_ENV=testnet` in your configuration
-2. Fund your testnet wallet with testnet INJ and USDC for the current RFQ market.
-   - Use the testnet faucet at `https://testnet-faucet.injective.dev`.
-   - It dispenses **500 USDC \+ 2 INJ** per address, once per 24 hours.
-   - The USDC denom on testnet is `erc20:0x0C382e685bbeeFE5d3d9C29e29E341fEE8E84C5d`.
-3. Grant `authz` permissions to the testnet contract address
-4. Connect your MakerStream to the testnet indexer endpoint
-5. Run through the complete quote and acceptance flow to confirm your signing and settlement logic is correct
+| Item | Notes |
+| --- | --- |
+| Maker `inj1...` address | The address your quoting system will use on MakerStream and quote signatures |
+| Markets | Symbols or market IDs you plan to support |
+| Subaccount nonce | Omit or use `0` unless your system intentionally isolates maker collateral in another nonce |
+| Testnet status | Whether you have completed the E2E runbook |
+| Contact path | Where TrueCurrent can reach your operator during incidents |
+| Quoting summary | Short description of price feeds, risk limits, and inventory controls |
 
-Once your testnet integration is verified end-to-end, you're ready to apply.
+Use one maker wallet per operational maker identity. If you rotate keys, the new address must be registered.
+
+---
+
+## Verification flow
+
+After TrueCurrent registers you, confirm the address appears in `list_makers`.
+
+```bash
+curl -s \
+  "https://testnet.sentry.lcd.injective.network/cosmwasm/wasm/v1/contract/inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk/smart/$(echo -n '{\"list_makers\":{}}' | base64)" \
+  | python3 -m json.tool
+```
+
+<Warning>
+The raw `list_makers` query can be paginated. If your address sorts beyond the first page, a one-line query can look like a false negative. Use the contract helper below when available.
+</Warning>
+
+```python
+import asyncio
+import os
+
+os.environ["RFQ_ENV"] = "testnet"
+
+from rfq_test.config import get_environment_config
+from rfq_test.clients.contract import ContractClient
+
+async def main():
+    env = get_environment_config()
+    client = ContractClient(env.contract, env.chain)
+    registered = await client.is_maker_registered("<YOUR_MM_ADDR>")
+    print("whitelisted" if registered else "not whitelisted")
+
+asyncio.run(main())
+```
+
+When you find your maker record, also record its `subaccount_nonce`. That nonce must match the `maker_subaccount_nonce` you sign and the subaccount you fund.
+
+---
+
+## Readiness checklist
+
+Before asking to move beyond testnet, confirm:
+
+- `list_makers` returns your maker address.
+- Maker and taker authz grants are present.
+- Maker subaccount has enough USDC for quoted margin.
+- MakerStream receives `request` events after answering `MakerChallenge`.
+- The maker returns quotes with `sign_mode: "v2"` and the correct `evm_chain_id`.
+- Decimal strings are canonical and tick-quantized.
+- The E2E settlement script lands a transaction.
+- You can stop quoting quickly if price feeds, balances, or hedging fail.
+
+See [Testnet runbook](/sdk-trading/runbook) for the command sequence.

@@ -1,34 +1,41 @@
 ---
 title: "Authorization setup"
 description: "Grant the TrueCurrent RFQ contract the narrow Injective authz permissions required for taker and maker SDK settlement."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
-TrueCurrent settles RFQ trades through the Injective exchange module. To make settlement atomic, both taker and maker wallets grant the RFQ contract narrow `authz` permissions before trading.
+TrueCurrent settles RFQ trades through Injective's exchange module. To make settlement atomic, taker and maker wallets grant the RFQ contract narrow `authz` permissions before trading.
 
-The grants are one-time setup per wallet. They are scoped to the TrueCurrent contract address, limited to specific message types, and revocable at any time.
+The grants are one-time setup per wallet. They are scoped to the current RFQ contract address, limited to specific message types, and revocable at any time.
 
 ---
 
 ## Required grants
 
 | Role | Message type | Purpose |
-|---|---|---|
-| Taker | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Lets the contract open or close the taker-side position |
+| --- | --- | --- |
+| Maker | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Lets the contract open or close maker-side derivative positions |
+| Maker | `/cosmos.bank.v1beta1.MsgSend` | Lets the contract move maker margin during settlement |
+| Taker | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Lets the contract open or close taker-side derivative positions |
 | Taker | `/injective.exchange.v2.MsgBatchUpdateOrders` | Reserved exchange permission used by taker settlement paths |
-| Taker | `/cosmos.bank.v1beta1.MsgSend` | Lets the contract move margin as part of settlement |
-| Maker | `/injective.exchange.v2.MsgPrivilegedExecuteContract` | Lets the contract open or close the maker-side position |
-| Maker | `/cosmos.bank.v1beta1.MsgSend` | Lets the contract move maker margin as part of settlement |
+| Taker | `/cosmos.bank.v1beta1.MsgSend` | Lets the contract move taker margin during settlement |
 
 <Info>
-`MsgWithdraw` appears in some contract notes as a canonical grant, but the current working testnet setup intentionally omits it. The active settlement path does not exercise it, and granting unused permissions increases attack surface.
+`MsgWithdraw` appears in some contract notes as a canonical grant, but the current working setup intentionally omits it. The active settlement path does not exercise it, and granting unused permissions increases attack surface. If a future contract path requires a new message type, add it only after verifying the deployed contract and runbook.
 </Info>
 
 ---
 
 ## Grant all testnet permissions
 
-This is the combined runbook pattern from the RFQ onboarding guide. It grants the required taker and maker permissions to the testnet RFQ contract.
+The script below grants the working testnet set for one maker wallet and one taker wallet. Run it after loading `.env` so the private keys are present.
+
+```bash
+set -a
+. ./.env
+set +a
+python grant_all.py
+```
 
 ```python
 import asyncio
@@ -58,6 +65,9 @@ async def grant_all():
     ]
 
     for private_key, msg_type in grants:
+        if not private_key:
+            raise RuntimeError(f"missing private key for {msg_type}")
+
         tx_hash = await chain.grant_authz(
             private_key=private_key,
             grantee=CONTRACT,
@@ -65,7 +75,7 @@ async def grant_all():
         )
         print(f"Granted {msg_type}: {tx_hash}")
 
-        # Each grant is a separate tx. Wait for account sequence/LCD state.
+        # Each grant is a separate tx. Wait for account sequence and LCD state.
         await asyncio.sleep(3)
 
     await chain.close()
@@ -79,7 +89,7 @@ Submit grant transactions sequentially. Parallel grant broadcasts commonly fail 
 
 ## Verify grants
 
-Use the Injective LCD to confirm the grants before running a settlement test.
+Use the Injective LCD to confirm grants before running settlement tests.
 
 ```bash
 # Maker grants
@@ -93,13 +103,17 @@ curl -s \
   | python3 -m json.tool
 ```
 
-You should see one entry per required message type for the role you are checking.
+Expected result:
+
+- Maker grants include `MsgPrivilegedExecuteContract` and `MsgSend`.
+- Taker grants include `MsgPrivilegedExecuteContract`, `MsgBatchUpdateOrders`, and `MsgSend`.
+- The `grantee` is the current RFQ contract address.
 
 ---
 
 ## Direct GenericAuthorization
 
-If your Injective SDK helper forces an expiration or uses `SendAuthorization`, build the grants manually as `GenericAuthorization`.
+If your Injective SDK helper forces an expiration or uses a specialized authorization, build the grant manually as `GenericAuthorization`.
 
 ```python
 from google.protobuf import any_pb2
@@ -116,7 +130,7 @@ def create_grant_msg(granter: str, grantee: str, msg_type: str):
 
     grant = authz_pb2.Grant()
     grant.authorization.CopyFrom(authz_any)
-    # Do not set grant.expiration if you want expiration: null.
+    # Leave grant.expiration unset if you want no expiration.
 
     grant_msg = authz_tx_pb2.MsgGrant()
     grant_msg.granter = granter
@@ -141,17 +155,18 @@ await chain.revoke_authz(
 )
 ```
 
-Revocation does not close open positions. It only prevents new TrueCurrent contract settlement actions for that wallet.
+Revocation does not close open positions. It only prevents future TrueCurrent contract settlement actions for that wallet.
 
 ---
 
 ## Security checklist
 
-- Use a dedicated taker or maker wallet.
-- Grant only the message types above.
+- Use dedicated maker and taker wallets.
+- Grant only the message types listed above.
 - Grant only to the current RFQ contract address.
+- Re-verify grants after contract upgrades.
 - Keep a revocation path ready before going live.
-- Monitor grant presence as part of bot startup.
+- Monitor grant presence at bot startup.
 - Re-run grant setup if settlement fails with `unauthorized` or `authorization not found`.
 
-For the trust model, see [Authorization model](/technical/authz-model).
+For the broader trust model, see [Authorization model](/technical/authz-model).
