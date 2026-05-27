@@ -1,47 +1,96 @@
 ---
 title: "SDK architecture"
-description: "How TrueCurrent's RFQ system connects takers, the RFQ indexer, makers, and the Injective chain for atomic onchain settlement."
-updatedAt: "2026-05-06"
+description: "How TrueCurrent's RFQ indexer, MakerStream, TakerStream, RFQ contract, and Injective exchange module work together."
+updatedAt: "2026-05-27"
 ---
 
+TrueCurrent splits RFQ trading into two planes:
+
+| Plane | Components | What happens there |
+| --- | --- | --- |
+| **Offchain coordination** | TakerStream, MakerStream, RFQ indexer | Request routing, maker competition, quote delivery, maker auth challenges, quote ACKs |
+| **Onchain settlement** | RFQ contract, Injective exchange module, authz grants | Signature verification, quote validation, margin movement, derivative position creation, liquidation eligibility |
+
+This split is the trust model. The indexer coordinates. The contract decides what can settle.
+
+---
+
+## Signal flow
+
 ```mermaid
-flowchart LR
-    Taker["Taker"]
-    Indexer["RFQ Indexer<br/>(WebSocket)"]
-    MM["Maker<br/>MakerStream"]
-    Chain["Injective Chain<br/>(Settlement)"]
+sequenceDiagram
+    autonumber
+    actor Taker
+    participant IDX as RFQ Indexer
+    participant MM as Maker
+    participant Contract as RFQ Contract
+    participant Exchange as Injective Exchange
 
-    Taker <-->|requests / quotes| Indexer
-    Indexer <-->|broadcast / quote| MM
-    Taker -->|AcceptQuote| Chain
-    MM -.->|authz grants<br/>one-time| Chain
-
-    classDef offchain fill:#eef4ff,stroke:#4a6db8,color:#111
-    classDef onchain fill:#eefbf0,stroke:#3c9c60,color:#111
-    class Taker,Indexer,MM offchain
-    class Chain onchain
+    Taker->>IDX: RFQ request with client_id (TakerStream)
+    IDX-->>Taker: ACK with rfq_id
+    IDX->>MM: Broadcast request (MakerStream)
+    MM->>MM: Price + EIP-712 v2 SignQuote
+    MM->>IDX: Signed quote with sign_mode="v2"
+    IDX-->>MM: Quote ACK
+    IDX->>Taker: Quote(s)
+    Taker->>Contract: AcceptQuote
+    Contract->>Contract: Verify signature, expiry, whitelist, worst_price, margin
+    Contract->>Exchange: MsgPrivilegedExecuteContract via authz
+    Exchange-->>Contract: Positions opened
+    Contract-->>Taker: Settlement event
 ```
 
-### How it works
+The maker never broadcasts the taker's `AcceptQuote` transaction. A successful maker `quote_ack` means the indexer accepted and routed the quote; it does not mean the taker accepted it or that settlement succeeded.
 
-1. **Taker** sends an RFQ request via the **TakerStream** WebSocket.
-2. **RFQ Indexer** broadcasts the request to all connected **Makers** via **MakerStream**.
-3. **Makers** price, sign, and return a quote over MakerStream.
-4. **Indexer** relays quotes back to the taker after a collection window.
-5. **Taker** picks one or more quotes and calls `AcceptQuote` on the RFQ contract.
-6. **Contract** verifies each maker signature and settles the trade atomically through Injective.
+---
 
-As a MM, you only:
+## Components
 
-- Connect to MakerStream
-- Receive requests
-- Sign and send quotes
+### TakerStream
 
-You do **not** submit an onchain transaction for each trade. The taker submits settlement, and the contract enforces your signed quote cryptographically.
+TakerStream is the bidirectional stream used by takers to submit RFQ requests and collect quotes. Taker integrations must treat the ACK-returned `rfq_id` as the source of truth. A locally generated timestamp or UUID is only a `client_id`; it is not the settlement `rfq_id`.
 
-> **TP/SL note:** `AcceptSignedIntent` is the settlement path for take-profit and stop-loss exits. A relayer submits the trade on the taker's behalf when a mark-price trigger fires. From your side as a maker, you can supply either:
->
-> - **Blind quotes** (pre-posted, nonce-based) — the relayer picks from your pre-posted book when a trigger fires.
-> - **Taker-specific quotes** (live RFQ response) — the relayer fires off a live RFQ at trigger time and you quote it the usual way.
->
-> The wire-level signing and quote shape are identical in both paths. See [TP/SL liquidity](/sdk-trading/tpsl-liquidity).
+### MakerStream
+
+MakerStream is the bidirectional stream used by makers to receive RFQ requests and send quotes. It uses gRPC-web framing over WebSocket and requires an application-level ping roughly every second.
+
+Before any request events arrive, the indexer sends a one-shot `MakerChallenge`. Makers sign `StreamAuthChallenge` with EIP-712 v2 and reply with `MakerAuth`. The reference `MakerStreamClient` handles this when configured with `auth_private_key`, `auth_evm_chain_id`, and `auth_contract_address`.
+
+### RFQ indexer
+
+The indexer maintains stream connections, broadcasts requests, collects maker quotes, and routes quotes back to the taker. It also validates message shape before forwarding. It cannot change signed quote terms or force onchain settlement.
+
+### RFQ contract
+
+The contract verifies every quote submitted to `AcceptQuote`. It checks maker registration, signature recovery, expiry, `worst_price`, quote bands, margin availability, and fill constraints. Invalid quotes are skipped; if no quote fills, settlement fails.
+
+### Injective exchange module
+
+The RFQ contract settles through Injective's native exchange module using pre-granted `authz` permissions. This is where margin accounting, positions, funding, liquidation, and ADL live.
+
+---
+
+## Settlement paths
+
+### `AcceptQuote`
+
+This is the normal synchronous path. The taker is online, receives quotes, chooses quote(s), and submits the transaction. Makers only sign quotes offchain.
+
+### `AcceptSignedIntent`
+
+This is the conditional TP/SL path. The taker pre-signs a reduce-only intent, submits it to the indexer, and a relayer submits settlement when the mark-price trigger is satisfied. Makers can participate by responding live when the relayer fires an RFQ or by pre-posting blind quotes. Participation is optional.
+
+---
+
+## Operational invariant
+
+If you remember one thing from the architecture, make it this:
+
+> Indexer success is not settlement success.
+
+Log both layers separately:
+
+- Stream-level events: request received, quote sent, quote ACK, stream errors, reconnects
+- Contract-level events: transaction hash, filled quantity, skipped quote reasons, position state
+
+Most integration bugs are caused by confusing those layers.
