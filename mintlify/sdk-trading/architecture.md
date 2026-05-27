@@ -78,7 +78,7 @@ This is the normal synchronous path. The taker is online, receives quotes, choos
 
 ### `AcceptSignedIntent`
 
-This is the conditional TP/SL path. The taker pre-signs a reduce-only intent, submits it to the indexer, and a relayer submits settlement when the mark-price trigger is satisfied. Makers can participate by responding live when the relayer fires an RFQ or by pre-posting blind quotes. Participation is optional.
+This is the conditional TP/SL path. The taker pre-signs a reduce-only intent, submits it to the indexer, and the executor submits settlement when the mark-price trigger is satisfied. When liquidity is needed, the executor sends a normal RFQ request through the same MakerStream path. Makers do not implement a separate TP/SL flow and do not need to know that the request came from a trigger order.
 
 ---
 

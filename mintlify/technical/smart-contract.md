@@ -24,7 +24,7 @@ Testnet EIP-712 chain ID is `1439`. The Cosmos chain ID is `injective-888`.
 | Entrypoint | Caller | Use case |
 | --- | --- | --- |
 | `AcceptQuote` | Taker | Taker is online, has collected one or more maker quotes, and submits settlement now. |
-| `AcceptSignedIntent` | Relayer | Taker pre-signed a conditional reduce-only exit; relayer submits once the trigger condition is satisfied. |
+| `AcceptSignedIntent` | Executor | Taker pre-signed a conditional reduce-only exit; the executor submits once the trigger condition is satisfied. |
 | `CancelIntentLane` | Taker | Invalidates active signed intents for one `(market_id, subaccount_nonce)` lane. |
 | `CancelAllIntents` | Taker | Invalidates all active signed intents for that taker. |
 
@@ -124,11 +124,11 @@ Signed intents support TP/SL exits:
 
 1. Taker signs a `SignedTakerIntent` with EIP-712 v2.
 2. Taker submits it through TakerStream with v2 conditional-order signing fields.
-3. Relayer monitors the trigger condition.
-4. Relayer pairs the intent with maker liquidity bound to the same `rfq_id`.
+3. Executor monitors the trigger condition.
+4. Executor requests standard RFQ liquidity and pairs the intent with a quote bound to the same `rfq_id`.
 5. Contract verifies the taker signature, trigger, deadline, cancellation counters, maker quote, and authz before settlement.
 
-The contract re-checks trigger state at execution time. If mark price moves back before the transaction lands, settlement can fail with `trigger_not_satisfied`; the relayer should retry while the intent remains valid.
+The contract re-checks trigger state at execution time. If mark price moves back before the transaction lands, settlement can fail with `trigger_not_satisfied`; the executor should retry according to its trigger-order policy while the intent remains valid.
 
 ---
 

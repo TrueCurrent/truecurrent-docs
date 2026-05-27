@@ -60,9 +60,9 @@ The indexer routes messages. The contract enforces settlement. If the indexer dr
 | Path | Who submits the tx | When it is used | Read next |
 | --- | --- | --- | --- |
 | `AcceptQuote` | Taker | Normal synchronous RFQ trades while the taker is online | [Taker SDK trading](/sdk-trading/takers), [Maker SDK trading](/sdk-trading/makers) |
-| `AcceptSignedIntent` | Relayer | TP/SL exits where the taker pre-signs a conditional order | [Signed intents](/sdk-trading/signed-intents), [TP/SL liquidity](/sdk-trading/tpsl-liquidity) |
+| `AcceptSignedIntent` | Executor | TP/SL exits where the taker pre-signs a conditional order | [Signed intents](/sdk-trading/signed-intents) |
 
-Both paths end in the same kind of onchain settlement. The difference is who authorizes and submits the settlement: a live taker transaction for `AcceptQuote`, or a pre-signed taker intent submitted by a relayer for `AcceptSignedIntent`.
+Both paths end in the same kind of onchain settlement. The difference is who authorizes and submits the settlement: a live taker transaction for `AcceptQuote`, or a pre-signed taker intent submitted by the executor for `AcceptSignedIntent`. Makers still receive ordinary RFQ requests and sign ordinary quotes.
 
 ---
 

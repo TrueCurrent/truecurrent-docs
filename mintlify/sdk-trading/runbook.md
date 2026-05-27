@@ -25,7 +25,7 @@ You need:
 | Requirement | Details |
 | --- | --- |
 | Python | 3.11 or newer |
-| Wallets | One maker wallet and one taker wallet; TP/SL tests may also use a relayer wallet |
+| Wallets | One maker wallet and one taker wallet; low-level TP/SL executor tests may also use an executor wallet |
 | Gas | Testnet INJ in every wallet that broadcasts transactions |
 | Margin | Testnet USDC in the relevant exchange subaccounts |
 | Maker status | Maker address whitelisted on the RFQ contract |
@@ -57,7 +57,7 @@ RFQ_ENV=testnet
 
 TESTNET_MM_PRIVATE_KEY=<hex>
 TESTNET_RETAIL_PRIVATE_KEY=<hex>
-# TESTNET_RELAYER_PRIVATE_KEY=<hex> # only for signed-intent relay tests
+# TESTNET_RELAYER_PRIVATE_KEY=<hex> # only for low-level signed-intent executor tests
 # TESTNET_ADMIN_PRIVATE_KEY=<hex>   # only for register_maker admin flows
 ```
 
@@ -294,13 +294,13 @@ Operational notes:
 
 ## 8. Run TP/SL signed-intent validation
 
-TP/SL exits are taker-signed conditional orders. The taker signs a `SignedTakerIntent`, submits it through TakerStream, and a relayer executes `AcceptSignedIntent` when the trigger condition is satisfied.
+TP/SL exits are taker-signed conditional orders. The taker signs a `SignedTakerIntent`, submits it through TakerStream, and the TP/SL executor executes `AcceptSignedIntent` when the trigger condition is satisfied.
 
 Before testing:
 
 - The taker has an open position to close.
-- The relayer has INJ for gas if you are testing relay submission.
-- A maker can provide closing liquidity through live MakerStream response or an eligible blind quote.
+- The executor wallet has INJ for gas if you are testing low-level executor submission.
+- The executor can source a normal RFQ quote when the trigger fires. No maker-specific TP/SL setup is required beyond the standard MakerStream quote loop.
 
 Minimum signing and submission shape:
 
@@ -408,7 +408,7 @@ Use `CancelAllIntents` only when you need to invalidate every lane for the taker
 | Quote rejected for signature | Signed decimal strings differ from sent strings, wrong EVM chain ID, wrong contract domain, or wrong field order | Quantize before signing and send the exact signed values |
 | No quotes collected by taker | Maker not whitelisted, offline, filtering wrong `rfq_id`, or request was not ACKed | Verify whitelist and correlate from the ACK-returned `rfq_id` |
 | `No quote was filled` | Expired quote, failed `worst_price`, mark-band rejection, wrong maker subaccount nonce, or margin issue | Inspect quote results, `list_makers`, and subaccount balances |
-| Conditional order accepted but never fires | Trigger not reached, expired intent, relayer unavailable, or no executable maker quote | Check intent status, trigger price, deadline, and relay logs |
-| `quote_rfq_id mismatch` | Relayer paired a signed intent with a quote for another RFQ | Re-query liquidity for the exact signed-intent `rfq_id` |
+| Conditional order accepted but never fires | Trigger not reached, expired intent, executor unavailable, or no executable RFQ quote | Check intent status, trigger price, deadline, and executor logs |
+| `quote_rfq_id mismatch` | Executor paired a signed intent with a quote for another RFQ | Re-request RFQ liquidity for the exact signed-intent `rfq_id` |
 
 For field-level details, see [Protocol reference](/sdk-trading/protocol-reference) and [Troubleshooting](/sdk-trading/troubleshooting).

@@ -72,7 +72,7 @@ Every live maker quote is an EIP-712 v2 signature over `SignQuote`. The digest b
 - Price
 - Expiry
 - Minimum fill quantity
-- Binding kind (`1` for taker-bound quotes, `0` for blind quotes)
+- Binding kind (`1` for current taker-bound RFQ quotes)
 
 Decimal fields are hashed as their exact UTF-8 strings. `"14.85"` and `"14.850"` are different signed messages. Quantize and canonicalize before signing, then send the exact same strings on the wire.
 
@@ -119,22 +119,22 @@ The taker's fill price is the accepted maker quote price. The maker's exposure i
 ```mermaid
 sequenceDiagram
     actor Taker
-    participant Indexer as Indexer / Relayer
+    participant Indexer as Indexer / Executor
     participant Maker as Maker
     participant Contract as RFQ Contract
 
     Taker->>Indexer: SignedTakerIntent
     Indexer->>Indexer: Monitor mark-price trigger
-    Indexer->>Maker: Exit RFQ request or select blind quote
-    Maker->>Indexer: Signed quote
+    Indexer->>Maker: Standard RFQ request
+    Maker->>Indexer: Standard signed RFQ quote
     Indexer->>Contract: AcceptSignedIntent
     Contract->>Contract: Verify taker intent + trigger + maker quote
     Contract->>Contract: Settle reduce-only close
 ```
 
-The taker signs in advance; the relayer submits only when the trigger condition is satisfied. The contract re-checks the trigger at execution time. If mark price moves back before the transaction lands, the settlement can fail with `trigger_not_satisfied` and the relayer should retry when the trigger is satisfied again.
+The taker signs in advance; the executor submits only when the trigger condition is satisfied. The contract re-checks the trigger at execution time. If mark price moves back before the transaction lands, settlement can fail with `trigger_not_satisfied` and the executor should retry according to its trigger-order policy.
 
-For maker participation modes, see [TP/SL liquidity](/sdk-trading/tpsl-liquidity). For taker intent signing, see [Signed intents](/sdk-trading/signed-intents).
+Makers see the liquidity request as a normal MakerStream RFQ and quote it normally. TP/SL-specific intent state is not part of the maker integration. For taker intent signing, see [Signed intents](/sdk-trading/signed-intents).
 
 ---
 

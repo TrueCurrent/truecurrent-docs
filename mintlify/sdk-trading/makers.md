@@ -6,7 +6,7 @@ updatedAt: "2026-05-27"
 
 Makers provide active liquidity to TrueCurrent takers. A maker system connects to MakerStream, receives RFQ requests, prices them, signs quotes, and sends those quotes back to the indexer.
 
-The taker or relayer submits settlement. The maker does not broadcast an onchain transaction per trade. Your signature authorizes only the exact quote terms you signed, and the RFQ contract enforces those terms during settlement.
+The taker or TP/SL executor submits settlement. The maker does not broadcast an onchain transaction per trade. Your signature authorizes only the exact quote terms you signed, and the RFQ contract enforces those terms during settlement.
 
 ---
 

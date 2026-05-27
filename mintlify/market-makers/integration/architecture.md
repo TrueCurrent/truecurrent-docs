@@ -39,9 +39,6 @@ As a MM, you only:
 
 You do **not** submit an on-chain transaction for each trade — settlement is the taker's responsibility. The contract enforces your signature cryptographically, so you can't be misquoted.
 
-> **TP/SL note:** since contract `0.1.0-alpha.6` ([#23](https://github.com/InjectiveLabs/rfq/pull/23), [#27](https://github.com/InjectiveLabs/rfq/pull/27)) there is a second settlement path — `AcceptSignedIntent` — used for take-profit / stop-loss exits. A relayer submits the trade on the taker's behalf when a mark-price trigger fires. From your side as an MM, you can supply either:
+> **TP/SL note:** since contract `0.1.0-alpha.6` ([#23](https://github.com/InjectiveLabs/rfq/pull/23), [#27](https://github.com/InjectiveLabs/rfq/pull/27)) there is a second settlement path — `AcceptSignedIntent` — used for take-profit / stop-loss exits. The executor handles trigger monitoring and submits settlement on the taker's behalf. From your side as an MM, there is no separate TP/SL integration: when the executor needs liquidity, it emits an ordinary RFQ request and you quote it the usual way.
 >
-> - **Blind quotes** (pre-posted, nonce-based) — the relayer picks from your pre-posted book when a trigger fires.
-> - **Taker-specific quotes** (live RFQ response) — the relayer fires off a live RFQ at trigger time and you quote it the usual way.
->
-> The wire-level signing and quote shape are identical in both paths. See [Blind quotes](/market-makers/integration/rfq-quotes-blind) below.
+> The wire-level signing and quote shape are identical in both paths. See [TP/SL and makers](/market-makers/integration/rfq-quotes-blind) below.

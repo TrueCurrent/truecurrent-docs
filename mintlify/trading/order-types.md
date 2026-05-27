@@ -13,7 +13,7 @@ TrueCurrent's execution model is RFQ-only. On every trade, the system solicits c
 | Execution path | Who fills | Price guarantee | Taker fee |
 | --- | --- | --- | --- |
 | RFQ | Competing makers | `worst_price` enforced onchain | Zero |
-| Trigger (TP/SL) | Makers via relayer | `worst_price` in signed intent | Zero |
+| Trigger (TP/SL) | TP/SL executor via RFQ | `worst_price` in signed intent | Zero |
 
 ---
 
@@ -40,7 +40,7 @@ A take profit order closes your position automatically when the price reaches a 
 - **Long TP:** triggers when the mark price rises to or above your target
 - **Short TP:** triggers when the mark price falls to or below your target
 
-**When it executes:** when the mark price crosses your trigger level; the TrueCurrent relayer executes `AcceptSignedIntent` onchain and closes the position at the best available quote.
+**When it executes:** when the mark price crosses your trigger level; the TrueCurrent TP/SL executor executes `AcceptSignedIntent` onchain and closes the position at the best available quote.
 
 **Price guarantee:** your `worst_price` in the signed intent is enforced; the exit will not settle at a less favorable price than your limit.
 
@@ -59,7 +59,7 @@ A stop loss order closes your position automatically when the price moves agains
 - **Long SL:** triggers when the mark price falls to or below your stop price
 - **Short SL:** triggers when the mark price rises to or above your stop price
 
-**When it executes:** same as take profit — the relayer fires `AcceptSignedIntent` when the trigger condition is satisfied.
+**When it executes:** same as take profit - the TP/SL executor fires `AcceptSignedIntent` when the trigger condition is satisfied.
 
 **Price guarantee:** `worst_price` in the signed intent is enforced. In a fast-moving market, if no maker can beat your `worst_price`, the order may fail rather than settle at a worse price.
 
@@ -75,9 +75,9 @@ See [Trigger orders (TP/SL)](/trading/trigger-orders) for setup instructions. Fo
 
 ## Signed intents (programmatic)
 
-A signed taker intent is a pre-authorized, conditional trade instruction that you sign offline and submit to the TrueCurrent relayer. When the trigger condition is satisfied (mark price crosses a threshold, or immediately), the relayer submits `AcceptSignedIntent` onchain and settles the position.
+A signed taker intent is a pre-authorized, conditional trade instruction that you sign offline and submit to the TrueCurrent TP/SL executor. When the trigger condition is satisfied (mark price crosses a threshold, or immediately), the executor submits `AcceptSignedIntent` onchain and settles the position.
 
-**When it executes:** when the mark price satisfies the trigger (or immediately for `{ "immediate": {} }` trigger); relies on the relayer monitoring mark price.
+**When it executes:** when the mark price satisfies the trigger (or immediately for `{ "immediate": {} }` trigger); relies on the executor monitoring mark price.
 
 **Price guarantee:** `worst_price` in the intent is enforced by the contract.
 

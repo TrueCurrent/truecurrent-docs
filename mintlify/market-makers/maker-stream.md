@@ -10,6 +10,5 @@ The canonical MakerStream documentation — connection details, the EIP-712 v2 a
 - [Receiving RFQ requests](/market-makers/integration/rfq-requests) — request fields and how to interpret them
 - [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — EIP-712 v2 `SignQuote` schema and the `sign_quote_v2` helper
 - [Sending quotes](/market-makers/integration/rfq-quotes-send) — wire format, required fields, and ACK / error responses
-- [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind) — how exit RFQs flow through the same stream
+- [TP/SL and makers](/market-makers/integration/rfq-quotes-blind) — why trigger-driven exits still arrive as ordinary RFQs
 - [Testnet configuration](/market-makers/integration/testnet-configuration) — endpoints, contract address, EVM chain ID
-

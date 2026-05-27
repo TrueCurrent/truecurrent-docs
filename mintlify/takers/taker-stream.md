@@ -128,7 +128,7 @@ After submitting, quotes stream in over the same connection as they're produced 
 | `expiry` | int | Quote expiry (Unix ms). Cast with `int(quote["expiry"])` defensively before passing to the contract. |
 | `signature` | string | Maker's secp256k1 signature, delivered as **hex with `0x` prefix** (e.g. `"0xabc123..."`) |
 | `status` | string | Quote state. `"pending"` when first received. |
-| `nonce` | uint64 \| null | Present on "blind" quotes (see [Best practices](/takers/best-practices)) |
+| `nonce` | uint64 \| null | Reserved for non-standard quote variants; normal RFQ quotes carry `null` |
 
 > **Signature format:** the indexer delivers the signature as hex (e.g. `"0xabc123..."`). The onchain contract requires **base64**. You must convert before building the `AcceptQuote` message. See [Accepting quotes](/takers/accepting-quotes).
 

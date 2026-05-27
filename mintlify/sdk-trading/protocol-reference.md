@@ -16,7 +16,7 @@ For conceptual background, start with [SDK architecture](/sdk-trading/architectu
 | --- | --- | --- | --- |
 | Taker | Client or trading service | Requests quotes, selects quotes, submits settlement | Owns taker key and taker margin |
 | Maker | Market-maker service | Receives RFQs, signs executable quotes, manages maker inventory | Owns maker key and maker margin |
-| RFQ indexer | TrueCurrent service | Routes requests and quotes, assigns `rfq_id`, monitors signed intents | Cannot change signed fields or settle without valid signatures |
+| RFQ indexer / executor | TrueCurrent service | Routes requests and quotes, assigns `rfq_id`, monitors signed intents, emits ordinary RFQs when triggers fire | Cannot change signed fields or settle without valid signatures |
 | RFQ contract | Injective CosmWasm | Verifies signatures, authz, expiries, constraints, then settles | Onchain enforcement point |
 | Injective exchange module | Injective chain | Opens, closes, and liquidates derivative positions | Final position and margin ledger |
 
@@ -58,27 +58,27 @@ sequenceDiagram
 
 ## Signed-intent path (`AcceptSignedIntent`)
 
-TP/SL orders are pre-signed taker intents. The taker can go offline after submission; a relayer or indexer fires the exit when the trigger condition is satisfied.
+TP/SL orders are pre-signed taker intents. The taker can go offline after submission; the executor fires the exit when the trigger condition is satisfied.
 
 ```mermaid
 sequenceDiagram
     participant Taker
-    participant Indexer as Indexer / Relayer
+    participant Indexer as Indexer / Executor
     participant Maker
     participant Contract as RFQ Contract
     participant Exchange as Injective Exchange
 
     Taker->>Indexer: SignedTakerIntent(trigger, worst_price, quantity, deadline)
     Indexer->>Indexer: Persist intent and monitor trigger source
-    Indexer->>Maker: Exit RFQ request for the same rfq_id
-    Maker->>Indexer: Signed quote bound to that rfq_id
+    Indexer->>Maker: Standard RFQ request
+    Maker->>Indexer: Standard signed RFQ quote
     Indexer->>Contract: AcceptSignedIntent(intent, quote)
     Contract->>Contract: Verify taker sig, trigger, deadline, quote sig, authz
     Contract->>Exchange: Atomic reduce-only settlement
     Exchange-->>Contract: Settlement result
 ```
 
-For maker participation modes, see [TP/SL liquidity](/sdk-trading/tpsl-liquidity). For taker-side fields and signing, see [Signed intents](/sdk-trading/signed-intents).
+Makers do not need to distinguish this from any other RFQ request. The TP/SL-specific state is owned by the taker and executor. For taker-side fields and signing, see [Signed intents](/sdk-trading/signed-intents).
 
 ---
 
@@ -111,7 +111,7 @@ The contract processes submitted quotes and skips quotes that fail quote-level v
 | `evm_chain_id` | Environment config | EIP-712 domain and v2 wire fields | `1439` on testnet, `1776` on mainnet. Do not put this value in `quote.chain_id`. |
 | `contract_address` | Environment config | Quote wire payload and EIP-712 domain | Bech32 RFQ contract address on the wire; converted to EVM address inside the typed-data domain. |
 | `maker_subaccount_nonce` | Maker registration | Quote signature and settlement | If `list_makers` returns `null`, quote with nonce `0`. |
-| `expiry` | Maker | Quote signature and settlement | Milliseconds. Live quotes usually use `now_ms + 2_000`; blind quotes may live longer. |
+| `expiry` | Maker | Quote signature and settlement | Milliseconds. Live quotes usually use `now_ms + 2_000`. |
 | `epoch` | Contract state | Signed intents | Bumped by `CancelAllIntents`; invalidates all older taker intents. |
 | `lane_version` | Contract state | Signed intents | Bumped by `CancelIntentLane`; invalidates one `(taker, market_id, subaccount_nonce)` lane. |
 

@@ -115,7 +115,7 @@ Instead of submitting a trade immediately, the taker signs an intent that says:
 - What `worst_price` must be respected
 - When the intent expires
 
-A relayer submits the intent when mark price crosses the trigger. The contract re-checks the trigger at execution time and still requires a valid quote that satisfies `worst_price`.
+The TP/SL executor submits the intent when mark price crosses the trigger. The contract re-checks the trigger at execution time and still requires a valid RFQ quote that satisfies `worst_price`.
 
 Signed intents are useful for automated take-profit and stop-loss workflows where the taker does not want to stay online.
 

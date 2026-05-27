@@ -118,7 +118,7 @@ The `SignQuote` message has 16 fields. Field order matters.
 | 13 | `expiryKind` | `uint8` | `0` for timestamp ms, `1` for block height |
 | 14 | `expiryValue` | `uint64` | Timestamp ms or block height |
 | 15 | `minFillQuantity` | `string` | Use `"0"` when absent; never empty string |
-| 16 | `bindingKind` | `uint8` | `1` for taker-bound live quotes, `0` for blind quotes |
+| 16 | `bindingKind` | `uint8` | `1` for current taker-bound RFQ quotes |
 
 The final digest is:
 
@@ -126,7 +126,7 @@ The final digest is:
 keccak256(0x19 || 0x01 || domainSeparator || keccak256(typeHash || encoded SignQuote fields))
 ```
 
-The helper derives `bindingKind` from whether `taker` is present. For live taker-bound quotes, pass the taker address and do not pass a blind-quote nonce.
+The helper derives `bindingKind` from whether `taker` is present. For current maker integrations, pass the taker address from the RFQ request.
 
 ---
 

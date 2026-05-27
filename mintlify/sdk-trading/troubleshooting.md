@@ -94,9 +94,9 @@ The [Testnet runbook](/sdk-trading/runbook) walks through the same order with co
 | `invalid_intent_signature` | Signed intent fields differ from submitted fields | Keep `deadline_ms`, `worst_price`, `trigger_type`, `trigger_price`, `epoch`, and `lane_version` identical between signing and submission. |
 | `trigger_not_satisfied` | Mark-price condition was not true at execution | Re-check trigger type and trigger price against current mark price. |
 | `intent expired` | `deadline_ms` passed before relay | Submit a fresh intent with a new deadline. |
-| `quote_rfq_id mismatch` | Relayer paired the intent with a quote for another RFQ | Re-query maker liquidity for the exact `rfq_id` embedded in the signed intent. |
+| `quote_rfq_id mismatch` | Executor paired the intent with a quote for another RFQ | Re-request RFQ liquidity for the exact `rfq_id` embedded in the signed intent. |
 | Intent was cancelled but still submitted | `epoch` or `lane_version` changed | Read current counters before signing new intents after `CancelAllIntents` or `CancelIntentLane`. |
-| Conditional order accepted but never fires | Trigger not reached, no relayer, or no executable maker quote | Check trigger source, relay logs, and maker quote availability. |
+| Conditional order accepted but never fires | Trigger not reached, executor unavailable, or no executable RFQ quote | Check trigger source, executor logs, and RFQ quote availability. |
 
 ---
 

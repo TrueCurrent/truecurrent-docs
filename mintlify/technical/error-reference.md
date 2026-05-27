@@ -129,9 +129,9 @@ Fix: keep `deadline_ms`, `worst_price`, `trigger_type`, `trigger_price`, `epoch`
 
 ### `trigger_not_satisfied`
 
-The relayer submitted `AcceptSignedIntent`, but the contract re-read mark price and the trigger condition was no longer true.
+The executor submitted `AcceptSignedIntent`, but the contract re-read mark price and the trigger condition was no longer true.
 
-Fix: the relayer should retry when the condition is true again, as long as the intent has not expired or been cancelled.
+Fix: the executor should retry according to its trigger-order policy when the condition is true again, as long as the intent has not expired or been cancelled.
 
 ---
 
@@ -139,7 +139,7 @@ Fix: the relayer should retry when the condition is true again, as long as the i
 
 The maker quote's `rfq_id` does not match the `rfq_id` embedded in the signed taker intent.
 
-Fix: the relayer must pair each signed intent with quotes bound to that exact `rfq_id`.
+Fix: the executor must pair each signed intent with quotes bound to that exact `rfq_id`.
 
 ---
 

@@ -87,10 +87,7 @@ The indexer quote payload must include `sign_mode: "v2"` and the signature retur
 The v2 signature binds chain and contract through the EIP-712 domain, not through these payload fields.
 On testnet, `chain_id` must remain `"injective-888"` even though the domain `chainId` and quote `evm_chain_id` are both `1439`.
 
-`bindingKind` is derived inside the v2 digest:
-`1` when `taker` is set and `0` for blind quotes.
-It is not an `RFQQuoteType` wire field,
-and you should not pass `binding_kind` or `nonce` into the helper for live taker-bound quotes.
+`bindingKind` is derived inside the v2 digest. Current maker integrations use taker-bound RFQ quotes, where `taker` is set and `bindingKind` is `1`. It is not an `RFQQuoteType` wire field, and you should not pass `binding_kind` or `nonce` into the helper for live taker-bound quotes.
 
 ---
 

@@ -63,7 +63,7 @@ Do not confuse `quote.chain_id` with the EIP-712 domain `chainId`. `quote.chain_
 | `quote.sign_mode` | string | Required. Use `"v2"`. |
 | `quote.evm_chain_id` | uint64 | Required for v2. Same EVM chain ID used in the EIP-712 domain (`1439` testnet, `1776` mainnet). |
 | `quote.min_fill_quantity` | string | Optional in some helper paths. If present, match the signed value. Use `"0"` when absent. |
-| `quote.nonce` | uint64 | Blind quotes only. Do not send for live taker-bound quotes unless the helper path requires it. |
+| `quote.nonce` | uint64 | Reserved for non-standard quote paths. Do not send for normal MakerStream RFQs. |
 
 The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). `chain_id` and `contract_address` are still sent for indexer compatibility. In camelCase SDK objects, this same split is `chainId` for Cosmos and `evmChainId` for EVM.
 
@@ -79,7 +79,7 @@ expiry = int(time.time() * 1000) + 2_000
 
 The contract checks expiry at settlement block time. Taker quote collection and transaction inclusion both consume the expiry window, so do not set live expiries too tight and do not do slow work after receiving an RFQ.
 
-Blind or TP/SL liquidity can use longer expiries, but those paths need stricter nonce, inventory, and cancel handling.
+TP/SL-triggered requests still use the normal live RFQ quote path from the maker's perspective.
 
 ---
 
@@ -123,7 +123,7 @@ Track these separately:
 | --- | --- |
 | `quote_ack` | Indexer accepted the quote payload |
 | `quote_update` | Quote lifecycle update, when emitted |
-| `settlement_update` | Taker or relayer attempted settlement |
+| `settlement_update` | Taker or executor attempted settlement |
 | Chain transaction / position state | Source of truth for actual fills |
 
 If no quote or settlement update arrives before your quote expiry, treat the quote as not accepted.
