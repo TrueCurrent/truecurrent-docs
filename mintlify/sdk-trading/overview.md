@@ -1,110 +1,113 @@
 ---
 title: "Intro to SDK Trading"
-description: "Trade or make markets on TrueCurrent programmatically through the SDK: choose a taker or maker integration path, understand the RFQ lifecycle, and know what must be set up before going live."
-updatedAt: "2026-05-06"
+description: "Trade or make markets on TrueCurrent programmatically through the RFQ indexer, MakerStream, TakerStream, and onchain settlement contract."
+updatedAt: "2026-05-27"
 ---
 
-TrueCurrent can be used from the web app or through an SDK integration. The SDK path is for teams that want to automate trading, embed RFQ execution in another product, or run institutional liquidity-provider infrastructure.
+TrueCurrent's SDK path gives teams programmatic access to the same RFQ execution model used by the web app. It is for two roles:
 
-There are two integration roles:
-
-| Role | What you do | Best for |
+| Role | What you do | Typical use |
 | --- | --- | --- |
-| **Taker** | Request quotes, choose the best executable price, and settle a trade onchain | Trading bots, execution desks, strategy engines, apps embedding TrueCurrent trading |
-| **Maker** | Receive RFQ requests, price them, sign quotes, and manage inventory | Professional liquidity providers and maker systems |
+| **Taker** | Submit trade requests, collect signed maker quotes, choose the best executable quote, and settle onchain | Trading bots, execution desks, vaults, wallets, and apps embedding TrueCurrent |
+| **Maker** | Connect to MakerStream, receive RFQ requests, price each request, sign quotes, and manage inventory | Professional liquidity providers and market-making systems |
 
-Most traders are takers. Makers must be approved before their quotes are routed to users.
-
----
-
-## How SDK trading fits into TrueCurrent
-
-SDK trading uses the same RFQ model as the web app:
-
-1. A taker requests a trade
-2. The request is routed to active makers
-3. Makers respond with signed quotes
-4. The taker selects the best quote or quote set
-5. The TrueCurrent contract verifies the quote and settles both sides on Injective
-
-The SDK does not create a different execution venue. It gives you programmatic access to the same quote discovery and settlement flow.
+Most integrations are takers. Makers must be approved before the indexer routes requests to them and before the contract accepts their quotes.
 
 ---
 
-## What the SDK handles
+## The core model
 
-The SDK and reference clients handle the repetitive parts of the RFQ flow so your system can focus on strategy, risk, and user experience.
+The RFQ system is an offchain quoting network with onchain settlement.
 
-For takers, the SDK path covers:
+```mermaid
+flowchart LR
+    Taker["Taker<br/>app, bot, or trader"]
+    Indexer["RFQ Indexer<br/>WebSocket routing"]
+    Maker["Maker<br/>liquidity system"]
+    Contract["TrueCurrent RFQ Contract<br/>signature + settlement checks"]
+    Exchange["Injective Exchange Module<br/>positions + margin"]
 
-- Connecting to TakerStream
-- Submitting RFQ requests
-- Waiting for the indexer-assigned `rfq_id`
-- Collecting quotes
-- Preparing `AcceptQuote`
-- Submitting settlement transactions
-- Creating and cancelling signed TP/SL intents
+    Taker <-->|"TakerStream<br/>requests + quotes"| Indexer
+    Indexer <-->|"MakerStream<br/>broadcasts + quotes"| Maker
+    Taker -->|"AcceptQuote tx"| Contract
+    Contract -->|"MsgPrivilegedExecuteContract<br/>via authz"| Exchange
+    Maker -.->|"one-time authz grants"| Contract
+    Taker -.->|"one-time authz grants"| Contract
+```
 
-For makers, the SDK path covers:
+As a maker, your hot path is only: connect, receive, sign, send. You do not submit an onchain transaction for every trade. The taker submits `AcceptQuote`, and the contract enforces your signed quote cryptographically.
 
-- Connecting to MakerStream
-- Completing the maker auth challenge
-- Receiving RFQ requests
-- Signing EIP-712 v2 quotes
-- Sending quotes with the required wire fields
-- Receiving quote and settlement updates
-
----
-
-## Before you integrate
-
-Every SDK integration needs:
-
-- An Injective wallet dedicated to SDK trading
-- INJ for gas
-- USDC margin in the relevant exchange subaccount
-- Network connectivity to the TrueCurrent indexer
-- The current RFQ contract address and market configuration
-- A plan for authz grant creation, monitoring, and revocation
-
-Makers also need:
-
-- Whitelist approval
-- Reliable price feeds
-- A quoting model
-- Inventory limits
-- Automated balance and connection monitoring
+As a taker, your hot path is: request, collect, select, settle. The indexer helps you discover quotes, but the settlement transaction is still checked onchain.
 
 ---
 
-## Which page should you read?
+## Standard trade lifecycle
 
-Use the taker page if you are building a trading bot, strategy runner, vault, app integration, or execution tool.
+1. The taker submits an RFQ request through TakerStream with market, direction, margin, quantity, `worst_price`, and a UUID `client_id`.
+2. The indexer acknowledges the request and assigns the real `rfq_id`.
+3. The indexer broadcasts the request to connected, whitelisted makers through MakerStream.
+4. Makers price the request, sign an EIP-712 v2 `SignQuote` digest, and return quotes with `sign_mode: "v2"` and `evm_chain_id`.
+5. The taker collects quotes, chooses one or more executable quotes, and submits `AcceptQuote`.
+6. The RFQ contract verifies signatures, quote expiry, maker whitelist status, taker `worst_price`, quote bands, available margin, and fill constraints.
+7. The contract opens both sides atomically through Injective's exchange module.
 
-Use the maker page if you will provide liquidity to other traders and respond to RFQ requests with signed quotes.
+The indexer routes messages. The contract enforces settlement. If the indexer drops a request, service degrades; it cannot forge a maker signature, change a signed price, or settle a trade that fails contract checks.
+
+---
+
+## Two settlement paths
+
+| Path | Who submits the tx | When it is used | Read next |
+| --- | --- | --- | --- |
+| `AcceptQuote` | Taker | Normal synchronous RFQ trades while the taker is online | [Taker SDK trading](/sdk-trading/takers), [Maker SDK trading](/sdk-trading/makers) |
+| `AcceptSignedIntent` | Executor | TP/SL exits where the taker pre-signs a conditional order | [Signed intents](/sdk-trading/signed-intents) |
+
+Both paths end in the same kind of onchain settlement. The difference is who authorizes and submits the settlement: a live taker transaction for `AcceptQuote`, or a pre-signed taker intent submitted by the executor for `AcceptSignedIntent`. Makers still receive ordinary RFQ requests and sign ordinary quotes.
+
+---
+
+## What the SDK abstracts
+
+For takers, the reference client covers:
+
+- TakerStream connection and gRPC-web framing
+- RFQ request creation and ACK handling
+- ACK-returned `rfq_id` correlation
+- Quote collection and filtering
+- `AcceptQuote` construction and broadcast
+- Signed-intent creation and cancellation helpers
+
+For makers, the reference client covers:
+
+- MakerStream connection and ping cadence
+- Maker auth challenge response
+- RFQ request decoding
+- EIP-712 v2 quote signing helpers
+- Required wire fields such as `sign_mode` and `evm_chain_id`
+- Quote submission, quote ACKs, and settlement updates
+
+Your system still owns strategy, pricing, risk limits, balance monitoring, key management, and operational recovery.
+
+---
+
+## Integration order
 
 <CardGroup cols={2}>
-  <Card title="Trade as a taker" icon="code" href="/sdk-trading/takers">
-    Build programmatic trading: request quotes, select execution, settle onchain, and manage TP/SL intents.
+  <Card title="Taker path" icon="code" href="/sdk-trading/takers">
+    Build request, quote collection, settlement, and TP/SL intent flows.
   </Card>
 
-  <Card title="Make markets" icon="chart-candlestick" href="/sdk-trading/makers">
-    Build a maker integration: connect to MakerStream, sign quotes, manage inventory, and monitor fills.
+  <Card title="Maker path" icon="chart-candlestick" href="/sdk-trading/makers">
+    Build whitelist setup, MakerStream auth, quote signing, inventory, and settlement monitoring.
   </Card>
-  <Card title="Set up authz" icon="key" href="/sdk-trading/authz">
-    Grant the RFQ contract the narrow permissions required for taker and maker settlement.
+
+  <Card title="Authz setup" icon="key" href="/sdk-trading/authz">
+    Grant the RFQ contract the narrow settlement permissions required by each role.
   </Card>
+
   <Card title="Run testnet E2E" icon="terminal" href="/sdk-trading/runbook">
-    Validate wallets, balances, grants, MakerStream auth, AcceptQuote, and TP/SL signed intents.
+    Validate config, balances, grants, MakerStream auth, `AcceptQuote`, and signed intents.
   </Card>
 </CardGroup>
 
----
-
-## Important mental model
-
-The indexer routes messages. The contract enforces settlement.
-
-That distinction matters. SDK clients use the indexer to discover quotes, but all final checks happen onchain: maker signature, quote expiry, `worst_price`, mark-price band, maker registration, and available margin. If a quote does not satisfy the contract, it cannot settle.
-
-For protocol details, see [How RFQ works](/technical/how-rfq-works).
+For the lower-level sequence and validation rules, see [SDK architecture](/sdk-trading/architecture) and [How RFQ works](/technical/how-rfq-works).

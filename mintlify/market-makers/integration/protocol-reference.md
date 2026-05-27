@@ -49,15 +49,15 @@ Summary from your side:
 ```mermaid
 sequenceDiagram
     participant Taker as 👤 Taker (offline)
-    participant IDX as 📡 Indexer / Relayer
+    participant IDX as 📡 Indexer / Executor
     participant MM as 🏦 Maker
     participant Chain as ⛓️ Chain
 
     Taker->>IDX: Submit SignedTakerIntent (TP/SL, pre-signed)
     IDX->>IDX: Persist, monitor mark price
 
-    IDX->>MM: Live RFQ for exit size
-    MM->>IDX: Signed quote with sign_mode="v2"
+    IDX->>MM: Standard RFQ request for exit size
+    MM->>IDX: Standard signed quote with sign_mode="v2"
 
     IDX->>Chain: Triggered settlement
     Chain->>Chain: Verify taker sig + trigger + maker sig

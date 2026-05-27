@@ -1,7 +1,7 @@
 ---
 title: "Glossary"
 description: "Definitions for TrueCurrent-specific terms, Injective ecosystem primitives, trading concepts, and maker operations used throughout this documentation."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 ## A
@@ -12,7 +12,7 @@ The primary TrueCurrent smart contract entrypoint that a taker calls to settle a
 
 **AcceptSignedIntent**:
 
-Smart contract entrypoint used by a relayer to execute a pre-signed conditional order (take profit or stop loss) when its trigger condition is satisfied. Unlike `AcceptQuote`, the taker does not need to be online at execution time.
+Smart contract entrypoint used by the TP/SL executor to execute a pre-signed conditional order (take profit or stop loss) when its trigger condition is satisfied. Unlike `AcceptQuote`, the taker does not need to be online at execution time.
 
 **atomic settlement**:
 
@@ -38,7 +38,7 @@ The premium or discount between a quoted or traded perpetual price and the marke
 
 **blind quote**:
 
-A maker quote keyed by a `nonce` rather than a specific `rfq_id`. Blind quotes are pre-posted to the indexer so that take-profit and stop-loss orders can settle even when the maker is not actively online at the moment a trigger fires.
+A quote keyed by a `nonce` rather than a specific `rfq_id`. Current maker integrations do not need blind quotes for take-profit or stop-loss execution; when a TP/SL trigger fires, the executor requests ordinary RFQ liquidity.
 
 ## C
 
@@ -85,6 +85,10 @@ The wire protocol used by TrueCurrent's WebSocket streams. Messages are length-p
 **initial margin rate (IMR)**:
 
 The minimum collateral required to open a new position, expressed as a fraction of notional value. Equal to `1 / leverage`. For example, 10x leverage requires an IMR of 10%.
+
+**index price**:
+
+The streamed market reference exposed as `indexPrice`. TrueCurrent uses index price as the primary source for open-position valuation and unrealized P&L display. It is streamed alongside `markPrice`.
 
 **insurance fund**:
 
@@ -136,7 +140,7 @@ Account equity divided by position notional value. Liquidation triggers when thi
 
 **mark price**:
 
-The market reference price of a perpetual. Mark price is published onchain and used for P&L calculations, margin ratio checks, liquidation triggers, trigger-order evaluation, and quote validation. It is not the execution price.
+The onchain risk reference price of a perpetual. Mark price is published onchain and used for margin ratio checks, liquidation triggers, trigger-order evaluation, funding, and quote validation. It is not the execution price or the UI's primary P&L source.
 
 **maker**:
 
@@ -162,7 +166,7 @@ A Cosmos bank module message type. TrueCurrent uses this (via `authz`) to transf
 
 **nonce**:
 
-A sequential number used for replay protection. Blind quotes use maker-controlled nonces (the maker tracks which nonces have been consumed). Taker-specific quotes use contract-tracked nonces that advance on each settlement.
+A sequential number used for replay protection. Normal RFQ quotes are bound to an `rfq_id`; nonce-keyed quote variants are non-standard and are not required for current maker integrations.
 
 **notional value**:
 
@@ -188,7 +192,7 @@ The actual execution price at which a trade fills, taken from a maker's signed q
 
 **RFQ** (Request for Quote):
 
-TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted makers respond with signed, firm price commitments within a 2-second window; the best price wins. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
+TrueCurrent's primary trading model. A trader broadcasts the parameters of a desired trade; whitelisted makers respond with signed, firm price commitments inside a short collection window. TrueCurrent currently uses 500 ms, though frontend/protocol configuration and API takers can vary that timeout. Unlike AMMs, the execution price is fixed at quote time and does not change during settlement.
 
 **rfq_id**:
 
@@ -198,7 +202,7 @@ A unique per-request identifier (u64) assigned by the indexer when it accepts an
 
 **signed intent** (SignedTakerIntent):
 
-A pre-authorized, cryptographically signed conditional order created by a taker and stored off-chain. A relayer submits it to the TrueCurrent contract when the specified mark-price trigger condition is satisfied. Used for take-profit and stop-loss orders.
+A pre-authorized, cryptographically signed conditional order created by a taker and stored off-chain. The TP/SL executor submits it to the TrueCurrent contract when the specified mark-price trigger condition is satisfied. Used for take-profit and stop-loss orders.
 
 **slippage**:
 
@@ -242,7 +246,7 @@ A reserved field on `AcceptQuote` and `AcceptSignedIntent`. The current TrueCurr
 
 **unrealized P&L (uPnL)**:
 
-Profit or loss on an open position based on the current mark price, updated continuously. Unrealized P&L is added to your margin when calculating account equity and margin ratio.
+Profit or loss on an open position based primarily on the current index price, updated continuously. Unrealized P&L is added to your margin when calculating account equity and margin ratio.
 
 ## W
 

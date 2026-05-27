@@ -111,7 +111,6 @@
                       "sdk-trading/rfq-requests",
                       "sdk-trading/signing-quotes",
                       "sdk-trading/sending-quotes",
-                      "sdk-trading/tpsl-liquidity",
                       "sdk-trading/quoting-guidelines"
                     ]
                   },

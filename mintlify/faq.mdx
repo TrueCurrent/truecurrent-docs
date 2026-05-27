@@ -76,7 +76,7 @@ updatedAt: "2026-05-06"
   </Accordion>
 
   <Accordion title="Why did my quote expire before I could accept?">
-    Live maker quotes are valid for about 2 seconds. That window is short by design — it protects makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
+    Live maker quotes must have at least 1500 ms of validity. Makers may choose longer expiries to increase match odds, but short quote lifetimes protect makers from being locked into stale prices in fast-moving markets, which in turn keeps spreads tight.
 
     If a quote expires before settlement confirms, simply request a new one. The process is fast.
   </Accordion>
@@ -144,7 +144,7 @@ updatedAt: "2026-05-06"
   <Accordion title="How is maker performance monitored?">
     TrueCurrent monitors makers on response rate, price competitiveness, settlement success rate, and overall quoting behavior.
 
-    Consistently failing to respond within the 2-second window, quoting off-market prices, or allowing settlements to fail due to insufficient margin will negatively affect your standing and may result in removal from the whitelist. See [Maker SDK trading](/sdk-trading/makers) for the full criteria.
+    Consistently failing to respond inside the active collection window, quoting off-market prices, or allowing settlements to fail due to insufficient margin will negatively affect your standing and may result in removal from the whitelist. See [Maker SDK trading](/sdk-trading/makers) for the full criteria.
   </Accordion>
 </AccordionGroup>
 

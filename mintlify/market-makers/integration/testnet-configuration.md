@@ -13,9 +13,9 @@ lcd_endpoint:  "https://testnet.sentry.lcd.injective.network"
 
 ```yaml
 # RFQ Indexer
-ws_endpoint:       "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream"
-grpc_web_endpoint: "https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC/MakerStream"
-#                  /MakerStream is for marker makers, replace with /TakerStream for takers
+ws_endpoint:       "wss://testnet.rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC"
+grpc_web_endpoint: "https://testnet.rfq.grpc.injective.network/injective_rfq_rpc.InjectiveRfqRPC"
+#                  append /MakerStream for makers or /TakerStream for takers
 ```
 
 ```yaml
@@ -27,6 +27,10 @@ contract_address: "inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk"  # 0.1.0-alpha.6
 # EIP-712
 evm_chain_id: 1439
 ```
+
+<Warning>
+Testnet uses both `chain_id: "injective-888"` and `evm_chain_id: 1439`. `chain_id` / `quote.chainId` is the Cosmos chain ID. `evm_chain_id` and EIP-712 domain `chainId` are the numeric EVM chain ID. Do not send `1439` as `quote.chain_id`.
+</Warning>
 
 ```yaml
 # Tokens

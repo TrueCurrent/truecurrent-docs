@@ -1,7 +1,7 @@
 ---
 title: "Taker SDK trading"
 description: "High-level guide for traders and integrators using the TrueCurrent SDK as takers: setup, RFQ request flow, quote selection, settlement, TP/SL intents, and operational requirements."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 A taker is the trader requesting liquidity. With the SDK, a taker system can open and close TrueCurrent perpetual positions without using the web app.
@@ -93,12 +93,13 @@ The contract re-checks every submitted quote. It verifies the maker signature, q
 After settlement, the position lives in Injective's exchange module. Monitor:
 
 - Entry price
-- Mark price
+- Index price and unrealized P&L
+- Mark price for risk and liquidation monitoring
 - Margin ratio
 - Liquidation price
 - Funding payments
 - Open quantity
-- Realized and unrealized P&L
+- Realized P&L
 
 ---
 
@@ -114,7 +115,7 @@ Instead of submitting a trade immediately, the taker signs an intent that says:
 - What `worst_price` must be respected
 - When the intent expires
 
-A relayer submits the intent when mark price crosses the trigger. The contract re-checks the trigger at execution time and still requires a valid quote that satisfies `worst_price`.
+The TP/SL executor submits the intent when mark price crosses the trigger. The contract re-checks the trigger at execution time and still requires a valid RFQ quote that satisfies `worst_price`.
 
 Signed intents are useful for automated take-profit and stop-loss workflows where the taker does not want to stay online.
 
@@ -141,7 +142,7 @@ Your application still owns strategy, sizing, risk checks, and position monitori
 
 Use a dedicated trading wallet. Keep only the capital needed for the strategy in that wallet.
 
-Treat quote expiry as a hard latency budget. Collect quotes briefly, choose, and settle immediately.
+Treat quote expiry as a hard latency budget. TrueCurrent currently collects quotes for 500 ms; the value can vary by frontend and protocol configuration, and API takers can tune their own timeout. Collect briefly, choose, and settle immediately.
 
 Always calculate `worst_price` from current mark price and your own risk tolerance. Do not accept arbitrary UI estimates or stale cached prices.
 

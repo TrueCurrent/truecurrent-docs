@@ -16,7 +16,7 @@ When you create a TP or SL order, it is **not** submitted to the Injective netwo
 
 1. You sign a `SignedTakerIntent` with your taker private key.
 2. The signed intent is submitted to the **RFQ indexer**, which stores it off-chain.
-3. The indexer monitors the mark price. When your trigger condition is met, the indexer's relayer submits `AcceptSignedIntent` onchain with maker quotes.
+3. The executor monitors the mark price. When your trigger condition is met, it requests normal RFQ liquidity and submits `AcceptSignedIntent` onchain with the resulting maker quote.
 
 The order only gets added to the Injective network at step 3, at which point, it is *onchain*. Until then, it exists exclusively in the indexer's database. This means:
 
@@ -28,11 +28,11 @@ The order only gets added to the Injective network at step 3, at which point, it
 
 ## Settlement can fail silently
 
-When a trigger fires, the relayer must find maker quotes and submit a valid `AcceptSignedIntent` transaction. Several things can prevent successful execution:
+When a trigger fires, the executor must request maker quotes and submit a valid `AcceptSignedIntent` transaction. Several things can prevent successful execution:
 
 ### No maker quotes available
 
-If no maker is quoting at the moment the trigger fires — because they're offline, have insufficient balance, or have withdrawn liquidity — there are no quotes to fill against. The relayer cannot construct a valid settlement transaction.
+If no maker is quoting at the moment the trigger fires - because they're offline, have insufficient balance, or have withdrawn liquidity - there are no quotes to fill against. The executor cannot construct a valid settlement transaction.
 
 ### Contract rejection
 
@@ -52,7 +52,7 @@ In a fast-moving market, this creates a gap scenario:
 
 **Stop loss example:**
 1. You open a long at \$5.00 and set a stop loss at \$4.80 with `worst_price = $4.75`.
-2. The market drops sharply. The mark price blows through \$4.80 and reaches \$4.60 before the relayer can land the transaction.
+2. The market drops sharply. The mark price blows through \$4.80 and reaches \$4.60 before the executor can land the transaction.
 3. At execution time, the trigger condition (mark ≤ \$4.80) is satisfied. But no maker is willing to quote at \$4.75 or better when the mark price is at \$4.60 — the asset is now worth less than your floor.
 4. The settlement fails. Your stop loss did not execute.
 
@@ -73,7 +73,7 @@ The risk is directional: `worst_price` gaps hurt when the market moves **through
 
 ## No retry mechanism in v1
 
-If a triggered TP/SL fails to settle — for any of the reasons above — the relayer **flags it as failed but does not retry**. The intent is effectively dead.
+If a triggered TP/SL fails to settle - for any of the reasons above - the executor **flags it as failed but does not retry**. The intent is effectively dead.
 
 This means:
 
@@ -92,7 +92,7 @@ The signed intent mechanism does not enforce that you have an open position at c
 - The **indexer accepts** the intent and stores it.
 - The **contract rejects** at execution time, because the settlement tries to close a position that doesn't exist.
 
-The frontend hides this path — the UI only offers TP/SL controls on open positions. But SDK and API users can construct intents freely, and the indexer won't block them. The failure only surfaces when the relayer tries to settle.
+The frontend hides this path - the UI only offers TP/SL controls on open positions. But SDK and API users can construct intents freely, and the indexer won't block them. The failure only surfaces when the executor tries to settle.
 
 <Tip>
 **Always verify you have an open position** in the target market and subaccount before creating a TP/SL intent. Query your position state from the chain or the indexer before signing.

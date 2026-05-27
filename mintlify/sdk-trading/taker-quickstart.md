@@ -199,7 +199,7 @@ Quotes stream in over the same WebSocket. Open a collection window, gather every
 ```python
 quotes = await taker_ws.collect_quotes(
     rfq_id=rfq_id,
-    timeout=0.5,           # 500ms collection window; tune against real latency
+    timeout=0.5,           # TrueCurrent uses 500ms; API takers may tune this
     min_quotes=1,
 )
 
@@ -222,14 +222,14 @@ ws.on("message", (raw: Buffer) => {
   }
 });
 
-await new Promise((r) => setTimeout(r, 500)); // tune against real latency
+await new Promise((r) => setTimeout(r, 500)); // TrueCurrent default; tune for API use
 
 const best = quotes.sort(
   (a, b) => Number(a.price) - Number(b.price),
 )[0];
 ```
 
-Keep the collection window short. A few hundred milliseconds is a reasonable starting point; waiting near the full live quote expiry window leaves little time for settlement. See [Best practices](/sdk-trading/taker-best-practices) for tuning.
+Keep the collection window short. TrueCurrent currently uses 500 ms, but the value can vary by frontend and protocol configuration, and API takers can tune it. Waiting near the full live quote expiry window leaves little time for settlement. See [Best practices](/sdk-trading/taker-best-practices) for tuning.
 
 ---
 

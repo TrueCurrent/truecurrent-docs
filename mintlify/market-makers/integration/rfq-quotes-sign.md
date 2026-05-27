@@ -53,6 +53,10 @@ The `chainId` here is the EVM chain ID, not the Cosmos chain ID.
 Use `1439` on testnet and `1776` on mainnet;
 do not use `injective-888` or `injective-1` in the EIP-712 domain.
 
+<Warning>
+Do not copy the EIP-712 domain `chainId` into the quote wire field `chain_id`. The quote `chain_id` / `chainId` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet). The numeric EVM ID (`1439` / `1776`) belongs in `evm_chain_id` / `evmChainId`.
+</Warning>
+
 ---
 
 ## 3. Quote shape on the wire
@@ -81,11 +85,9 @@ The indexer quote payload must include `sign_mode: "v2"` and the signature retur
 
 `chain_id` and `contract_address` are wire fields used by the indexer for compatibility.
 The v2 signature binds chain and contract through the EIP-712 domain, not through these payload fields.
+On testnet, `chain_id` must remain `"injective-888"` even though the domain `chainId` and quote `evm_chain_id` are both `1439`.
 
-`bindingKind` is derived inside the v2 digest:
-`1` when `taker` is set and `0` for blind quotes.
-It is not an `RFQQuoteType` wire field,
-and you should not pass `binding_kind` or `nonce` into the helper for live taker-bound quotes.
+`bindingKind` is derived inside the v2 digest. Current maker integrations use taker-bound RFQ quotes, where `taker` is set and `bindingKind` is `1`. It is not an `RFQQuoteType` wire field, and you should not pass `binding_kind` or `nonce` into the helper for live taker-bound quotes.
 
 ---
 
@@ -113,7 +115,7 @@ sig = sign_quote_v2(
     maker_margin="200",
     maker_quantity="100",
     price="14.85",
-    expiry_ms=int(time.time() * 1000) + 2_000,
+    expiry_ms=int(time.time() * 1000) + 2_000,  # must be at least now + 1500ms
     min_fill_quantity=None,
     evm_chain_id=1439,
     verifying_contract_bech32="inj1qw7jk82hjvf79tnjykux6zacuh9gl0z0wl3ruk",

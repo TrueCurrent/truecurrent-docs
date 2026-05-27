@@ -1,15 +1,15 @@
 ---
 title: "Signed taker intents (TP/SL)"
 description: "Pre-signed conditional orders on TrueCurrent. A signed taker intent authorizes a reduce-only exit in advance, gated by mark-price trigger conditions and signed with the EIP-712 v2 schema."
-updatedAt: "2026-05-18"
+updatedAt: "2026-05-27"
 ---
 
-A **signed taker intent** is a pre-authorized conditional order. You sign the exit parameters ahead of time, submit them to the indexer, and the relayer settles the trade when the mark-price trigger is satisfied.
+A **signed taker intent** is a pre-authorized conditional order. You sign the exit parameters ahead of time, submit them to the indexer, and the TP/SL executor settles the trade when the mark-price trigger is satisfied.
 
 This is how **take-profit / stop-loss** orders work on TrueCurrent. You can create the signed exit when opening a position or later, while the position is already open.
 
 <Warning>
-Current trigger orders are reduce-only close-position orders. Set `margin` to `"0"` and use `sign_mode: "v2"` on the wire. Do not use JSON-string signing for conditional orders.
+Current trigger orders are reduce-only close-position orders. Set `margin` to `"0"` and use the EIP-712 v2 path only. TakerStream conditional orders must carry `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id`; the SDK helper sets those when you pass `sign_mode="v2"` and `evm_chain_id`.
 </Warning>
 
 ---
@@ -31,7 +31,7 @@ If you want to trade immediately while online, use [`AcceptQuote`](/sdk-trading/
 sequenceDiagram
     autonumber
     participant Taker
-    participant Indexer as Indexer / Relayer
+    participant Indexer as Indexer / Executor
     participant MMs as Makers
     participant Chain as Injective Chain
     participant Contract as RFQ Contract
@@ -80,7 +80,7 @@ These fields are sent to the indexer and contract. The v2 signature covers the `
 | `trigger_price` | `string \| null` | Trigger threshold. Use `"0"` or `null` for `immediate`, depending on the helper path. |
 | `unfilled_action` | `null` | Reserved field; pass `null`. Non-null values are not exposed in the current product. |
 | `cid` | `string \| null` | Optional client identifier. Bound by the v2 signature. |
-| `allowed_relayer` | `string \| null` | Optional relayer address. Bound by the v2 signature when set. |
+| `allowed_relayer` | `string \| null` | Optional executor/relayer address. This is the protocol field name and is bound by the v2 signature when set. |
 | `evm_chain_id` | `uint64` | Wire field included in the order body; matches the EIP-712 domain `chainId` (`1439` testnet, `1776` mainnet). |
 
 ---
@@ -158,7 +158,7 @@ async with TakerStreamClient(
 print(f"SI ACK: rfq_id={ack['rfq_id']} status={ack['status']}")
 ```
 
-The signed values you pass to `sign_conditional_order_v2` and the values in the `order_body` you submit must match exactly. Any drift (different price string, different `lane_version`) will fail signature recovery at the indexer or contract.
+The signed values you pass to `sign_conditional_order_v2` and the values in the `order_body` you submit must match exactly. Any drift (different price string, different `lane_version`, different `evm_chain_id`) will fail signature recovery at the indexer or contract.
 
 For REST submissions, include the same signing mode explicitly:
 
@@ -192,7 +192,7 @@ Mapping trigger to intent (the `direction` field is the *closing* direction, opp
 | Short position | Take profit | `mark_price_lte` | falls to or below target |
 | Short position | Stop loss | `mark_price_gte` | rises to or above stop |
 
-The contract re-evaluates the mark-price trigger during settlement. If mark moves back before the relayer's transaction lands, the contract rejects with `trigger_not_satisfied` — the relayer should wait and retry when the trigger is satisfied again.
+The contract re-evaluates the mark-price trigger during settlement. If mark moves back before the executor's transaction lands, the contract rejects with `trigger_not_satisfied`; the executor should retry according to its trigger-order policy.
 
 ---
 
@@ -226,8 +226,9 @@ tx = await contract.cancel_all_intents(private_key=RETAIL_PK)
 |---|---|
 | Missing conditional order signing mode | Send `sign_mode: "v2"` on REST or let `send_conditional_order` set it on TakerStream. |
 | Invalid signature | Check EVM `chainId`, verifying contract, exact decimal strings, trigger fields, `epoch`, and `lane_version`. |
-| Trigger not satisfied | The mark price moved back before settlement. The relayer should retry when the trigger is satisfied again. |
+| Trigger not satisfied | The mark price moved back before settlement. The executor should retry according to its trigger-order policy. |
 | Stale lane or epoch | Refresh state from the contract and sign a new intent. |
+| Quote RFQ ID mismatch | Ensure the maker quote used for settlement is bound to the same `rfq_id` embedded in the signed intent. |
 
 ---
 

@@ -120,7 +120,7 @@ The `ContractClient.accept_quote()` helper in `injective-rfq-toolkit` handles al
 | `price` | string | yes | Maker's quoted price |
 | `expiry` | `{ts: number}` or `{h: number}` | yes | Quote expiry – wrapped enum |
 | `signature` | string (base64) | yes | Maker's signature over the canonical quote payload |
-| `nonce` | number \| null | no | Present on blind quotes, used for replay protection |
+| `nonce` | number \| null | no | Reserved for non-standard quote paths; normal RFQ quotes omit it |
 | `min_fill_quantity` | string \| null | no | Maker-imposed minimum fill; if the contract would fill them for less, the quote is skipped |
 
 ---
@@ -389,5 +389,5 @@ Each entry includes the `rfq_id`, `tx_hash`, fill quantities, per-quote results,
 
 - [Best practices](/takers/best-practices) – slippage strategy, expiry races, idempotency
 - [TakerStream](/takers/taker-stream) – collecting quotes to feed into `AcceptQuote`
-- [Signed taker intents](/takers/signed-intents) – the conditional/TP-SL path (pre-signed trigger-gated intents executed by a relayer)
+- [Signed taker intents](/takers/signed-intents) - the conditional/TP-SL path (pre-signed trigger-gated intents executed by the TP/SL executor)
 - [Authorization setup](/takers/authz-setup) – the grants you need before any of this works

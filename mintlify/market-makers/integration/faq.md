@@ -1,6 +1,6 @@
 ---
 title: "FAQ & troubleshooting"
-description: "Frequently asked questions and troubleshooting guide for TrueCurrent maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and TP/SL participation."
+description: "Frequently asked questions and troubleshooting guide for TrueCurrent maker integration: settlement mechanics, quote expiry, partial fills, connection issues, and RFQ handling."
 updatedAt: "2026-05-05"
 ---
 
@@ -55,11 +55,12 @@ updatedAt: "2026-05-05"
     4. **Signature verifies?**
        Check `evmChainId` field #1 in `SignQuote`, field order,
        and that `rfq_id` is a JSON number.
-    5. **Quote expired?** Verify `expiry` (`now + 2s` for live quotes) and clock sync.
+    5. **Quote expired?** Verify `expiry` is at least `now + 1500ms` and that your clock is synced.
   </Accordion>
 
   <Accordion title="What is the competition window?">
-    After a request is sent, the indexer collects quotes for ~2 seconds before delivering the best one to the taker.
+    TrueCurrent currently collects quotes for 500 ms before selecting a quote for the taker.
+    This can vary by frontend and protocol configuration, and API takers can configure their own collection timeout.
 
     Best price wins: lowest quoted price for long positions, highest for short positions.
   </Accordion>
@@ -74,14 +75,11 @@ updatedAt: "2026-05-05"
   </Accordion>
 
   <Accordion title="What changes for TP/SL orders?">
-    Nothing changes on your send path for live RFQs;
-    TP/SL participation is opt-in and carries no reputational cost for non-response.
+    Nothing changes for makers.
 
-    If another maker has coverage at an acceptable price,
-    the protocol settles without you.
-    Not responding carries no reputational cost for TP/SL events.
-    To participate in pre-posted blind quotes,
-    see [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind).
+    The TP/SL executor handles trigger monitoring and signed-intent settlement.
+    When it needs liquidity, it sends an ordinary RFQ request through MakerStream.
+    Price and sign that request the same way you price any other RFQ.
   </Accordion>
 
   <Accordion title="What causes the worst_price exceeds limit error?">
@@ -100,5 +98,3 @@ updatedAt: "2026-05-05"
     the protocol enforces that only fills closing or shrinking existing exposure are valid.
   </Accordion>
 </AccordionGroup>
-
-

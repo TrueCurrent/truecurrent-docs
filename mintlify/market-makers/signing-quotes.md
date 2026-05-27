@@ -10,6 +10,6 @@ Quick links:
 
 - [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — `SignQuote` schema, Python helper, decimal hygiene
 - [Sending quotes](/market-makers/integration/rfq-quotes-send) — wire format, ACK / error responses
-- [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind) — exit-RFQ signing path
+- [TP/SL and makers](/market-makers/integration/rfq-quotes-blind) — no separate TP/SL signing path is required
 - [Connecting to the RFQ stream](/market-makers/integration/connecting) — auth handshake (also EIP-712 v2)
 - [Testnet configuration](/market-makers/integration/testnet-configuration) — EVM chain IDs (`1439` testnet, `1776` mainnet) and contract address

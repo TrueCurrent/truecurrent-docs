@@ -50,7 +50,7 @@ Trigger orders on TrueCurrent are evaluated against the **mark price**. The sign
 This means:
 
 - A TP or SL fires from the same mark-price basis used by the signed-intent contract path
-- The trigger is not latched: if mark price moves back before the relayer lands the transaction, the settlement can revert as `trigger_not_satisfied`
+- The trigger is not latched: if mark price moves back before the executor lands the transaction, the settlement can revert as `trigger_not_satisfied`
 - Once triggered, the close still executes through the RFQ quote path, and your `worst_price` is enforced on the quoted exit
 
 ---

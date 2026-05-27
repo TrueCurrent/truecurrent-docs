@@ -1,6 +1,6 @@
 ---
 title: "Margin trading"
-updatedAt: "2026-05-14"
+updatedAt: "2026-05-27"
 ---
 
 Understand margin, leverage, account equity, margin ratio, available margin, and how they affect liquidation risk.
@@ -21,5 +21,6 @@ Margin trading lets you control a position larger than your deposited collateral
 | **IMR** | Initial Margin Ratio – minimum margin required to _open_ a position |
 | **MMR** | Maintenance Margin Ratio – minimum margin required to _keep_ a position open |
 | **RMR** | Reduce Margin Ratio – minimum margin required _after reducing_ a position margin. |
-| **Mark price** | The fair-value price used for all P & L \+ margin calculations, as well as the reference price for funding |
+| **Index price** | The streamed position reference used as the primary source for displayed Index Price and unrealized P&L |
+| **Mark price** | The onchain risk reference used for margin checks, liquidation, funding, trigger evaluation, and quote validation |
 | **uPnL** | Unrealized profit or loss on an open position |

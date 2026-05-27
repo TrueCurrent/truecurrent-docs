@@ -1,173 +1,121 @@
 ---
 title: "Maker SDK trading"
-description: "High-level guide for makers using the TrueCurrent SDK: whitelist approval, MakerStream connection, auth challenge, quote signing, risk controls, settlement, and monitoring."
-updatedAt: "2026-05-06"
+description: "Onboarding guide for market makers integrating with TrueCurrent RFQ: whitelist approval, wallet setup, authz, MakerStream, quote signing, and operational controls."
+updatedAt: "2026-05-27"
 ---
 
-Makers provide liquidity to TrueCurrent takers. A maker system listens for RFQ requests, prices each request, signs a quote, and sends it back through MakerStream.
+Makers provide active liquidity to TrueCurrent takers. A maker system connects to MakerStream, receives RFQ requests, prices them, signs quotes, and sends those quotes back to the indexer.
 
-The taker decides whether to accept the quote. If accepted, the TrueCurrent contract verifies the maker signature and settles both sides on Injective.
+The taker or TP/SL executor submits settlement. The maker does not broadcast an onchain transaction per trade. Your signature authorizes only the exact quote terms you signed, and the RFQ contract enforces those terms during settlement.
 
 ---
 
 ## Who this is for
 
-The maker path is for professional liquidity providers and trading systems that can:
+The maker path is for teams that can operate a low-latency trading system with:
 
-- Maintain reliable WebSocket infrastructure
-- Price perpetual markets in real time
-- Manage inventory and hedging
-- Respond within the quote window
-- Keep sufficient margin available
-- Monitor quote quality and settlement outcomes
+- Reliable WebSocket or gRPC infrastructure
+- Real-time reference prices and tick-size handling
+- Inventory and hedge management
+- USDC margin monitoring
+- EIP-712 v2 signing
+- Quote and settlement reconciliation
+- A kill switch for market, wallet, or feed incidents
 
-Makers must be approved before their quotes are routed to takers.
+Makers must be whitelisted before their quotes are routed to takers and before those quotes can settle.
 
 ---
 
 ## Maker lifecycle
 
-### 1. Get approved
+| Step | Goal | Details |
+| --- | --- | --- |
+| 1. Generate wallet | Create a dedicated maker key | One private key has both `0x...` and `inj1...` address encodings. Do not use a treasury wallet. |
+| 2. Get whitelisted | Register maker address | Send your `inj1...` address and supported markets to TrueCurrent. Confirm with `list_makers`. |
+| 3. Grant authz | Allow contract settlement | Grant only the required message types to the current RFQ contract. Keep revocation ready. |
+| 4. Fund subaccount | Back maker-side positions | Keep INJ for gas and USDC in the registered exchange subaccount nonce. |
+| 5. Connect to MakerStream | Receive RFQs | Use gRPC-web over WebSocket and answer the EIP-712 MakerChallenge. |
+| 6. Price, sign, send | Compete on each request | Sign EIP-712 v2 quotes with canonical decimal strings and required wire fields. |
+| 7. Reconcile outcomes | Track quote and settlement state | `quote_ack` means routed, not filled. Settlement updates and chain state are the source of fill truth. |
 
-TrueCurrent uses a maker whitelist. Before your SDK system can quote, your maker wallet must be registered by the TrueCurrent team.
+---
 
-You should be ready to provide:
+## What each RFQ request gives you
 
-- Maker Injective address
-- Markets you want to support
-- Confirmation that your system can run against testnet
-- A short description of your quoting and risk controls
+Each MakerStream request includes the taker's market, direction, margin, quantity, `worst_price`, request address, expiry, and indexer-assigned `rfq_id`.
 
-### 2. Set up the wallet
+Your quoting system decides:
 
-A maker wallet needs:
+- Whether to quote at all
+- Maker-side margin and quantity
+- Price
+- Expiry
+- Minimum fill quantity, if any
+- Maker subaccount nonce
 
-| Requirement | Why it matters |
-| --- | --- |
-| INJ gas balance | Required for setup and operational transactions |
-| USDC margin | Collateral for maker-side positions |
-| Exchange subaccount funding | Quotes settle into Injective exchange subaccounts |
-| Maker authz grants | Allows the contract to settle accepted quotes |
-| Registered maker address | Required before quotes are accepted |
-
-Use a dedicated maker wallet. Do not grant from a treasury wallet.
-
-### 3. Connect to MakerStream
-
-The SDK connects to MakerStream with your `maker_address`. MakerStream sends a one-time auth challenge before forwarding RFQ requests.
-
-Your system signs the challenge using the EIP-712 v2 auth flow and replies with `MakerAuth`. Until the challenge is accepted, the stream may remain open but will not deliver request events.
-
-### 4. Receive RFQ requests
-
-Each request tells you:
-
-- Market
-- Taker direction
-- Requested quantity
-- Taker margin
-- Taker `worst_price`
-- Request expiry
-- Taker address
-- `rfq_id`
-
-MakerStream can deliver requests from many takers. Always filter and track by `rfq_id`.
-
-### 5. Price and sign quotes
-
-Your system decides whether to quote and at what price.
-
-A quote should account for:
-
-- Current mark price
-- External reference markets
-- Market volatility
-- Request size
-- Inventory skew
-- Funding carry
-- Hedging cost
-- Available margin
-- Minimum fill size
-
-Quotes use EIP-712 v2 signing. The wire payload must include `sign_mode: "v2"` and the correct `evm_chain_id`. Price and quantity strings must be quantized before signing and sent exactly as signed.
-
-### 6. Send quotes
-
-After signing, the SDK sends the quote to MakerStream. If the taker accepts it, the taker submits settlement onchain.
-
-The maker does not submit the taker's settlement transaction. The maker's signature authorizes the quote terms, and the maker's authz grants allow the contract to settle the maker side if the quote is accepted.
-
-### 7. Monitor fills
-
-Track quote updates and settlement updates so your system knows which quotes were accepted, rejected, partially filled, or expired.
-
-After a fill, update:
-
-- Inventory
-- Available margin
-- Hedge state
-- P&L
-- Quote skew
-- Per-market exposure limits
+The taker direction is from the taker's perspective. If the taker is long, you fill the short side. If the taker is short, you fill the long side.
 
 ---
 
 ## Required controls
 
-Maker systems should include these controls before quoting live:
+Before quoting live, implement these controls:
 
 | Control | Why it matters |
 | --- | --- |
-| Price-feed freshness checks | Avoid stale quotes and adverse selection |
+| Price-feed freshness | Avoid stale quotes and adverse selection |
 | Mark-price tracking | Contract validation is centered on mark price |
 | Tick-size quantization | Unquantized prices or quantities fail validation |
+| Canonical decimal formatting | Signed strings must match sent strings byte-for-byte |
 | Balance monitoring | Accepted quotes fail if maker margin is insufficient |
-| Inventory limits | Prevents one market or direction from dominating risk |
-| Quote expiry discipline | Reduces stale-price exposure |
+| Inventory limits | Prevent one market or direction from dominating risk |
+| Quote expiry discipline | Live quote expiry is short; stale quotes are skipped |
 | Reconnect logic | Keeps MakerStream availability high |
 | Kill switch | Lets you stop quoting quickly during incidents |
 
-If your system cannot price a request safely, do not quote it. A no-quote is better than a stale or undercollateralized quote.
+If your system cannot price safely, do not quote. No quote means no trade. A stale or undercollateralized quote can still damage maker performance.
 
 ---
 
-## What the SDK abstracts
+## Signing requirements
 
-A maker SDK integration should not need to hand-roll:
-
-- MakerStream connection framing
-- Maker auth challenge handling
-- RFQ request decoding
-- EIP-712 v2 quote signing helpers
-- Required wire fields such as `sign_mode` and `evm_chain_id`
-- Quote submission encoding
-- Quote and settlement update parsing
-
-Your system still owns pricing, inventory, hedging, capital allocation, and uptime.
-
----
-
-## Signing requirements to remember
-
-New integrations should use EIP-712 v2 only.
+New maker integrations should use EIP-712 v2 only.
 
 Keep these rules visible in your implementation checklist:
 
-- Set `sign_mode` to `"v2"` on every quote
-- Include `evm_chain_id` on the wire
-- Use the EVM chain ID in the signing domain, not the Cosmos chain ID
-- Quantize price and quantity before signing
-- Send the exact decimal strings you signed
-- Include the maker subaccount nonce used in the signed payload
-- Treat missing or stale mark price data as a no-quote condition
+- Set `sign_mode` to `"v2"` on every quote.
+- Include `evm_chain_id` on the quote wire payload.
+- Use the EVM chain ID in the EIP-712 domain: `1439` on testnet, `1776` on mainnet.
+- Do not put the EVM chain ID in `quote.chain_id`; that field remains the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet).
+- Convert the RFQ contract bech32 address to its EVM address for the EIP-712 domain.
+- Quantize every decimal field before signing.
+- Send the exact decimal strings you signed.
+- Use compact `v=0/1` signatures.
+- Include the maker subaccount nonce used in the signed payload.
 
-On testnet, the EVM chain ID is `1439`. Mainnet uses `1776`.
+For the full layout, see [Building & signing quotes](/sdk-trading/signing-quotes).
+
+---
+
+## Quote lifecycle
+
+`quote_ack.status="success"` means the indexer accepted and routed your quote. It does not mean:
+
+- the taker accepted it,
+- the quote filled,
+- settlement succeeded,
+- or your position changed.
+
+If the taker accepts and settlement is attempted, monitor settlement updates and chain state. If no update arrives before your quote expiry, treat the quote as not accepted.
 
 ---
 
 ## Read next
 
-- [How RFQ works](/technical/how-rfq-works)
-- [Authorization model](/technical/authz-model)
-- [Smart contract](/technical/smart-contract)
-- [Error reference](/technical/error-reference)
+1. [Maker whitelist](/sdk-trading/maker-whitelist)
+2. [Maker setup](/sdk-trading/maker-setup)
+3. [MakerStream](/sdk-trading/maker-stream)
+4. [RFQ requests](/sdk-trading/rfq-requests)
+5. [Building & signing quotes](/sdk-trading/signing-quotes)
+6. [Sending quotes](/sdk-trading/sending-quotes)
+7. [Runbook](/sdk-trading/runbook)

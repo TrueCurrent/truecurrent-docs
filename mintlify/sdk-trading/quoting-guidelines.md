@@ -1,7 +1,7 @@
 ---
 title: "Quoting guidelines"
 description: "Best practices for TrueCurrent makers covering spread management, volatility-based pricing, inventory hedging, response rate optimization, and avoiding common pitfalls like stale prices and signature errors."
-updatedAt: "2026-05-06"
+updatedAt: "2026-05-27"
 ---
 
 This page covers best practices for makers on TrueCurrent. Following these guidelines will improve your fill rate, protect you from adverse selection, and keep your maker standing in good shape.
@@ -60,11 +60,11 @@ Below is a worked example of building a competitive two-sided quote for an INJ/U
 
 ## Response rate
 
-**Always try to quote within 2 seconds.** A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none get their order cancelled – a worse experience for them and lost flow for the maker pool.
+**Always try to quote inside the collection window.** TrueCurrent currently uses 500 ms. A consistent response rate is important both for your standing and for the quality of the RFQ system. Traders who request quotes and receive none get their order cancelled - a worse experience for them and lost flow for the maker pool.
 
 **Fail gracefully.** If you genuinely can't price a request (e.g. your pricing feed is down, your margin is depleted), it's better to not submit a quote than to submit one. The system handles no-quote correctly: the request expires and the taker is told to retry.
 
-**Monitor latency.** The 2-second window includes network round-trip time. If your system is co-located far from the indexer, account for that latency. A quote that arrives after the window is ignored.
+**Monitor latency.** The collection window includes network round-trip time. If your system is co-located far from the indexer, account for that latency. A quote that arrives after the active window is ignored.
 
 ---
 
@@ -72,7 +72,7 @@ Below is a worked example of building a competitive two-sided quote for an INJ/U
 
 To minimize adverse selection and avoid rejected quotes, makers should price around the same reference the contract validates against: the current onchain mark price.
 
-TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, P&L, and liquidation checks.
+TrueCurrent's RFQ validation uses `mark_price` directly. The market's `mark_price` is the reference used for quote validation, `worst_price` validation, trigger evaluation, and liquidation checks. Position P&L display uses the streamed `indexPrice`, so do not use UI P&L or index price as the source for contract-facing quote bands.
 
 **To track it:**
 

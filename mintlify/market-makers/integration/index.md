@@ -46,7 +46,7 @@ If you've integrated with other RFQ venues, three things on TrueCurrent are wort
 1. [Protocol reference](/market-makers/integration/protocol-reference) — full sequence diagrams (sync `AcceptQuote` and TP/SL `AcceptSignedIntent` paths) plus testnet market list
 2. [Building & signing quotes](/market-makers/integration/rfq-quotes-sign) — the `SignQuote` field order is precise; mismatches fail signature verification silently
 3. [Connecting to the RFQ stream](/market-makers/integration/connecting) — auth handshake details that aren't optional
-4. [TP/SL liquidity](/market-makers/integration/rfq-quotes-blind) — what changes when an exit RFQ fires from a triggered signed intent
+4. [TP/SL and makers](/market-makers/integration/rfq-quotes-blind) — why makers do not need a separate TP/SL code path
 5. [Testnet configuration](/market-makers/integration/testnet-configuration) — endpoints, contract address, EVM chain IDs
 6. [FAQ & troubleshooting](/market-makers/integration/faq) — settlement mechanics, expiry, partial fills, "why aren't my quotes reaching takers"
 
