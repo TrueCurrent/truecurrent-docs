@@ -28,7 +28,7 @@ The grants are one-time setup per wallet. They are scoped to the current RFQ con
 
 ## Grant all testnet permissions
 
-The script below grants the working testnet set for one maker wallet and one taker wallet. Run it after loading `.env` so the private keys are present.
+The script below grants the working testnet set for one maker wallet and one taker wallet. The shell wrapper loads `.env` before running the Python script so the private keys are present.
 
 ```bash
 set -a
