@@ -54,7 +54,7 @@ Use `1439` on testnet and `1776` on mainnet;
 do not use `injective-888` or `injective-1` in the EIP-712 domain.
 
 <Warning>
-Do not copy the EIP-712 domain `chainId` into the quote wire field `chain_id`. The quote payload uses snake_case: `chain_id` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet), and `evm_chain_id` is the numeric EVM ID (`1439` / `1776`). CamelCase names such as `chainId` and `evmChainId` belong to EIP-712 typed data or generated client properties, not raw MakerStream JSON fields.
+Use snake_case for quote payload fields. `quote.chain_id` is the Cosmos chain ID, not the EIP-712 numeric chain ID. Use `"injective-888"` on testnet or `"injective-1"` on mainnet. Put `1439` / `1776` only in `quote.evm_chain_id` and the EIP-712 domain `chainId`.
 </Warning>
 
 ---
