@@ -6,6 +6,16 @@ updatedAt: "2026-05-27"
 
 Request for Quote (RFQ) is a trading model where you request executable prices from liquidity providers before committing to a trade. On TrueCurrent, those prices are signed by makers, delivered through an indexer, and settled onchain only if they match your trade parameters.
 
+## RFQ vs. order books vs. AMMs
+
+| Model | How price is found | Execution profile | Best fit |
+| --- | --- | --- | --- |
+| RFQ | Makers compete to quote a specific request | Firm, signed quote for a short expiry window | Size-aware derivatives trades where execution quality matters |
+| Order book | Takers cross resting bids and asks | Public depth, but large trades can walk the book | Continuous markets with visible passive liquidity |
+| AMM | Pool balances and a pricing formula set the price | Always available pool liquidity, with formula-driven slippage | Passive spot liquidity and smaller flow |
+
+TrueCurrent uses RFQ for onchain perpetuals because it lets makers price each request with current market data, inventory, and risk while keeping settlement transparent and self-custodial.
+
 The important distinction is simple:
 
 - **Price discovery happens offchain** through a short maker competition.
@@ -48,14 +58,14 @@ TrueCurrent's RFQ model asks professional makers to quote each request using cur
 
 ## RFQ vs. order books
 
-An order book matches against passive resting liquidity. RFQ is active liquidity:
+An order book matches against passive resting liquidity. That gives traders visible depth, but it also creates tradeoffs:
 
-| Order book | RFQ |
-| --- | --- |
-| You consume resting bids or asks | Makers respond to your specific request |
-| Large orders can walk the book | Makers can quote one executable size-aware price |
-| Price is visible before execution | Maker quotes are signed and routed for your settlement flow |
-| Liquidity is passive | Liquidity providers actively compete |
+- Large orders can walk through multiple price levels.
+- Publicly visible resting liquidity may disappear before execution.
+- Execution quality depends on the book state at the moment the order lands.
+- Liquidity providers quote passively and wait to be lifted or hit.
+
+RFQ uses active liquidity instead. Makers respond to your specific request, can quote one executable size-aware price, and compete for the trade before you settle.
 
 TrueCurrent still settles through Injective's exchange module, but the public execution flow is RFQ-only: a trade fills from signed maker quotes, not from a different hidden price path.
 
