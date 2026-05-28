@@ -126,7 +126,7 @@ The final digest is:
 keccak256(0x19 || 0x01 || domainSeparator || keccak256(typeHash || encoded SignQuote fields))
 ```
 
-The helper derives `bindingKind` from whether `taker` is present. For current maker integrations, pass the taker address from the RFQ request.
+The helper derives `bindingKind` from whether `taker` is present. For current maker integrations, pass the taker address from the RFQ request. Do not add `bindingKind` to the quote payload, and do not pass a binding-kind helper argument for live taker-bound RFQs.
 
 ---
 
