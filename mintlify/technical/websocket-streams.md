@@ -168,7 +168,7 @@ MakerStream can broadcast requests unrelated to the taker you are testing. Alway
 }
 ```
 
-`sign_mode="v2"` and `evm_chain_id` are mandatory for the current signing path. `chain_id` is the Cosmos chain ID; keep it as `injective-888` on testnet. In camelCase clients, the same split is `evmChainId=1439` and `chainId="injective-888"`.
+`sign_mode="v2"` and `evm_chain_id` are mandatory for the current signing path. `chain_id` is the Cosmos chain ID; keep it as `injective-888` on testnet. Raw MakerStream JSON uses snake_case field names (`evm_chain_id`, `chain_id`); camelCase names are only for EIP-712 typed data or generated client properties.
 
 `quote_ack.status="success"` means the indexer accepted and routed the quote. It does not mean the taker accepted or filled it. Use `settlement_update` or onchain transaction state for fill confirmation.
 

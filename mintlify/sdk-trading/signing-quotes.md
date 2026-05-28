@@ -11,7 +11,7 @@ This guide is EIP-712 v2 only. Quote payloads must include `sign_mode: "v2"` and
 </Warning>
 
 <Warning>
-There are two different chain IDs in every v2 quote. EIP-712 uses a field named `chainId`, but that value is the numeric EVM chain ID: `1439` on testnet or `1776` on mainnet. The quote wire field `chain_id` / `chainId` is the Cosmos chain ID: `injective-888` on testnet or `injective-1` on mainnet. Passing `1439` or `1776` as `quote.chain_id` is invalid.
+There are two different chain IDs in every v2 quote. EIP-712 uses a field named `chainId`, but that value is the numeric EVM chain ID: `1439` on testnet or `1776` on mainnet. The MakerStream quote payload uses snake_case: `chain_id` is the Cosmos chain ID, and `evm_chain_id` is the numeric EVM chain ID. Passing `1439` or `1776` as `quote.chain_id` is invalid.
 </Warning>
 
 ---
@@ -81,13 +81,13 @@ Quotes use this EIP-712 domain:
 | `chainId` mainnet | `1776` |
 | `verifyingContract` | EVM address derived from the RFQ contract bech32 address |
 
-The domain `chainId` is the EVM chain ID. It is not the Cosmos chain ID. This is the main naming collision in the RFQ payloads: `chainId` in the EIP-712 domain is not the same field as `quote.chain_id` / `quote.chainId` on the wire.
+The domain `chainId` is the EVM chain ID. It is not the Cosmos chain ID. This is the main naming collision in RFQ: `chainId` in the EIP-712 domain is not the same field as `quote.chain_id` in the MakerStream payload.
 
 | Context | Testnet | Mainnet |
 | --- | --- | --- |
 | EIP-712 domain `chainId` | `1439` | `1776` |
-| Quote `evm_chain_id` / `evmChainId` | `1439` | `1776` |
-| Quote `chain_id` / `chainId` | `injective-888` | `injective-1` |
+| Quote payload `evm_chain_id` | `1439` | `1776` |
+| Quote payload `chain_id` | `injective-888` | `injective-1` |
 
 Current testnet RFQ contract:
 

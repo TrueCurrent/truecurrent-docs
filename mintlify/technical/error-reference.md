@@ -18,7 +18,7 @@ Common causes:
 
 - Signed decimal string differs from the sent decimal string.
 - EVM chain ID in the EIP-712 domain is wrong (`1439` testnet, `1776` mainnet).
-- `quote.chain_id` / `quote.chainId` was set to the EVM chain ID instead of the Cosmos chain ID.
+- `quote.chain_id` was set to the EVM chain ID instead of the Cosmos chain ID, or raw JSON used a camelCase chain ID field instead of `quote.chain_id`.
 - RFQ contract address in the EIP-712 domain is stale.
 - Field order differs from the v2 `SignQuote` schema.
 

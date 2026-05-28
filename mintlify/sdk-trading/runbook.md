@@ -13,7 +13,7 @@ The commands assume the [`injective-rfq-toolkit`](https://github.com/InjectiveLa
 ## 0. Before you start
 
 <Warning>
-This flow is EIP-712 v2 only. Quotes must carry `sign_mode="v2"` and `evm_chain_id=1439` on testnet. TakerStream conditional orders must carry `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id=1439`. The quote `chain_id` / `chainId` remains the Cosmos chain ID, `injective-888`; do not put `1439` in `quote.chain_id`.
+This flow is EIP-712 v2 only. Quotes must carry `sign_mode="v2"` and `evm_chain_id=1439` on testnet. TakerStream conditional orders must carry `conditional_order_sign_mode="v2"` and `conditional_order_evm_chain_id=1439`. The quote payload uses snake_case fields: `chain_id` remains the Cosmos chain ID, `injective-888`; do not put `1439` in `quote.chain_id`.
 </Warning>
 
 <Info>
