@@ -108,7 +108,7 @@ The [Runbook](/sdk-trading/runbook) walks through the same order with commands.
 - Confirm maker subaccount nonce and USDC margin.
 - Confirm MakerStream auth challenge is answered before waiting for RFQs.
 - Confirm quotes use `sign_mode="v2"` and `evm_chain_id=1439` on testnet.
-- Confirm `quote.chain_id` / `quote.chainId` remains `injective-888`, not `1439`.
+- Confirm `quote.chain_id` remains `injective-888`, not `1439`, and raw JSON uses snake_case field names.
 - Confirm the taker collects quotes for the ACK-returned `rfq_id`.
 - Confirm quote expiry is still in the future at settlement time.
 - Confirm `worst_price`, tick size, and signed decimal strings all match the selected market.
