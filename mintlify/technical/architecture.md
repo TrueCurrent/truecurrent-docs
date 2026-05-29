@@ -43,7 +43,7 @@ flowchart LR
 
 ### RFQ Indexer (off-chain)
 
-The indexer is TrueCurrent's off-chain coordination layer. It:
+The RFQ (Request for Quote) Indexer is TrueCurrent's off-chain coordination layer. It:
 
 - Maintains the registry of whitelisted maker addresses
 - Operates the **TakerStream** WebSocket (for traders submitting requests)
@@ -52,7 +52,7 @@ The indexer is TrueCurrent's off-chain coordination layer. It:
 - Collects and forwards quotes back to traders
 - Selects the best quote for presentation
 
-The indexer is a coordination layer only – it never holds funds or executes trades. Its role is purely informational: passing messages between traders and makers. Even if the indexer were to behave maliciously, it could not forge a maker's signature or change the terms of a quote.
+The indexer is a coordination layer only; it never holds funds or executes trades. Its role is purely informational: passing messages between traders and makers. Even if the indexer were to behave maliciously, it could not forge a maker's signature or change the terms of a quote.
 
 ### TrueCurrent smart contract (onchain)
 
@@ -68,13 +68,13 @@ The contract's logic is deterministic and publicly verifiable. All settlement de
 
 ### Injective exchange module
 
-Injective has a native exchange module built into the chain consensus layer – not a smart contract, but a chain-level primitive. The TrueCurrent contract uses `MsgPrivilegedExecuteContract` to call into this module for final position settlement.
+Injective has a native exchange module built into the chain consensus layer, not a smart contract, but a chain-level primitive. The TrueCurrent contract uses `MsgPrivilegedExecuteContract` to call into this module for final position settlement.
 
 The exchange module handles:
 - Margin accounting and position tracking
 - Liquidation engine
 - Funding rate calculations and payments
-- Onchain order book (used for fallback fills)
+- On-chain order book (used for fallback fills)
 
 ---
 
@@ -109,14 +109,14 @@ sequenceDiagram
 
 Step-by-step:
 
-1. **Trader → Indexer (TakerStream):** Trader sends an RFQ request over WebSocket
-2. **Indexer → All MMs (MakerStream):** Request is broadcast to all active makers simultaneously
-3. **MMs -> Indexer (MakerStream):** Each maker responds with a signed quote inside the collection window
-4. **Indexer → Trader (TakerStream):** Best quote is returned to the trader
-5. **Trader → Chain (AcceptQuote):** Trader submits the `AcceptQuote` transaction with the quote and their parameters
-6. **Contract verification:** Onchain contract verifies signature, price, expiry, and margin
-7. **Settlement (exchange module):** Contract uses `authz` to open positions for both taker and maker through Injective's exchange module
-8. **Position update:** Both wallets' subaccounts reflect the new positions
+1. **Trader → Indexer (TakerStream):** Trader sends an RFQ request over WebSocket.
+2. **Indexer → All MMs (MakerStream):** The indexer broadcasts the request to all active makers simultaneously.
+3. **MMs → Indexer (MakerStream):** Each maker responds with a signed quote inside the collection window.
+4. **Indexer → Trader (TakerStream):** The indexer returns the best quote to the trader.
+5. **Trader → Chain (AcceptQuote):** Trader submits the `AcceptQuote` transaction with the quote and their parameters.
+6. **Contract verification:** The on-chain contract verifies signature, price, expiry, and margin.
+7. **Settlement (exchange module):** The contract uses `authz` to open positions for both taker and maker through Injective's exchange module.
+8. **Position update:** Both wallets' subaccounts reflect the new positions.
 
 For the conditional / TP-SL variant, substitute steps 1-5 with the signed-intent flow described in [Taker SDK trading](/sdk-trading/takers): the taker signs in advance, and the TP/SL executor submits `AcceptSignedIntent` when the trigger is satisfied. Makers still receive ordinary RFQ requests. Steps 6-8 are the same.
 
@@ -126,9 +126,9 @@ For the conditional / TP-SL variant, substitute steps 1-5 with the signed-intent
 
 **Who you trust when trading on TrueCurrent:**
 
-- **The TrueCurrent smart contract** – open source, onchain, deterministic. Verifiable by anyone.
+- **The TrueCurrent smart contract** – open source, onchain, and deterministic. Anyone can verify it.
 - **Injective chain and validators** – for block finality and execution of the exchange module.
-- **The RFQ indexer** – only for routing. It cannot steal funds or change prices. At worst, a malicious indexer could drop requests (degraded service), but couldn't cause unauthorized trades.
+- **The RFQ indexer** – only for routing. It is unable to steal funds or change prices. At worst, a malicious indexer could drop requests (degraded service), but couldn't cause unauthorized trades.
 
 **What you do not need to trust:**
 
