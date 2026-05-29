@@ -54,7 +54,7 @@ Use `1439` on testnet and `1776` on mainnet;
 do not use `injective-888` or `injective-1` in the EIP-712 domain.
 
 <Warning>
-Do not copy the EIP-712 domain `chainId` into the quote wire field `chain_id`. The quote `chain_id` / `chainId` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet). The numeric EVM ID (`1439` / `1776`) belongs in `evm_chain_id` / `evmChainId`.
+Use snake_case for quote payload fields. `quote.chain_id` is the Cosmos chain ID, not the EIP-712 numeric chain ID. Use `"injective-888"` on testnet or `"injective-1"` on mainnet. Put `1439` / `1776` only in `quote.evm_chain_id` and the EIP-712 domain `chainId`.
 </Warning>
 
 ---
@@ -87,7 +87,7 @@ The indexer quote payload must include `sign_mode: "v2"` and the signature retur
 The v2 signature binds chain and contract through the EIP-712 domain, not through these payload fields.
 On testnet, `chain_id` must remain `"injective-888"` even though the domain `chainId` and quote `evm_chain_id` are both `1439`.
 
-`bindingKind` is derived inside the v2 digest. Current maker integrations use taker-bound RFQ quotes, where `taker` is set and `bindingKind` is `1`. It is not an `RFQQuoteType` wire field, and you should not pass `binding_kind` or `nonce` into the helper for live taker-bound quotes.
+`bindingKind` is an internal EIP-712 field derived by the v2 helper: `1` when `taker` is set, and `0` when it is absent. Current maker integrations use taker-bound RFQ quotes, so pass `taker` from the request. Do not add `bindingKind` to the `RFQQuoteType` payload, and do not pass a binding-kind helper argument or blind-quote `nonce` for live taker-bound quotes.
 
 ---
 

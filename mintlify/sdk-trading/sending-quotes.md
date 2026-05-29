@@ -9,7 +9,7 @@ After signing, send the quote over MakerStream as a `MakerStreamStreamingRequest
 Any field covered by the EIP-712 v2 signature must match exactly, or settlement will reject the quote even if the indexer accepts the payload.
 
 <Warning>
-Do not confuse `quote.chain_id` with the EIP-712 domain `chainId`. `quote.chain_id` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet). The numeric EVM chain ID (`1439` testnet, `1776` mainnet) belongs in `quote.evm_chain_id` and the EIP-712 domain.
+Use snake_case for MakerStream quote payload fields. Do not confuse `quote.chain_id` with the EIP-712 domain `chainId`: `quote.chain_id` is the Cosmos chain ID (`injective-888` testnet, `injective-1` mainnet), while `quote.evm_chain_id` and the EIP-712 domain `chainId` use the numeric EVM chain ID (`1439` testnet, `1776` mainnet).
 </Warning>
 
 ---
@@ -65,7 +65,7 @@ Do not confuse `quote.chain_id` with the EIP-712 domain `chainId`. `quote.chain_
 | `quote.min_fill_quantity` | string | Optional in some helper paths. If present, match the signed value. Use `"0"` when absent. |
 | `quote.nonce` | uint64 | Reserved for non-standard quote paths. Do not send for normal MakerStream RFQs. |
 
-The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). `chain_id` and `contract_address` are still sent for indexer compatibility. In camelCase SDK objects, this same split is `chainId` for Cosmos and `evmChainId` for EVM.
+The v2 signature binds chain and contract through the EIP-712 domain (`evm_chain_id` and `verifying_contract_bech32`). `chain_id` and `contract_address` are still sent for indexer compatibility. Raw MakerStream JSON examples use `chain_id` and `evm_chain_id`; generated clients may expose language-specific property names, but the wire/proto field names are snake_case.
 
 ---
 

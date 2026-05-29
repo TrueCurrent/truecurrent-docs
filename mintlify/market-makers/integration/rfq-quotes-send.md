@@ -8,7 +8,7 @@ Wrap the quote in a `MakerStreamStreamingRequest` with `message_type = "quote"`.
 Any field covered by the EIP-712 v2 signature must match exactly, or settlement rejects it.
 
 <Warning>
-`quote.chain_id` / `quote.chainId` is the Cosmos chain ID, not the EIP-712 numeric chain ID. Use `"injective-888"` on testnet or `"injective-1"` on mainnet. Put `1439` / `1776` only in `quote.evm_chain_id` / `quote.evmChainId` and the EIP-712 domain.
+Use snake_case for quote payload fields. `quote.chain_id` is the Cosmos chain ID, not the EIP-712 numeric chain ID. Use `"injective-888"` on testnet or `"injective-1"` on mainnet. Put `1439` / `1776` only in `quote.evm_chain_id` and the EIP-712 domain `chainId`.
 </Warning>
 
 | Field | Type | Value |
